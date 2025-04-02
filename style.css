@@ -1,0 +1,157 @@
+.myclass {font-family: 'Noto Serif Devanagari', serif;
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+            color: #444;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        /* Animation keyframes */
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .container {
+            width: 85%;
+            margin: auto;
+            overflow: hidden;
+            padding: 30px;
+        }
+
+        /* Header Styles */
+        .header {
+            text-align: center;
+            color: #c0392b; /* Deep Red */
+            animation: fadeIn 2s ease-in-out;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Tribute Frame Styles */
+        .tribute-frame {
+            border: 10px solid #d4ac0d; /* Gold */
+            padding: 25px;
+            margin-bottom: 30px;
+            background-color: #fff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            animation: pulse 5s infinite;
+        }
+
+        .tribute-frame img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Tribute Details Styles */
+        .tribute-details {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .date {
+            font-size: 1.3em;
+            color: #7b241c; /* Dark Red */
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .age {
+            font-size: 1.2em;
+            color: #800000; /* Maroon */
+            font-style: italic;
+        }
+
+        /* Content Styles */
+        .content {
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .content h2 {
+            color: #943126; /* Burgundy */
+            border-bottom: 3px solid #e74c3c; /* Red Accent */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .content p {
+            color: #555;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .content ul {
+            list-style-type: square;
+            padding-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .content li {
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        /* Emphasis Styles */
+        .emphasis {
+            color: #c0392b; /* Deep Red */
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        /* Footer Styles */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #777;
+            font-size: 0.9em;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        /* Call to Action Button */
+        .cta-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #e74c3c; /* Red */
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            animation: pulse 3s infinite;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #c0392b; /* Darker Red */
+        }
+
+        /* Responsive Adjustments */
+        @media(max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .tribute-frame {
+                padding: 15px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
