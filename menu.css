@@ -1,226 +1,385 @@
 /* बॉडी स्टाइल */
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f9f9f9;
-  overflow-x: hidden;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    overflow-x: hidden;
 }
+
+/* --- REMOVE OR KEEP AS NEEDED --- */
+h1, p { /* Example styles for body content */
+    text-align: center;
+    margin-top: 50px;
+    padding: 0 20px;
+}
+/* --- END REMOVE/KEEP --- */
+
 
 /* सर्कुलर मेन्यू कंटेनर */
 .circle-menu-container {
-  position: fixed;
-  bottom: 120px;
-  left: 90%;
-  transform: translateX(-50%);
-  z-index: 1000;
+    position: fixed;
+    top: 20px;
+    /* Adjusted for better right alignment */
+    right: 20px;
+    /* Removed left and transform for simpler positioning */
+    /* left: 92%; */
+    /* transform: translateX(-50%); */
+    z-index: 1000;
+    /* Add width/height if needed, depends on content */
 }
 
-/* मेन्यू आइकॉन */
+/* मेन्यू आइकॉन (Main Toggle Button) */
 .menu-toggle {
-  width: 60px;
-  height: 60px;
-  background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjCimrlajxAn2Uwtdk4zhE-krYms8rC43mB8SmoqopAHBi-Z0PFJXpqy1aQOmY9YNZ7ObzVj3P6CVVUa3n2Jkh_7qf9HneETZIjPBBVFcWp8KIiKU_YbHc6OFePFoxFV39OSCS8XazIpYrK711-1ekyU9cMehM6JAA8FChvAN6gaCeaaoIm2lY-DLi7pfql/s1929/IMG_1737386384948.png');
-  background-size: cover;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s, box-shadow 0.3s;
+    width: 60px;
+    height: 60px;
+    background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhCbarYqIlzfRqB0VbKZvHmwyyPtvU0Y2Nkv1izHDcL_tlX1A6d3u8KtV85jfUhqqZcsUDKds1yQDDn6p_MJbM_wec1tyUHOw50hsTHKlpVzeEfhZR_gkFsL_O4OG0zytlGbKUlJaRQPSDfx7SAqI4D6B_SnWzxSQ-lWz3ld38THUIYWdDwsXE7bBuJx7EN/s374/IMG_20250404_055208.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+    /* Position relative to the container's top-right */
+    position: relative;
+    /* Removed float if using fixed positioning */
 }
 
 .menu-toggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* सब-कैटेगरी मेन्यू */
 .menu-categories {
-  position: absolute;
-  bottom: 80px;
-  right: 50%;
-  transform: translateX(-50%);
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  width: 300px;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  padding: 10px;
-  transform: scale(0);
-  transition: transform 0.4s ease, opacity 0.4s ease, visibility 0.4s ease;
-  opacity: 0;
-  visibility: hidden;
+    position: absolute;
+    /* Position relative to the container */
+    top: 70px; /* Space below toggle */
+    right: 0; /* Align to the right of the container */
+    /* transform: translateX(-50%); */ /* No longer needed */
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px; /* Slightly increased gap */
+    width: 320px; /* Adjusted width */
+    background-color: rgba(255, 255, 255, 0.95); /* Optional: slight background */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+    transform: scale(0) translateY(-20px); /* Start smaller and slightly up */
+    transform-origin: top right; /* Animate from top-right corner */
+    transition: transform 0.4s ease, opacity 0.4s ease, visibility 0.4s ease;
+    opacity: 0;
+    visibility: hidden;
 }
 
 .menu-categories.active {
-  transform: scale(1);
-  opacity: 1;
-  visibility: visible;
+    transform: scale(1) translateY(0);
+    opacity: 1;
+    visibility: visible;
 }
 
+/* Category Title */
+.menu-categories .category-title {
+    font-size: 1.1em; /* Adjusted size */
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    color: #fff;
+    border-bottom: 1px solid rgba(204, 204, 204, 0.5);
+    display: none; /* Initially hidden, controlled by JS */
+    grid-column: 1 / -1;
+    animation: zoomIn 0.6s ease-out; /* Adjusted animation */
+    background-size: 200% auto;
+    transition: background-position 0.5s ease;
+    cursor: default; /* Not clickable */
+    border-radius: 8px; /* Slightly smaller radius */
+     box-shadow:
+        inset 0px 0px 3px rgba(255, 255, 255, 0.6), /* Adjusted shadow */
+        inset 0px 10px 15px rgba(0, 0, 0, 0.5), /* Adjusted shadow */
+        0px 3px 6px rgba(0, 0, 0, 0.4); /* Adjusted shadow */
+}
+
+/* Gradient Background Styles for category titles (Dynamically applied by JS) */
+.menu-categories .category-title.gradient-1 { background-image: linear-gradient(90deg, #ff5733, #ffcc00, #33ff57, #00ccff, #cc33ff); }
+.menu-categories .category-title.gradient-2 { background-image: linear-gradient(90deg, #3366ff, #cc3399, #ff3366, #ff6600, #ffff33); }
+.menu-categories .category-title.gradient-3 { background-image: linear-gradient(90deg, #00ffcc, #33ccff, #cc33ff, #ff33cc, #ff0066); }
+.menu-categories .category-title.gradient-4 { background-image: linear-gradient(90deg, #66ff33, #33ffcc, #3366ff, #6633ff, #cc33ff); }
+.menu-categories .category-title.gradient-5 { background-image: linear-gradient(90deg, #ff3300, #ff9933, #ffcc66, #ffff99, #ccffcc); }
+.menu-categories .category-title.gradient-6 { background-image: linear-gradient(90deg, #33ff57, #00ccff, #cc33ff, #ff5733, #ffcc00); }
+.menu-categories .category-title.gradient-7 { background-image: linear-gradient(90deg, #cc3399, #ff3366, #ff6600, #ffff33, #3366ff); }
+.menu-categories .category-title.gradient-8 { background-image: linear-gradient(90deg, #33ccff, #cc33ff, #ff33cc, #ff0066, #00ffcc); }
+.menu-categories .category-title.gradient-9 { background-image: linear-gradient(90deg, #6633ff, #cc33ff, #66ff33, #33ffcc, #3366ff); }
+.menu-categories .category-title.gradient-10 { background-image: linear-gradient(90deg, #ffcc66, #ffff99, #ccffcc, #ff3300, #ff9933); }
+.menu-categories .category-title.gradient-11 { background-image: linear-gradient(90deg, #33ff57, #00ccff, #cc33ff, #ff5733, #ffcc00); }
+.menu-categories .category-title.gradient-12 { background-image: linear-gradient(90deg, #cc3399, #ff3366, #ff6600, #ffff33, #3366ff); }
+
+/* Gradient Animation on Hover for category titles */
+.menu-categories .category-title:hover {
+    background-position: right center;
+}
+
+@keyframes zoomIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Category Items (Circles) */
 .menu-categories .category {
-  width: 60px;
-  height: 60px;
-  background-color: #4caf50;
-  color: #fff;
-  font-size: 16px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.3s, background-color 0.3s;
+    width: 60px;
+    height: 60px;
+    /* background-color: #4caf50; */ /* Base color removed, using image */
+    color: #fff;
+    font-size: 16px;
+    border-radius: 50%;
+    display: flex; /* Keep flex for potential future content */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s; /* Added shadow transition */
+    background-size: contain; /* Ensure icon fits */
+    background-repeat: no-repeat;
+    background-position: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Add subtle shadow */
 }
 
-.menu-categories .category img {
-  width: 60px;
-  height: 60px;
-  object-fit: contain; /* सुनिश्चित करें कि छवियां अपने कंटेनर के भीतर फिट हों */
-}
+/* Individual Category Background Images */
+.category[data-category="class-1-5"] { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEilZ3dM55Xz_GsEsZBSYaM0oCI_P9GqRYJuyKhTZdcEy4AdjPMvhJOcV1BR-p3oC1wp4L_KiMAVTJQTtw_1-xtRv1wUuCNMQNH1MdeLNJjsHlp0phRumFY7SIDNz3Jz3BOTlIF73ST_ZI1F-xSUEDDKMAP9vpi9VajiPLTllj4lTFJyWf7HYmdmHiTx8Nny/s1927/IMG_1737028885894.png'); }
+.category[data-category="class-6-8"] { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgfw6acBTVCVpCY5J0EzY0bPVrWXMjcM1n09DcZs61WdkIwqGJuuWmu87Pm50X0CbxF_KBPn7YfgNr2I1T53EjBXy8yGh0Yx7o25whknaJ5HOKkPy1DivIRCxYj0cmBCKRPOSOzdhgbVIHik9PrpQvcetUh0Myl280acraLYWihsgbRkggN7aJTJv1WwvOY/s1920/IMG_1737029602252.png'); }
+.category[data-category="class-9-10"] { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgNGlb5DDFB88pvgViQJZcg5AipTVcGaKfXGBr35N9YFH6JRh8JwAUaa5HxJ_ctb4p4mZXwMNzw8HeGwBJkz7kFw44rRE7LtkXMGYI2PLXvwM-iRzQfFr1AhWITmNN8Fkhd3yyyH8KWmH57IzOXc49tess0qWbuWiz5t-ppg1fnW5Bj6RNpFKXMyADrS9lU/s1932/IMG_1737030307619.png'); }
+.category[data-category="class-11-12"] { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiSMSIpGMWSoWT9cbCtYs0UebIOU9q6I0qgyTODXCi1V5xeCcBP6T8Qh9DaB8Ny0L2pB0Wb6hhXcOXeRYWuLNGaBHlcfUVd7h2y8OVQtWt7BFdHqe0mg4EklsJVZn5PP4iKH-F7z7eYvUEqqfyNt7FsSNNdyRs6M0IDLO-z-zmHsY3wq4jq7_QvxiqKUfrn/s1920/IMG_1737030959966.png'); }
+.category[data-category="competitive-exam"] { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEik6LmPJRY2LLMJxQpJb6E5ApvSEHibTaQUvzK__ubR93p5s4UnOMg9PSgN67Ezry7x0kb_KBSrnZnp3V0YXvRr7Mn-M4ZxevKOSGCjZBHF9zIBnon70Ax9E8L3i8gtcsaWJtB6k9IV8TIHd0RPeTkvxziW9A57PGXytm9Cf6ZLgJXuhQZ-CjqaI8liZUtR/s1936/IMG_1737032416654.png'); }
+.category[data-category="news-channel"] { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEimscbBPwLeeDEABAI0MEm_Ec97oI9cP-86fI7xUnQgG37kI8bc_SbkkaK00AIoMfdfBTH2xDtAKm6ds4SoDS5STw739457bXdkEHsPmxvgGLMpkJvc9ozkBep11lCWwZHeItEl-IIHanAxGEqAOQ6Kuq8wa5K7TtmEOR7wflj_OolZYlEgPOUqb3nEJqQn/s360/ei_1737032712023-removebg-preview.png'); }
+.category[data-category="yoga-ayurveda"] { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhIS0xgui57ahr_TkmScetUIbKuytwQntWUNEq3YpGEOi0ex6e02yYmUNzgfM3nx7pPo30ZRmkXtQRqouuAc9Ec3DsHPw9kc7hLvO8OUTSA2k9RjD_uCtuRXokvsoZK9jkDyx1fmhB46yQkRq7klhaCNVx7KPH2MrUeJy0FPKVXzHD-LV7po5kq3Q_Uubx-/s1920/IMG_1737033609508.png'); }
+.category[data-category="marriage-links"] { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjUPJ2C-ImxKtFeebozoRX6VOI-0c1X60QjNb3zJ5WctyIXg7yJZIL2zWOgVUt0rDkdV1VUi-V8cHDEbI5XDZmaCvvOgxHK7dyMJ3AzyHKS-YoAbZQT7EhZfrXmFhTmpw7D1bf1xWYBhM3O-_M_a_71Vjp8m9ErVccZI7_JWY9mP45ucONqzCPrRomhOHCT/s1936/IMG_1737037850103.png'); }
+.category[data-category="editorial-links"] { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjLFyagxMQqTaoPj45kWuIIqFBAwieWcDc5veBXWjty8Il1RONxrLfosbTFscO4_h8dqHAo2pBDpyivNaAZaN2qzng7K9pvJozBBfpcUuVaSLTKlMEvNbumsAR2yBA2P-G2CxPzQpp8mq9Fhag__UuIR2zi0ODIqa9yzetZZm_wQV2Yl7Fw0-RiE85Fkrqm/s1920/IMG_1737039338978.png'); }
+.category[data-category="government-links"] { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzCGzcmFfSlKXQ1tVEP1fOG9WrRmaaIjxGyrBeeKP2n0xNgTolpqjebLDoyLQEZl29v181W-ctfwbMEEWI4sBMIin6Qf2CqA-MNmaLi0BMjvrL_0EWkuo4xSWfRIZ-DzQDX3L7rsvYOfkPWMYgPXKl05zDJ5T4jXPlwnNk_ur7m9nYBoOOsBKt9-_YUmZr/s1920/IMG_1737039937417.png'); }
+.category[data-category="astrology-links"] { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgDUoKsPMq_-9FoU9oHdFrqiUKvRUKiG_Illy-k0ETzQH_1ortJ-qwswSNKJYTIzi_rA-J9uOnSbFd_TOgmlqa4MIfKwXKpci_LobCXQnQJ4fKYYLjItGU2YvsvmZX73zqtZg4OaBCrdUGsLhNGg-icumjss0DPyfWoGfUaMHwC_JkttRYtJZulH8mSzwuM/s1920/IMG_20241210_203857.png'); }
+.category[data-category="vaidik-links"] { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgSJSrmSw18LQ8KkHRCU3zRJYZULUae5E_mVqI3HzqDfHvtkyE0QQnOYY6JkD6_MRiGZF-jBd00trM1_3LDSatJrbTzvqlcnaAZ12eeJnPE-MpwWP40GCOI1HiP_ancRTgMAXq9WOYBlb8iVUsIQIohJ9EIqt4Rugst-aFJyopmmU2q-ByGhG1qQZcWnxVN/s1920/IMG_1737048090628.png'); }
+
 
 .menu-categories .category:hover {
-  transform: scale(1.2);
-  background-color: #3d8f42;
+    transform: scale(1.15); /* Slightly larger scale on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
 }
 
 /* लिंक बॉक्स */
 .menu-links {
-  position: absolute;
-  bottom: 80px;
-  right: 50%;
-  transform: translateX(-50%);
-  width: 300px;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  padding: 15px;
-  transform: scale(0);
-  opacity: 0;
-  visibility: hidden;
-  max-height: 350px;
-  overflow-y: auto;
-  transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
-  display: none;
+    position: absolute;
+    top: 70px; /* Match categories top */
+    right: 0; /* Align to container right */
+    /* transform: translateX(-50%); */ /* Removed */
+    width: 320px; /* Match categories width */
+    background-color: #444; /* Darker background */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); /* Adjusted shadow */
+    border-radius: 12px; /* Match link style */
+    padding: 15px;
+    transform: scale(0) translateY(-20px); /* Start smaller and slightly up */
+    transform-origin: top right; /* Animate from top-right */
+    opacity: 0;
+    visibility: hidden;
+    max-height: 400px; /* Increased height */
+    overflow-y: auto;
+    transition: transform 0.4s ease, opacity 0.4s ease, visibility 0.4s ease;
+    display: none; /* Use JS to control display block/none */
+     box-shadow: /* Keep original complex shadow */
+        inset 0px 0px 5px #ffffffa9,
+        inset 0px 35px 30px #000,
+        0px 5px 10px #000000cc;
 }
 
 .menu-links.show {
-  display: block;
-  opacity: 1;
-  visibility: visible;
-  transform: scale(1);
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1) translateY(0);
 }
 
+/* Style for Links Title with Icon */
 .menu-links .links-title {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  text-align: center;
+    font-size: 1.2em; /* Slightly larger */
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    animation: fadeInUp 0.8s ease-out; /* Adjusted animation */
+    background-size: 200% auto;
+    color: #fff;
+    padding: 12px; /* Adjusted padding */
+    border-radius: 8px; /* Match category title */
+    position: relative;
+    z-index: 1;
+    background-color: transparent; /* Keep transparent */
+    overflow: hidden;
+     box-shadow: /* Keep original complex shadow */
+        inset 0px 0px 5px #ffffffa9,
+        inset 0px 35px 30px #000,
+        0px 5px 10px #000000cc;
+    transition: background-position 0.5s ease; /* Add transition for gradient hover */
 }
 
-.links-content a {
-  display: flex;
-  align-items: center;
-  font-size: 1rem; /* 16px के बराबर */
-  cursor: pointer;
-  position: relative;
-  color: #fff;
-  transition: all 0.3s ease;
-  text-shadow: 1px 1px 1px #000;
-    margin-bottom:5px;
+.menu-links .links-title:hover {
+     background-position: right center; /* Animate gradient on hover */
 }
 
-.links-content a::before {
-    content: "";
+
+/* Animated Border - Applied dynamically via JS */
+.menu-links .links-title::before {
+    content: '';
     position: absolute;
-    inset: 0;
-    margin: auto;
-    border-radius: 12px;
-    filter: blur(0);
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background-size: 400% 400%;
     z-index: -1;
-    box-shadow: none;
-      transition: all 0.3s ease;
-  }
-
-.links-content a:hover::before {
-  filter: blur(15px);
-}
-.links-content a:active::before {
-  filter: blur(5px);
-  transform: translateY(1px);
+    border-radius: 10px; /* Match parent slightly adjusted radius */
+    animation: Gradient 5s ease infinite;
 }
 
-.links-content a:active {
-  box-shadow:
-    inset 0px 0px 5px #ffffffa9,
-    inset 0px 35px 30px #000;
-  margin-top: 3px;
+/* Gradient Border Animations (Applied by JS) */
+.links-title.gradient-1::before { background-image: linear-gradient(90deg, #ff5733, #ffcc00, #33ff57, #00ccff, #cc33ff, #ff5733); }
+.links-title.gradient-2::before { background-image: linear-gradient(90deg, #3366ff, #cc3399, #ff3366, #ff6600, #ffff33, #3366ff); }
+.links-title.gradient-3::before { background-image: linear-gradient(90deg, #00ffcc, #33ccff, #cc33ff, #ff33cc, #ff0066, #00ffcc); }
+.links-title.gradient-4::before { background-image: linear-gradient(90deg, #66ff33, #33ffcc, #3366ff, #6633ff, #cc33ff, #66ff33); }
+.links-title.gradient-5::before { background-image: linear-gradient(90deg, #ff3300, #ff9933, #ffcc66, #ffff99, #ccffcc, #ff3300); }
+.links-title.gradient-6::before { background-image: linear-gradient(90deg, #33ff57, #00ccff, #cc33ff, #ff5733, #ffcc00, #33ff57); }
+.links-title.gradient-7::before { background-image: linear-gradient(90deg, #cc3399, #ff3366, #ff6600, #ffff33, #3366ff, #cc3399); }
+.links-title.gradient-8::before { background-image: linear-gradient(90deg, #33ccff, #cc33ff, #ff33cc, #ff0066, #00ffcc, #33ccff); }
+.links-title.gradient-9::before { background-image: linear-gradient(90deg, #6633ff, #cc33ff, #66ff33, #33ffcc, #3366ff, #6633ff); }
+.links-title.gradient-10::before { background-image: linear-gradient(90deg, #ffcc66, #ffff99, #ccffcc, #ff3300, #ff9933, #ffcc66); }
+.links-title.gradient-11::before { background-image: linear-gradient(90deg, #33ff57, #00ccff, #cc33ff, #ff5733, #ffcc00, #33ff57); }
+.links-title.gradient-12::before { background-image: linear-gradient(90deg, #cc3399, #ff3366, #ff6600, #ffff33, #3366ff, #cc3399); }
+
+
+@keyframes Gradient {
+    0% { background-position: 0% 50% }
+    50% { background-position: 100% 50% }
+    100% { background-position: 0% 50% }
 }
 
-.links-content a img {
-  width: 28px;
-  height: 28px;
-  margin-right: 10px;
-  vertical-align: middle;
+@keyframes fadeInUp {
+    0% { transform: translateY(15px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
 }
 
+/* Link Content Area */
+.links-content {
+    /* Styles for the container of all link groups if needed */
+}
+
+/* Individual Link Sets (Hidden by default) */
 .links-content .links {
-  display: none;
+    display: none; /* Controlled by JS */
+    /* Add grid/flex layout here if needed for the links within a set */
+    /* e.g., display: grid; gap: 10px; */
 }
 
-.links-content .outer-cont {
-  padding: 12px 20px;
+/* Individual Link Styling (<a> tag) */
+.links-content a.outer-cont { /* Target specifically links with outer-cont */
+    display: flex; /* Use flex to align icon and text */
+    align-items: center;
+    padding: 10px 15px; /* Adjusted padding */
     border: none;
-    font-size: 1rem;
-  cursor: pointer;
-  position: relative;
-  background: linear-gradient(90deg, #5bfcc4, #f593e4, #71a4f0);
-  border-radius: 12px;
-  color: #fff;
-  transition: all 0.3s ease;
-  box-shadow:
-    inset 0px 0px 5px #ffffffa9,
-    inset 0px 35px 30px #000,
-    0px 5px 10px #000000cc;
-  text-shadow: 1px 1px 1px #000;
-  display: flex;
-  align-items: center;
-    width:auto;
-    justify-content: space-between;
+    font-size: 0.95rem; /* Slightly smaller font */
+    cursor: pointer;
+    position: relative;
+    background: linear-gradient(90deg, #5bfcc4, #f593e4, #71a4f0); /* Default gradient */
+    border-radius: 10px; /* Adjusted radius */
+    color: #fff;
+    transition: all 0.3s ease;
+    box-shadow:
+        inset 0px 0px 4px rgba(255, 255, 255, 0.6), /* Adjusted shadow */
+        inset 0px 15px 20px rgba(0, 0, 0, 0.5), /* Adjusted shadow */
+        0px 4px 8px rgba(0, 0, 0, 0.5); /* Adjusted shadow */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); /* Adjusted shadow */
+    width: auto;
+    justify-content: flex-start; /* Align items to start */
+    margin-bottom: 10px; /* Space between links */
+    text-decoration: none; /* Remove underline */
+    overflow: hidden; /* Hide potential overflow from pseudo-elements */
+}
 
-}
-.links-content .outer-cont::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  border-radius: 12px;
-  filter: blur(0);
-  z-index: -1;
-  box-shadow: none;
-  background: conic-gradient(
-    #00000000 80deg,
-    #40baf7,
-    #f34ad7,
-    #5bfcc4,
-    #00000000 280deg
-  );
-  transition: all 0.3s ease;
-}
-.links-content .outer-cont:hover::before {
-  filter: blur(15px);
-}
-.links-content .outer-cont:active::before {
-  filter: blur(5px);
-  transform: translateY(1px);
-}
-.links-content .outer-cont:active {
-  box-shadow:
-    inset 0px 0px 5px #ffffffa9,
-    inset 0px 35px 30px #000;
-  margin-top: 3px;
+/* Add space for the icon using ::before */
+.links-content a.outer-cont::before {
+    content: '';
+    display: inline-block;
+    width: 28px; /* Icon width */
+    height: 28px; /* Icon height */
+    margin-right: 10px; /* Space between icon and text */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    flex-shrink: 0; /* Prevent icon from shrinking */
+    /* Background image set per link below */
 }
 
 
-/* मैनुअल कलर प्रति लिंक */
+/* Hover and Active States for Links */
+.links-content a.outer-cont:hover {
+    transform: translateY(-2px); /* Slight lift */
+    box-shadow:
+        inset 0px 0px 5px #ffffffa9,
+        inset 0px 35px 30px #000,
+        0px 8px 15px #000000e0; /* Enhanced shadow */
+}
+
+.links-content a.outer-cont:active {
+    transform: translateY(1px); /* Press down effect */
+    box-shadow:
+        inset 0px 0px 5px #ffffffa9,
+        inset 0px 35px 30px #000; /* Keep inset shadow */
+    /* margin-top: 3px; */ /* Avoid using margin for active state */
+}
+
+
+/* --- Individual Link Icons using ::before --- */
+
+/* Class 1-5 */
+.link-icon-viprayag::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEge_my0vsh84LVnDtaheqQD-EyyQ2Y0Q6a8BOD_q8mcy19LO_YDu2P26Po2FmfSuKrin13Uu1OdP6j9FjeXrocwZg8BZ9E9t7ZLkboy__14FHcVtcnl9JYLB6LYQSO1DlehQxElALxYxE_qiQc5JjPdvmvQx2h4UajhnSuDQ_IHymkcb3LCxXpC8ltAJ1M/s1882/IMG_20241210_133455.png'); }
+.link-icon-opeclasso::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhiH5h-Tl0IZC4baK9YE0cSfzBvuKTq-WNSXfNLgb39b3q0_liV21kdOIZchyRX8RIYP0_KU0ulcXcEfwmy-tWcW1fEV0MPj9fZ3O8KVtJPvRMY8qTcZvZGswknTNKVzHcWvMahRpBbMS5ERl3piBdC2ExyJfofZsHvxFe_tjHvaV3kHiJ7PYEi6McgOMM/s1920/IMG_1733818781532.png'); }
+
+/* Class 6-8 */
+.link-icon-gyanbaddha::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi41j3-jLIxsAmLLP2Nc-9ZxIw9WiCDIu4cPQ5n39t36m8KSYTUVthmKtjHhOZKMrdMOQfAGUsD2U53G0EImH90BsZdIRzFMc7ffRYi5-XYgsYHkwtGk3WdeeO8pU3ZOY4foR6wcRNZhERDyWAIRy7ARnDEsgj44Fz_Tz7m3vAcbdXV2fkn7Lq3hHR2piU/s1920/IMG_1733819363432.png'); }
+.link-icon-iqvc::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjbjiTd3hdMu-RwO2ITI3LiMCivcf35VUlBhLr1qtqi2PFeCT8gIAsg_kANpIcJpJHwoAHMsg84P8LgJD4Z0rsV-ognFunKUSB-2XLzuP95YRP7UUOuRXpM6rxQR34SwkJ2ryOlU8hjV2xuRsPN9G9Z29JhJ54v41FIGiJRZREc-vYf6MwrpOE1_tmBFNY/s1920/IMG_20241210_141118.png'); }
+.link-icon-ythawawat::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEggQygcO7XniXokXdes5wiSVmOmn-CjlzUYaBxc5oRe_c8IjTIhF1vqU6IcPgoRsDcQdruJSClcuwBKNiBZJV9d7LwunfpEN4-wLAp-MrHDhoX9LaZ1EKX-cp1vExYc-9A55inh6ANSuy_IVnNjXJDbpxcKBvMnOHmCthQpz6bWn3EJ4lHVL3_Pw5GWI8s/s1916/IMG_20241210_141720.png'); }
+.link-icon-niryogkshemah::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhYFxuIOcKY7rdxQmkBhhQRP18izXdPVD-QYo1OaND4LDPnoOUzkSKJp-xIJAxAaUlOvavBqHt_TQyLdytZodUQ_vqn6E24g65UAgeZkbMZCyQEdV0X3lwty0pI91E_cU1X1lwBUAxLNtC2rqxv2R3NsH20Pl_1dnZndHbqhLfNpE5I0OeEXkJqq-iO9BA/s1920/IMG_20241210_142418.png'); }
+.link-icon-querymug::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjrvMwwx55yASQnQkrjIJecm_0JaPXeqDyAKUm52BgDJ__NJKGKbGGLXGuK3reuFHMehR-4XfdoekBBlUQzw7jmu85_1GUy_4mTwDhWQ627gVps5AVRZR2xYNes5FBWceSM4xqAD5MbyYfS44Zw5pkwm4ALvxqM3rwSQzYMRF4Tq1TJkaOcNwjyCkmuseY/s1865/IMG_20241210_145107.png'); }
+.link-icon-apurya::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiEEZlUWzB-A8TSr0E9H0sUIgJc9RJt2zAzXWT4EAFBw0woZ6DxO2ytsAE4NofzRyL3fN3Z5Ah2aBlcUCyfs9WyMwNzlW2UKD19ag7wpjPmHHKUjywowfk9F1Nbb9UOgEb2qGXb166ly4xnT9U-00kAZlgMCvgKSdnfvM5yIy8R7DN16F9SA2Gu8LsAD2w/s1812/IMG_20241210_150538.png'); }
+.link-icon-vedhasah::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvDG6QMBDPokmOvuIkGKGjQd8Hz-Zl5zF-xWNdXoTca0aWh4Qmff0DB13DaxprA3FCl9gmk4oaDQCJabRhIZ8PEl82BSiMwJecsELf6858Bi3fp1Eqsr3rq_hlB-nVm1ITyg54OoLAYRRJhWcrv9HVCITVUyONVACm50PCN87BzGtZj1UYjGlXqLj1ISQ/s1903/IMG_20241210_153525.png'); }
+.link-icon-ctzi::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiyh083bzlFD18QlN88CjeMNSAak8VDXWD3J7zdKVbY-lxV0Pyx9-ljKw13utY_hY8bRoQcCrCuCWV38DYKZiDLXIV4h-z06y12KGg0PKMy1n3piKdzo5OEvpNJP8fMdX0iEdkS2kzYFyNYmIlQFfV_tMS_tYCIdIaaCsRk2d4Zih6XpQWJtPEOESrV5AQ/s1920/IMG_1733826746871.png'); }
+
+/* Class 9-10 */
+.link-icon-stickmemory::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjBDrXer2jXvO8-rwPmT5ySYMLv1okLMi8GtgnoVRmgP6ertLpevWwWITr216VMamHxNi-e3imMnZDvejFQQTUyghk0Vv6AKgO0QnSnrjLIRDRS51fXfKhf8Xn_ZdRAl8i_n-Bm-JCYfvRv_9B9zimArUPZce4TLFsp3ixEIcPMDBW0MyhyzoPbvMZ5UcU/s1920/IMG_1733827984637.png'); }
+.link-icon-vqlm::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj_DI2yPTtS3P3igxNBWvjf3WlERehHBzKBEvFcTrnKGZY16Vsk7Nq856BWol-8lafdHgvO8PvCx1SskyNm3mRTnl_hX5u5G1lO3p5PjqOzb0YusHhUZi4_VPG9B99UF4XmqCOiSBjFywbWnOx3vmgcy0HiSBz_64QjUQFBdX-a-0rAf4n5BlyDXu_Gw_c/s1920/IMG_1733829505213.png'); }
+.link-icon-xmcq::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEikAEXf4e-wSYtzWuesJru3oHDm7YA66gM8nJx069Le3vlHhX6MwyvK23e8-2Hr5Wz2FbEE39fbeJGcfycsUMAR9NCV9aycJxhoJNbxNPbTNYupMJ4ztXXtpyjqwhw4hRBxYpou4NqyKZRx67cmj3cpuvn1rp2nNqbKsM9XbRS_31ICQxZCRloODuBmfuQ/s1843/IMG_20241210_171352.png'); }
+.link-icon-memoryurl::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhU2hXCXvdz5pFGihKYtCsS7BkhJZkyNoRCU_salKo9v2H0pYZEX4v3zX8ia10drYKv9n8BwXYd1iVlb41efwnAF3dChyphenhyphen_sf-V7y6d_YLxth5BJJa64Nkx-5K_fNhqmK1GjW6pAiwKvY1hgDUU6dR_bP464gRfxObGGUapGe9lRyHRN9oyPCHA7Txh4QpY/s1920/IMG_1733832061511.png'); }
+.link-icon-kanatva::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjwBAM24so3dfPv1yhmhZSbrb8GkqiZplIT25_N7HCbAUuu7UunQ-s4AAWjsBh4hU8GAbu7-AEQNMI8NhT5_UYNvy1iiKnj2up3szq3qOa_17tZs8QfFi-svDVB0DfJLRDql7y_0IcKFe8uqJwfNi8HGItkyqUg-RFSzbrfXwn2mU1EsflkwKGktu-of0M/s1920/IMG_1733833916710.png'); }
+.link-icon-gariyashi::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvYlgjghb04ZQJN5ZjUsAGHG5MunIA0PxO1Luu00R2xW86dhoI5sbcpTxddFat6GJy9SLutkLlD8i8CQnUYRLKucAlB7mwemp45bTENRB7F4V3kg-mNJfok1D3fI6T-dlvYR2noHsUOXrpRbC8CwZLGgcLGD-rvgLM70ComSYBDwe-vnjTWqYdqtRtLyY/s1920/IMG_1733834999240.png'); }
+.link-icon-jyayashi::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjnCzr75NckOsOSu2YA_aIH8IkFDUqE6jksnM1DW5Y30JNvNdizusATmVGKhy9leSdsNOOxxlfMhUh3n2is3H2YifFP7lAXQUoKpuTJkuFjuUHdSMI8cVMTf4R0GvB1zexfPbwOzGHPYzkBpu4hoJir9G819RXvUiWWvDUR7uV3qpXzFvoBNNaI026jqqA/s1920/IMG_20241210_184006.png'); }
+.link-icon-vijyatum::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjNxkbOETI7MiZDwq1VdJEAjPekCiYcw-M6Lk777pLkMRMc4_cNllO7i7Y5CWiA9M2gKkPhlG74MM3pkVpSGmDAgftNabxDlmSLE8owRFY_NCOxAHU9NSDmrTS6KamOHPxMrnSpIw48TsnyK_LEvVztDdDI-G27W5oN2NEjKR9NIGxWWXKuZSfKy-hfC_E/s1920/IMG_1733837060242.png'); }
+
+/* Class 11-12 */
+.link-icon-ashramshiksha::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjRUW7GukzAmBq_m1pyGMrJkm74RuOE-G2qDKGJLZLgQ3Dvo6bnByHYIK78IRA8N1kbmXuOeldeH8R2XJe-OgyXuRFZnp73FNVMsSc9tQUBfsQIVUYRwmjSnERaefU2GbNPXhs0RENj7X6WsStkS5t7hDRvU1Z1NiOn_0Z4647KJuCu07g-28lCteMh5Qw/s1920/IMG_20241210_190956.png'); }
+.link-icon-vitrashna::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi_EyEi6ERxnHjBYmZ8URfGyjQImI0BGsM0ujbyfvOL6XtJApWf_rUiR4LbDYo6asowOROtxtqN55-gBcw1trCfRA-NaffpiUtooweoPzoc4wAhfn-GrRdE1Eaa3RJe0h7y_pwmOEbMOdHOh4gBmqQyN5UFtYWvWwcratBJnECuKbF9mZNilvouaj6iv2o/s1920/IMG_1733838667056.png'); }
+
+/* Competitive Exam */
+.link-icon-subandh::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi8ATiuAAwnTMtcKeT2NYjFZBGdCF7u96KYTs5fqQnij7cKTeaICY3GeFFWKNDFJhmE3pSRh3gNmdG-l5LBqVJHmC5icO5qDDHhCEvk_BbmZ6wlSQWd-OBt8n8HOsvTJXZbX6uAbbgFbcfB-TugUEXxQSF92yIdAo6m2bmipNier9nVw3iEuBfUeIif4gY/s1080/IMG_1733839507623.png'); }
+.link-icon-qbuk::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiEyG4-sfy-scauOvXTh-OT_LLoFZPlT-ITuZk0K2-ztiOH1R1YIpbHydrvpwx9-dL9_GICJdYvx9nyYKgmMptzcCgPWbpQFOaGnpHrRmc-1H6ud5ifFxdHuje1MHxtrFRtMYLP1D5whu4EclpkMH_hiUoGHHtLOGwKzLvgmF24FO28VgReGKAGH9bc9QtW/s300/ei_1743597993085-removebg-preview.png'); }
+
+/* News Channel */
+.link-icon-kaalpath::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEieAI52uVG_olpmLAMZUzL-X1hkuWZvTLXYraZjrnb92jmFdL-pbeL4306Lo9o-4FzBv6ILtrXDm1kKF5ATr7xeIAqhFpJhFkv_XUEHBg3B-r_e5qUZ-nRWUQiuTW72CcD0JGgpYZCRgrBvIZfWHjl3WI2obKVC2DAQdRevzM4Nf2FdLPyMBbR-UYo02mtV/s2190/IMG_1737383925311.png'); }
+.link-icon-fciznews::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhPnFVVpRRZUsLGplaSflnhcA6cX8ZsuzAudj1eaQ2cVEK5yPQR4NoSWVW1flEXxPTRDWK2refi81Dlp58c8-RMd0zCb3l9TmW7IGR6yLztK0jbAubNb8hyAThcY9jDlN4qwMOCIiTYqTjCerrWBUH4hEXcTMPv5GSn7XYVdBzfy9Pgz_hIyFFcp86saXNW/s707/ei_1743592033448-removebg-preview.png'); }
+
+/* Editorial Links */
+.link-icon-acharya::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjbZ7_Uon8hfXYZziqWhnPCQUGuGE6N198G2lCeUMX4NG3lRyAaXrN8d2D8dPh7XgJeEWXdSQehSAK0K9lWlGKO05h_pJvxH74hRYERrTPVOFdOMx4rcqAM38L_DIBvbcQ2ze1QyFxhLpZG1utval86e-Dfpn95Nvs6mdxulB_4B0lohgJSYe6D186TZTtz/s1920/IMG_1733804939628.png'); }
+.link-icon-apgo::before { background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjy_rfa2D9qUqxHqJfaU7UxH-sPaz4AMWeh_GUr5-kt9xA7WpQy3DkZ3YZ1CZWbiFWaJMkbG_87sOX1tMQhaYuarGv5PW9YQMRYvCdRg7IPr3w11Toc3hIi4av1ZXO36TbEJImjIdHLgiIbbrFLxn7o2h318B4RQqnHAT9pO6ZMcynTP9k3kjH3D0zp2eb6/s500/ei_1743593756057-removebg-preview.png'); }
+
+/* Add more ::before rules for other links as needed */
+/* Example: */
+/* .yoga-ayurveda .outer-cont:nth-child(1)::before { background-image: url('...'); } */
+/* .yoga-ayurveda .outer-cont:nth-child(2)::before { background-image: url('...'); } */
+
+
+/* --- मैनुअल कलर प्रति लिंक (Apply to a.outer-cont) --- */
+/* Note: These gradients will be the main background of the link */
+
 .links-content .class-1-5 a:nth-child(1) { background: linear-gradient(90deg, #ffc107, #ff9800, #ff5722); }
 .links-content .class-1-5 a:nth-child(2) { background: linear-gradient(90deg, #4caf50, #8bc34a, #cddc39); }
 
@@ -231,7 +390,7 @@ body {
 .links-content .class-6-8 a:nth-child(5) { background: linear-gradient(90deg, #4caf50, #8bc34a, #cddc39); }
 .links-content .class-6-8 a:nth-child(6) { background: linear-gradient(90deg, #ff9800, #ffc107, #ffeb3b); }
 .links-content .class-6-8 a:nth-child(7) { background: linear-gradient(90deg, #8bc34a, #cddc39, #f0f4c3); }
-.links-content .class-6-8 a:nth-child(8) { background: linear-gradient(90deg, #e91e63, #9c27b0, #673ab7); }
+.links-content .class-6-8 a:nth-child(8) { background: linear-gradient(90deg, #e91e63, #9c27b0, #673ab7); } /* Note: Repeated gradient */
 
 .links-content .class-9-10 a:nth-child(1) { background: linear-gradient(90deg, #ccffcc, #8bc34a, #4caf50); }
 .links-content .class-9-10 a:nth-child(2) { background: linear-gradient(90deg, #ffffcc, #ffeb3b, #ffc107); }
@@ -239,31 +398,51 @@ body {
 .links-content .class-9-10 a:nth-child(4) { background: linear-gradient(90deg, #ccffff, #009688, #00bcd4); }
 .links-content .class-9-10 a:nth-child(5) { background: linear-gradient(90deg, #ffccff, #ba68c8, #9c27b0); }
 .links-content .class-9-10 a:nth-child(6) { background: linear-gradient(90deg, #cc9999, #a1887f, #795548); }
-.links-content .class-9-10 a:nth-child(7) { background: linear-gradient(90deg, #ffc107, #ff9800, #ff5722); }
+.links-content .class-9-10 a:nth-child(7) { background: linear-gradient(90deg, #ffc107, #ff9800, #ff5722); } /* Note: Repeated gradient */
 .links-content .class-9-10 a:nth-child(8) { background: linear-gradient(90deg, #b0c4de, #90a4ae, #607d8b); }
 
-.links-content .class-11-12 a:nth-child(1) { background: linear-gradient(90deg, #e91e63, #9c27b0, #673ab7); }
-.links-content .class-11-12 a:nth-child(2) { background: linear-gradient(90deg, #00bcd4, #03a9f4, #009688); }
+.links-content .class-11-12 a:nth-child(1) { background: linear-gradient(90deg, #e91e63, #9c27b0, #673ab7); } /* Note: Repeated gradient */
+.links-content .class-11-12 a:nth-child(2) { background: linear-gradient(90deg, #00bcd4, #03a9f4, #009688); } /* Note: Repeated gradient */
 
-.links-content .competitive-exam a:nth-child(1) { background: linear-gradient(90deg, #4caf50, #8bc34a, #cddc39); }
+.links-content .competitive-exam a:nth-child(1) { background: linear-gradient(90deg, #4caf50, #8bc34a, #cddc39); } /* Note: Repeated gradient */
+.links-content .competitive-exam a:nth-child(2) { background: linear-gradient(90deg, #ff9800, #ffc107, #ffeb3b); } /* Added example gradient */
 
-.links-content .news-channel a:nth-child(1) { background: linear-gradient(90deg, #ff9800, #ffc107, #ffeb3b); }
 
-.links-content .yoga-ayurveda a:nth-child(1) { background: linear-gradient(90deg, #00bcd4, #03a9f4, #009688); }
-.links-content .yoga-ayurveda a:nth-child(2) { background: linear-gradient(90deg, #8bc34a, #cddc39, #f0f4c3); }
+.links-content .news-channel a:nth-child(1) { background: linear-gradient(90deg, #ff9800, #ffc107, #ffeb3b); } /* Note: Repeated gradient */
+.links-content .news-channel a:nth-child(2) { background: linear-gradient(90deg, #f44336, #e53935, #d32f2f); } /* Added example gradient */
+
+
+.links-content .yoga-ayurveda a:nth-child(1) { background: linear-gradient(90deg, #00bcd4, #03a9f4, #009688); } /* Note: Repeated gradient */
+.links-content .yoga-ayurveda a:nth-child(2) { background: linear-gradient(90deg, #8bc34a, #cddc39, #f0f4c3); } /* Note: Repeated gradient */
 .links-content .yoga-ayurveda a:nth-child(3) { background: linear-gradient(90deg, #708090, #f593e4, #71a4f0); }
 
-.links-content .marriage-links a:nth-child(1) { background: linear-gradient(90deg, #f44336, #e53935, #d32f2f); }
- .links-content .marriage-links a:nth-child(2) { background: linear-gradient(90deg, #795548, #a1887f, #d7ccc8); }
+.links-content .marriage-links a:nth-child(1) { background: linear-gradient(90deg, #f44336, #e53935, #d32f2f); } /* Note: Repeated gradient */
+.links-content .marriage-links a:nth-child(2) { background: linear-gradient(90deg, #795548, #a1887f, #d7ccc8); }
 
-.links-content .editorial-links a:nth-child(1) { background: linear-gradient(90deg, #9c27b0, #ba68c8, #e1bee7); }
+.links-content .editorial-links a:nth-child(1) { background: linear-gradient(90deg, #9c27b0, #ba68c8, #e1bee7); } /* Note: Repeated gradient */
 .links-content .editorial-links a:nth-child(2) { background: linear-gradient(90deg, #607d8b, #90a4ae, #cfd8dc); }
 
 .links-content .government-links a:nth-child(1) { background: linear-gradient(90deg, #f0f8ff, #00bcd4, #03a9f4); }
 
-.links-content .astrology-links a:nth-child(1) { background: linear-gradient(90deg, #4caf50, #8bc34a, #cddc39); }
-.links-content .astrology-links a:nth-child(2) { background: linear-gradient(90deg, #f44336, #e53935, #d32f2f); }
-.links-content .astrology-links a:nth-child(3) { background: linear-gradient(90deg, #00bcd4, #03a9f4, #009688); }
+.links-content .astrology-links a:nth-child(1) { background: linear-gradient(90deg, #4caf50, #8bc34a, #cddc39); } /* Note: Repeated gradient */
+.links-content .astrology-links a:nth-child(2) { background: linear-gradient(90deg, #f44336, #e53935, #d32f2f); } /* Note: Repeated gradient */
+.links-content .astrology-links a:nth-child(3) { background: linear-gradient(90deg, #00bcd4, #03a9f4, #009688); } /* Note: Repeated gradient */
 
 .links-content .vaidik-links a:nth-child(1) { background: linear-gradient(90deg, #ffeb3b, #ffc107, #ff9800); }
 .links-content .vaidik-links a:nth-child(2) { background: linear-gradient(90deg, #ffffcc, #f0e68c, #d7ccc8); }
+
+/* Scrollbar styling (Optional) */
+.menu-links::-webkit-scrollbar {
+    width: 8px;
+}
+.menu-links::-webkit-scrollbar-track {
+    background: #555;
+    border-radius: 10px;
+}
+.menu-links::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+.menu-links::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
