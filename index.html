@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Auth Widget Customizer</title>
+    <style>
+        /* --- General Styles --- */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 15px; background-color: #f4f7f9; margin: 0; font-size: 14px; }
+        .container { max-width: 1200px; margin: 15px auto; background-color: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        h1, h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-bottom: 20px;}
+        h1 { font-size: 1.8em; text-align: center;}
+        h2 { font-size: 1.3em;}
+        .configurator { display: flex; flex-wrap: wrap; gap: 30px; }
+        .controls { width: 100%; max-width: 450px; flex-shrink: 0; background-color: #fdfdfd; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; max-height: 85vh; overflow-y: auto; }
+        .code-display { flex-grow: 1; min-width: 450px; display: flex; flex-direction: column; max-height: 85vh;}
+
+        /* --- Input Section Styles --- */
+        .input-section h3 { font-size: 1.1em; margin-top: 25px; margin-bottom: 12px; color: #3498db; border-top: 1px dashed #ccc; padding-top: 15px;}
+        .input-group { margin-bottom: 12px; display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 8px;}
+        .input-group label {
+            grid-column: 1 / 2;
+            font-weight: 500; /* Medium weight */
+            font-size: 0.9em;
+            color: #34495e;
+            text-align: right;
+            padding-right: 10px;
+        }
+        .input-group input[type="text"],
+        .input-group input[type="number"],
+        .input-group input[type="color"],
+        .input-group select,
+        .input-group textarea {
+            grid-column: 2 / 3;
+            padding: 7px 9px; /* Adjusted padding */
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 13px;
+            box-sizing: border-box;
+            width: 100%; /* Ensure full width within grid */
+        }
+        .input-group input[type="color"] { padding: 1px 2px; height: 30px; width: 60px; } /* Slightly larger color input */
+        .input-group textarea { min-height: 60px; font-family: inherit; resize: vertical;} /* Allow vertical resize */
+        .input-group small { grid-column: 2 / 3; color: #7f8c8d; font-size: 0.85em; margin-top: -5px; } /* Info below input */
+        input.invalid-field { border-color: #e74c3c !important; box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2); }
+
+        /* --- Output Section Styles --- */
+        .output-code-box {
+            width: 100%;
+            flex-grow: 1;
+            min-height: 550px;
+            font-family: 'Courier New', Courier, monospace; /* Classic monospace */
+            font-size: 11.5px; /* Slightly larger mono font */
+            line-height: 1.4;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 18px;
+            white-space: pre;
+            overflow: auto;
+            background-color: #fdfdfd;
+            box-sizing: border-box;
+            user-select: text; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text;
+            margin-bottom: 10px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .code-display .button-container { justify-content: flex-end; margin-top: 0;}
+
+        /* --- Button Styles --- */
+        .button-container { margin-top: 15px; display: flex; justify-content: space-between; gap: 10px; }
+        .controls .button-container { flex-direction: column; gap: 10px; margin-top: 25px;}
+
+        button {
+            padding: 10px 16px;
+            color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: 500;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease; width: 100%; box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .code-display button { width: auto; flex-grow: 0; }
+
+        #copy-button { background-color: #3498db; }
+        #copy-button:hover:not(:disabled) { background-color: #2980b9; box-shadow: 0 2px 4px rgba(0,0,0,0.15);}
+        #reset-button { background-color: #95a5a6; }
+        #reset-button:hover:not(:disabled) { background-color: #7f8c8d; box-shadow: 0 2px 4px rgba(0,0,0,0.15);}
+        button:disabled { background-color: #bdc3c7; cursor: not-allowed; box-shadow: none;}
+        .required-star { color: #e74c3c; }
+        .info { font-size: 0.9em; color: #7f8c8d; margin-bottom: 15px; line-height: 1.4;}
+        #output-placeholder { /* Placeholder text style */
+             padding: 20px; color: #aaa; font-style: italic; text-align: center; font-family: sans-serif; font-size: 14px;
+         }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Firebase Auth Widget Customizer</h1>
+    <p class="info">Adjust the settings in the form below. The code in the right box will update instantly. Copy the final code for your project.</p>
+
+    <div class="configurator">
+        <div class="controls">
+            <h2>1. Customize Widget</h2>
+            <div id="customization-inputs">
+
+                <h3>Firebase Configuration <span class="required-star">*</span></h3>
+                <div class="input-group">
+                    <label for="input-apiKey">API Key:</label>
+                    <input type="text" id="input-apiKey" placeholder="Enter your API Key">
+                </div>
+                <div class="input-group">
+                    <label for="input-authDomain">Auth Domain:</label>
+                    <input type="text" id="input-authDomain" placeholder="your-project.firebaseapp.com">
+                </div>
+                <div class="input-group">
+                    <label for="input-projectId">Project ID:</label>
+                    <input type="text" id="input-projectId" placeholder="your-project-id">
+                </div>
+                <div class="input-group">
+                    <label for="input-storageBucket">Storage Bucket:</label>
+                    <input type="text" id="input-storageBucket" placeholder="(Optional)">
+                </div>
+                <div class="input-group">
+                    <label for="input-messagingSenderId">Msg Sender ID:</label>
+                    <input type="text" id="input-messagingSenderId" placeholder="(Optional)">
+                </div>
+                <div class="input-group">
+                    <label for="input-appId">App ID:</label>
+                    <input type="text" id="input-appId" placeholder="Enter your App ID">
+                </div>
+                 <small style="grid-column: 1 / -1; text-align: center;"><span class="required-star">*</span> Required fields</small>
+
+                <h3>Colors</h3>
+                <div class="input-group">
+                    <label for="input-primary-color">Primary:</label>
+                    <input type="color" id="input-primary-color" value="#007BFF">
+                </div>
+                <div class="input-group">
+                    <label for="input-success-color">Success:</label>
+                    <input type="color" id="input-success-color" value="#28a745">
+                </div>
+                 <div class="input-group">
+                    <label for="input-danger-color">Danger/Error:</label>
+                    <input type="color" id="input-danger-color" value="#dc3545">
+                </div>
+                 <div class="input-group">
+                    <label for="input-info-color">Info:</label>
+                    <input type="color" id="input-info-color" value="#17a2b8">
+                </div>
+                <div class="input-group">
+                    <label for="input-dark-text">Dark Text:</label>
+                    <input type="color" id="input-dark-text" value="#212529">
+                </div>
+                 <div class="input-group">
+                    <label for="input-bg-light">Widget BG:</label>
+                    <input type="color" id="input-bg-light" value="#ffffff">
+                </div>
+
+                <h3>Layout & Size</h3>
+                <div class="input-group">
+                    <label for="input-widget-width">Widget Width (px):</label>
+                    <input type="number" id="input-widget-width" value="300" min="250" max="600">
+                </div>
+                 <div class="input-group">
+                    <label for="input-border-radius-lg">Widget Corners (px):</label>
+                    <input type="number" id="input-border-radius-lg" value="6" min="0" max="30">
+                </div>
+                 <div class="input-group">
+                    <label for="input-border-radius-md">Button Corners (px):</label>
+                    <input type="number" id="input-border-radius-md" value="4" min="0" max="30">
+                </div>
+
+                <h3>Text Labels</h3>
+                 <div class="input-group">
+                    <label for="input-h2-signin">Sign In Header:</label>
+                    <input type="text" id="input-h2-signin" value="Sign In">
+                </div>
+                 <div class="input-group">
+                    <label for="input-btn-signin">Sign In Button:</label>
+                    <input type="text" id="input-btn-signin" value="Sign In">
+                </div>
+                 <div class="input-group">
+                    <label for="input-h2-signup">Sign Up Header:</label>
+                    <input type="text" id="input-h2-signup" value="Create Account">
+                </div>
+                  <div class="input-group">
+                    <label for="input-btn-signup">Sign Up Button:</label>
+                    <input type="text" id="input-btn-signup" value="Sign Up">
+                </div>
+                 <div class="input-group">
+                    <label for="input-h2-reset">Reset Header:</label>
+                    <input type="text" id="input-h2-reset" value="Reset Password">
+                </div>
+                 <div class="input-group">
+                    <label for="input-btn-reset">Reset Button:</label>
+                    <input type="text" id="input-btn-reset" value="Send Reset Link">
+                </div>
+                 <div class="input-group">
+                    <label for="input-btn-magiclink">Magic Link Button:</label>
+                    <input type="text" id="input-btn-magiclink" value="Send Magic Link">
+                </div>
+                <div class="input-group">
+                    <label for="input-btn-logout">Logout Button:</label>
+                    <input type="text" id="input-btn-logout" value="Logout">
+                </div>
+                <div class="input-group">
+                     <label for="input-p-legal">Legal Text (HTML OK):</label>
+                     <textarea id="input-p-legal">By signing in, you agree to our <a href="#">Policy</a> & <a href="#">Terms</a>.</textarea>
+                 </div>
+
+
+                <!-- Reset Button -->
+                <div class="button-container">
+                     <button id="reset-button" onclick="resetInputsAndCode()">Reset All Customizations</button>
+                </div>
+            </div><!-- /#customization-inputs -->
+        </div><!-- /.controls -->
+
+        <div class="code-display">
+            <h2>2. Generated Code</h2>
+            <textarea id="widget-code-output" class="output-code-box" spellcheck="false" readonly></textarea> <!-- readonly added -->
+             <div class="button-container">
+                 <button id="copy-button" onclick="copyOutputCode()">Copy Code</button>
+            </div>
+             <p class="info" style="font-size: 0.85em;">Paste this code into your HTML. Remember to include Firebase SDKs separately.</p>
+
+        </div><!-- /.code-display -->
+    </div><!-- /.configurator -->
+</div><!-- /.container -->
+
+<script>
+    // --- DOM References ---
+    const outputCodeTextarea = document.getElementById('widget-code-output');
+    const customizationInputsContainer = document.getElementById('customization-inputs');
+    const copyButton = document.getElementById('copy-button');
+
+    // Store references to all input elements found within the container
+    const inputElements = {};
+    customizationInputsContainer.querySelectorAll('input, textarea, select').forEach(input => {
+        if (input.id) {
+            inputElements[input.id] = input;
+        }
+    });
+
+    // Store default values when script loads
+    const defaultInputValues = {};
+    function storeDefaultValues() {
+         for (const id in inputElements) {
+             if (inputElements[id]) {
+                 defaultInputValues[id] = inputElements[id].value; // Store initial value from HTML input
+             }
+         }
+         // Also store the original template code for reset
+         defaultInputValues['initialCode'] = baseWidgetCodeTemplate.trim();
+    }
+
+    // --- Base Widget Code Template with Placeholders ---
+    // Placeholders [[input-id]] correspond to the IDs of the input elements above.
+    const baseWidgetCodeTemplate = `
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Firebase Authentication Widget</title>
+    <!-- IMPORTANT: Add Firebase SDKs (v9 compat) here in your actual project -->
+    <!-- e.g.,
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"><\/script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"><\/script>
+    -->
+    <style>
+        :root {
+            --primary-color: [[input-primary-color]];
+            --danger-color: [[input-danger-color]];
+            --success-color: [[input-success-color]];
+            --info-color: [[input-info-color]];
+            --dark-text: [[input-dark-text]];
+            --bg-light: [[input-bg-light]];
+            --border-radius-md: [[input-border-radius-md]]px;
+            --border-radius-lg: [[input-border-radius-lg]]px;
+            /* Other variables (using defaults) */
+            --primary-light-bg: #e7f5ff; --danger-light-bg: #ffe3e3; --success-dark-text: #155724;
+            --success-light-bg: #eaf7ec; --success-border: #a1d9a5; --info-light-bg: #e8f7fa;
+            --info-border: #bee5eb; --medium-text: #495057; --light-text: #6c757d; --grey-text: #adb5bd;
+            --bg-body: #f8f9fa; --border-color: #dee2e6; --input-border-color: #ced4da;
+            --box-shadow-light: 0px 1px 2px rgba(0,0,0,0.05); --box-shadow-strong: 0px 2px 6px rgba(0,0,0,0.1);
+            --widget-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --facebook-color: #1877F2; --github-color: #333333; --yahoo-color: #6001d2;
+        }
+        .firebase-auth-widget-container, .firebase-auth-logout-box, .firebase-auth-popup { font-family: var(--widget-font); font-size: 13px; box-sizing: border-box; }
+        .firebase-auth-widget-container *, .firebase-auth-logout-box *, .firebase-auth-popup * { box-sizing: border-box; }
+        .firebase-auth-widget-hidden { display: none !important; }
+        #firebase-auth-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.3); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999; }
+        #firebase-auth-backdrop.firebase-auth-widget-hidden { display: none !important; }
+        .firebase-auth-widget-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: [[input-widget-width]]px; background: var(--bg-light); padding: 18px; border-radius: var(--border-radius-lg); box-shadow: var(--box-shadow-strong); display: flex; flex-direction: column; align-items: center; z-index: 1000; border: 2px solid var(--primary-color); color: var(--dark-text); max-height: 90vh; overflow-y: auto; }
+        .firebase-auth-widget-box { width: 100%; text-align: center; }
+        .firebase-auth-widget-box h2 { color: var(--dark-text); font-weight: 600; font-size: 1.1em; margin: 0 0 12px 0; line-height: 1.3; flex-shrink: 0; }
+        .firebase-auth-input-group { margin-bottom: 10px; width: 100%; flex-shrink: 0;}
+        .firebase-auth-input-group input { width: 100%; padding: 9px 10px; border: 1px solid var(--input-border-color); border-radius: var(--border-radius-md); font-size: 13px; background-color: var(--bg-light); color: var(--dark-text); margin-bottom: 6px; font-family: inherit; }
+        .firebase-auth-input-group input::placeholder { color: var(--grey-text); opacity: 1; }
+        .firebase-auth-action-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 9px; border: none; cursor: pointer; border-radius: var(--border-radius-md); font-size: 13px; font-weight: 600; transition: all 0.2s ease; margin-top: 5px; font-family: inherit; line-height: 1.2; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
+        .firebase-auth-action-btn:hover:not(:disabled) { opacity: 1; transform: translateY(-1px); filter: brightness(1.1); }
+        .firebase-auth-action-btn:disabled { opacity: 0.65; cursor: not-allowed; filter: brightness(1); transform: none; }
+        .firebase-auth-sign-in-btn { background-color: var(--primary-color); color: white; }
+        .firebase-auth-sign-up-btn { background-color: var(--success-color); color: white; }
+        .firebase-auth-reset-btn { background-color: var(--info-color); color: white; }
+        .firebase-auth-email-link-btn { color: var(--medium-text); background-color: #f1f3f5; border: 1px solid var(--input-border-color); margin-top: 10px; text-transform: none; font-weight: 500; }
+        .firebase-auth-link-btn { background: none; border: none; color: var(--primary-color); font-size: 11px; cursor: pointer; padding: 0; text-align: right; width: 100%; display: block; margin-top: 4px; margin-bottom: 8px; font-family: inherit; flex-shrink: 0;}
+        .firebase-auth-toggle-link { background: none; border: none; color: var(--primary-color); font-size: 12px; cursor: pointer; padding: 5px 0; text-align: center; width: 100%; display: block; margin-top: 10px; font-weight: 500; font-family: inherit; flex-shrink: 0;}
+        .firebase-auth-provider-btn { margin: 5px 0; color: white; font-weight: 500; }
+        .firebase-auth-google-btn-style { background: #DB4437; } .firebase-auth-facebook-btn-style { background: #1877F2; } .firebase-auth-github-btn-style { background: #333333; } .firebase-auth-yahoo-btn-style { background: #6001d2; }
+        .firebase-auth-message { color: var(--danger-color); margin-top: 12px; margin-bottom: 12px; min-height: 1.4em; font-size: 12px; font-weight: 500; text-align: center; width: 100%; line-height: 1.4; word-wrap: break-word; padding: 6px 8px; border-radius: var(--border-radius-md); border: 1px solid transparent; flex-shrink: 0; }
+        .firebase-auth-message.info { color: var(--info-color); background-color: #e8f7fa; border-color: #bee5eb; } .firebase-auth-message.error { color: var(--danger-color); background-color: #ffe3e3; border-color: #f5c6cb; } .firebase-auth-message.success { color: #155724; background-color: #eaf7ec; border-color: #a1d9a5; }
+        .firebase-auth-divider { font-size: 11px; color: var(--light-text); margin: 15px 0; text-align: center; position: relative; width: 100%; line-height: 1; flex-shrink: 0; }
+        .firebase-auth-divider::before, .firebase-auth-divider::after { content: ''; position: absolute; top: 50%; width: 37%; height: 1px; background-color: var(--border-color); transform: translateY(-50%); } .firebase-auth-divider::before { left: 0; } .firebase-auth-divider::after { right: 0; }
+        .firebase-auth-legal-text { font-size: 10px; color: var(--light-text); margin-top: 10px; line-height: 1.3; text-align: center; width: 100%; flex-shrink: 0; } .firebase-auth-legal-text a { color: var(--primary-color); text-decoration: none; } .firebase-auth-legal-text a:hover { text-decoration: underline; }
+        .firebase-auth-popup { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: auto; max-width: 90%; min-width: 250px; background-color: #eaf7ec; color: #155724; border: 1px solid #a1d9a5; border-radius: var(--border-radius-lg); padding: 18px 25px; box-shadow: var(--box-shadow-strong); z-index: 2000; text-align: center; font-size: 14px; font-weight: 600; line-height: 1.4; } .firebase-auth-popup p { margin: 0; padding: 0; }
+        .firebase-auth-logout-box { width: auto; padding: 5px 8px; position: fixed; bottom: 15px; left: 15px; background-color: #ffffff; color: #212529; border-radius: 18px; box-shadow: var(--box-shadow-light); border: 1px solid #dee2e6; display: flex; align-items: center; gap: 6px; z-index: 9999; transition: all 0.2s ease; }
+        .firebase-auth-logout-box:hover { box-shadow: var(--box-shadow-strong); }
+        .firebase-auth-profile-img { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #dee2e6; display: block; }
+        .firebase-auth-profile-initial { width: 24px; height: 24px; border-radius: 50%; background-color: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; line-height: 1; text-transform: uppercase; border: 1px solid #dee2e6; }
+        .firebase-auth-logout-box button { background-color: transparent; color: var(--danger-color); border: 1px solid #ffe3e3; padding: 3px 8px; font-size: 11px; font-weight: 600; cursor: pointer; margin: 0; width: auto; border-radius: var(--border-radius-md); transition: all 0.2s ease; font-family: inherit; }
+        .firebase-auth-logout-box button:hover { background-color: var(--danger-color); color: white; border-color: var(--danger-color); transform: translateY(-1px); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        #firebase-auth-reset-password-section p { font-size: 12px; color: var(--medium-text); margin-bottom: 10px; line-height: 1.4; flex-shrink: 0; }
+    </style>
+</head>
+<body>
+
+    <div id="firebase-auth-backdrop" class="firebase-auth-widget-hidden"></div>
+    <div id="firebase-auth-login-popup" class="firebase-auth-widget-container firebase-auth-widget-hidden">
+        <div class="firebase-auth-widget-box">
+            <div id="firebase-auth-sign-in-section"><h2>[[input-h2-signin]]</h2><div class="firebase-auth-input-group"><input type="email" id="firebase-auth-email-input-signin" placeholder="Enter email" autocomplete="email" /><input type="password" id="firebase-auth-password-input-signin" placeholder="Enter password" autocomplete="current-password" /></div><button onclick="firebaseAuthToggleView('reset')" class="firebase-auth-link-btn">Forgot Password?</button><button id="firebase-auth-signin-btn" onclick="firebaseAuthSignInWithEmailPassword()" class="firebase-auth-action-btn firebase-auth-sign-in-btn">[[input-btn-signin]]</button><button onclick="firebaseAuthToggleView('signup')" class="firebase-auth-toggle-link">New user? Sign Up</button></div>
+            <div id="firebase-auth-sign-up-section" class="firebase-auth-widget-hidden"><h2>[[input-h2-signup]]</h2><div class="firebase-auth-input-group"><input type="email" id="firebase-auth-email-input-signup" placeholder="Enter email" autocomplete="email" /><input type="password" id="firebase-auth-password-input-signup" placeholder="Create password (min. 6 chars)" autocomplete="new-password" /><input type="password" id="firebase-auth-password-confirm-signup" placeholder="Confirm password" autocomplete="new-password" /></div><button onclick="firebaseAuthSignUpWithEmailPassword()" class="firebase-auth-action-btn firebase-auth-sign-up-btn">[[input-btn-signup]]</button><button onclick="firebaseAuthToggleView('signin')" class="firebase-auth-toggle-link">Already have an account? Sign In</button></div>
+            <div id="firebase-auth-reset-password-section" class="firebase-auth-widget-hidden"><h2>[[input-h2-reset]]</h2><p>Enter your email address below and we'll send you a link to reset your password.</p><div class="firebase-auth-input-group"><input type="email" id="firebase-auth-email-input-reset" placeholder="Enter your email" autocomplete="email" /></div><button onclick="firebaseAuthSendPasswordReset()" class="firebase-auth-action-btn firebase-auth-reset-btn">[[input-btn-reset]]</button><button onclick="firebaseAuthToggleView('signin')" class="firebase-auth-toggle-link">Back to Sign In</button></div>
+            <p id="firebase-auth-message" class="firebase-auth-message" aria-live="polite"></p>
+            <div id="firebase-auth-other-methods-divider" class="firebase-auth-divider">OR</div>
+            <button id="firebase-auth-magic-link-btn" onclick="firebaseAuthSendEmailLink()" class="firebase-auth-action-btn firebase-auth-email-link-btn">[[input-btn-magiclink]]</button>
+            <div id="firebase-auth-provider-divider" class="firebase-auth-divider" style="margin-top: 10px;">OR USE</div>
+            <button id="firebase-auth-google-btn" onclick="firebaseAuthLoginWithProvider('google')" class="firebase-auth-action-btn firebase-auth-provider-btn firebase-auth-google-btn-style">Continue with Google</button>
+            <button id="firebase-auth-facebook-btn" onclick="firebaseAuthLoginWithProvider('facebook')" class="firebase-auth-action-btn firebase-auth-provider-btn firebase-auth-facebook-btn-style">Continue with Facebook</button>
+            <button id="firebase-auth-github-btn" onclick="firebaseAuthLoginWithProvider('github')" class="firebase-auth-action-btn firebase-auth-provider-btn firebase-auth-github-btn-style">Continue with GitHub</button>
+            <button id="firebase-auth-yahoo-btn" onclick="firebaseAuthLoginWithProvider('yahoo')" class="firebase-auth-action-btn firebase-auth-provider-btn firebase-auth-yahoo-btn-style">Continue with Yahoo</button>
+            <p class="firebase-auth-legal-text">[[input-p-legal]]</p>
+        </div>
+    </div>
+    <div id="firebase-auth-logout-box" class="firebase-auth-logout-box firebase-auth-widget-hidden"><img id="firebase-auth-profile-pic" src="" alt="User profile picture" class="firebase-auth-profile-img firebase-auth-widget-hidden" /><div id="firebase-auth-profile-fallback" class="firebase-auth-profile-initial firebase-auth-widget-hidden"><span id="firebase-auth-profile-initial-letter"></span></div><button onclick="firebaseAuthLogout()">[[input-btn-logout]]</button></div>
+    <div id="firebase-auth-success-popup" class="firebase-auth-popup firebase-auth-widget-hidden"><p id="firebase-auth-popup-message"></p></div>
+
+    <script>
+    (function() {
+        "use strict";
+        // --- Configuration (REPLACED BY TOOL) ---
+        const firebaseConfig = {
+            apiKey: "[[input-apiKey]]",
+            authDomain: "[[input-authDomain]]",
+            projectId: "[[input-projectId]]",
+            storageBucket: "[[input-storageBucket]]",
+            messagingSenderId: "[[input-messagingSenderId]]",
+            appId: "[[input-appId]]"
+        };
+        // --- End Configuration ---
+
+        // --- Constants & Variables ---
+        const EMAIL_STORAGE_KEY='firebaseAuthEmailForSignIn'; const actionCodeSettings={url:window.location.href.split('?')[0].split('#')[0],handleCodeInApp:!0}; const SIGNUP_SUCCESS_DELAY=4000; const RESET_SUCCESS_DELAY=3000; const fallbackColors=["#007bff","#6f42c1","#e83e8c","#dc3545","#fd7e14","#ffc107","#28a745","#20c997","#17a2b8","#6c757d"]; let auth=null,app=null;
+        // --- DOM References (Shortened) ---
+        const lP=document.getElementById('firebase-auth-login-popup'),lB=document.getElementById('firebase-auth-logout-box'),bD=document.getElementById('firebase-auth-backdrop'),pP=document.getElementById('firebase-auth-profile-pic'),pF=document.getElementById('firebase-auth-profile-fallback'),iS=document.getElementById('firebase-auth-profile-initial-letter'),mE=document.getElementById('firebase-auth-message'),sP=document.getElementById('firebase-auth-success-popup'),pME=document.getElementById('firebase-auth-popup-message'),sIS=document.getElementById('firebase-auth-sign-in-section'),sUS=document.getElementById('firebase-auth-sign-up-section'),rPS=document.getElementById('firebase-auth-reset-password-section'),eISi=document.getElementById('firebase-auth-email-input-signin'),pISi=document.getElementById('firebase-auth-password-input-signin'),sIB=document.getElementById('firebase-auth-signin-btn'),eISu=document.getElementById('firebase-auth-email-input-signup'),pISu=document.getElementById('firebase-auth-password-input-signup'),pCISu=document.getElementById('firebase-auth-password-confirm-signup'),eIR=document.getElementById('firebase-auth-email-input-reset');
+        // --- Helper Functions (Minified) ---
+        const getVisibleEmailInput=()=>sIS&&!sIS.classList.contains("firebase-auth-widget-hidden")?eISi:sUS&&!sUS.classList.contains("firebase-auth-widget-hidden")?eISu:rPS&&!rPS.classList.contains("firebase-auth-widget-hidden")?eIR:eISi; function getUserColorIndex(e){if(!e)return 0;let t=0;for(let n=0;n<e.length;n++)t=e.charCodeAt(n)+((t<<5)-t),t&=t;return Math.abs(t)%fallbackColors.length} function showLoginPopupMessage(e,t="error"){mE&&(mE.textContent=e,mE.className="firebase-auth-message",e&&t&&mE.classList.add(t))} function clearMessages(){showLoginPopupMessage("")} function isValidEmail(e){return!(!e||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e).toLowerCase()))} function cleanUrlAfterSignIn(){if(window.history&&window.history.replaceState){const e=window.location.protocol+"//"+window.location.host+window.location.pathname+window.location.hash;try{window.history.replaceState({path:e},"",e)}catch(e){}}} function displayGlobalError(e){mE?(showLoginPopupMessage(e,"error"),lP&&lP.classList.remove("firebase-auth-widget-hidden")):lP?(lP.innerHTML=\`<p style='color:red;'>\${e}</p>\`,lP.classList.remove("firebase-auth-widget-hidden")):alert("Widget Error: "+e),bD&&bD.classList.remove("firebase-auth-widget-hidden")} function handleAuthError(e){console.error("Auth Err:",e.code,e.message);let t="",n="error";switch(e.code){case'auth/invalid-login-credentials':case'auth/user-not-found':case'auth/wrong-password':t="Incorrect email or password.";break;case'auth/invalid-email':t="Invalid email format.";break;case'auth/email-already-in-use':t="Email already exists.";break;case'auth/weak-password':t="Password too short.";break;case'auth/requires-recent-login':t="Please sign in again.";n="info";break;case'auth/too-many-requests':t="Too many attempts. Wait.";n="info";break;case'auth/network-request-failed':t="Network error.";n="info";break;case'auth/user-disabled':t="Account disabled.";break;case'auth/invalid-action-code':t="Link invalid/expired.";break;case'auth/operation-not-allowed':t="Sign-in method disabled.";break;case'auth/popup-blocked':t="Popup blocked.";break;case'auth/popup-closed-by-user':case'auth/cancelled-popup-request':return void clearMessages();case'auth/account-exists-with-different-credential':const o=e.customData?.providerId||"other";t=\`Email linked to \${o}.\`;break;case'auth/unauthorized-domain':t="Domain not allowed.";break;case'auth/auth-domain-config-required':t="Config error.";break;default:console.warn("Unhandled Error:",e.code),t="An error occurred.",e.message&&(t+=\` (\${e.code})\`)}showLoginPopupMessage(t,n)}
+        // --- Core Logic ---
+        function handleAuthStateChange(e){/* Minified */ if(sP)sP.classList.add("firebase-auth-widget-hidden");if(!lP||!lB||!bD)return;const t=auth&&auth.isSignInWithEmailLink(window.location.href);if(e){lP.classList.add("firebase-auth-widget-hidden"),bD.classList.add("firebase-auth-widget-hidden"),lB.classList.remove("firebase-auth-widget-hidden");if(pP&&pF&&iS){if(e.photoURL)pP.src=e.photoURL,pP.classList.remove("firebase-auth-widget-hidden"),pF.classList.add("firebase-auth-widget-hidden");else{const t=e.email||" ",n=t.charAt(0).toUpperCase(),o=getUserColorIndex(e.uid);iS.textContent=n,pF&&(pF.style.backgroundColor=fallbackColors[o],pF.classList.remove("firebase-auth-widget-hidden")),pP.classList.add("firebase-auth-widget-hidden")}}console.log("User logged in:",e.uid),mE?.classList.contains("success")?setTimeout(()=>{showLoginPopupMessage("")},3500):showLoginPopupMessage(""),eISi&&(pISi.value=""),eISu&&(pISu.value=""),pCISu&&(pCISu.value=""),eIR&&(eIR.value="")}else{lB.classList.add("firebase-auth-widget-hidden"),pP&&pP.classList.add("firebase-auth-widget-hidden"),pF&&pF.classList.add("firebase-auth-widget-hidden"),eISi&&(pISi.value=""),eISu&&(pISu.value=""),pCISu&&(pCISu.value=""),eIR&&(eIR.value=""),console.log("User logged out."),t?(lP.classList.add("firebase-auth-widget-hidden"),bD.classList.add("firebase-auth-widget-hidden")):(lP.classList.remove("firebase-auth-widget-hidden"),bD.classList.remove("firebase-auth-widget-hidden"),"function"==typeof firebaseAuthToggleView&&firebaseAuthToggleView("signin"),clearMessages())}}
+        function setupAuthentication(){/* Minified */ if(!auth)return;auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{auth.onAuthStateChanged(handleAuthStateChange)}).catch(()=>{auth.onAuthStateChanged(handleAuthStateChange)})}
+        window.firebaseAuthToggleView=function(e){/* Minified */ if(sIS)sIS.classList.add("firebase-auth-widget-hidden");if(sUS)sUS.classList.add("firebase-auth-widget-hidden");if(rPS)rPS.classList.add("firebase-auth-widget-hidden");if(sP)sP.classList.add("firebase-auth-widget-hidden");clearMessages();let t=!0;"signin"===e&&sIS?sIS.classList.remove("firebase-auth-widget-hidden"):"signup"===e&&sUS?sUS.classList.remove("firebase-auth-widget-hidden"):"reset"===e&&rPS&&(rPS.classList.remove("firebase-auth-widget-hidden"),t=!1);const n=[document.getElementById("firebase-auth-other-methods-divider"),document.getElementById("firebase-auth-provider-divider"),document.getElementById("firebase-auth-magic-link-btn"),document.getElementById("firebase-auth-google-btn"),document.getElementById("firebase-auth-facebook-btn"),document.getElementById("firebase-auth-github-btn"),document.getElementById("firebase-auth-yahoo-btn")];n.forEach(e=>{if(e)e.classList.toggle("firebase-auth-widget-hidden",!t)})}
+        // --- Auth Action Functions ---
+        window.firebaseAuthSignUpWithEmailPassword=function(){/* Minified */ if(!auth||!eISu||!pISu||!pCISu||!sP||!pME)return;const e=eISu.value.trim(),t=pISu.value,n=pCISu.value;clearMessages();if(!isValidEmail(e))return void showLoginPopupMessage("Valid email needed.","error");if(t.length<6)return void showLoginPopupMessage("Password too short.","error");if(t!==n)return void showLoginPopupMessage("Passwords mismatch.","error");showLoginPopupMessage("Creating account...","info"),auth.createUserWithEmailAndPassword(e,t).then(()=>{clearMessages(),pME&&(pME.textContent="Account created!"),sP&&sP.classList.remove("firebase-auth-widget-hidden"),eISu.value="",pISu.value="",pCISu.value="",setTimeout(()=>{sP&&sP.classList.add("firebase-auth-widget-hidden"),"function"==typeof firebaseAuthToggleView&&firebaseAuthToggleView("signin"),eISi&&(eISi.value=e),pISi&&pISi.focus()},SIGNUP_SUCCESS_DELAY)}).catch(e=>{sP&&sP.classList.add("firebase-auth-widget-hidden"),pISu.value="",pCISu.value="",handleAuthError(e)})}
+        window.firebaseAuthSignInWithEmailPassword=function(){/* Minified */ if(!auth||!eISi||!pISi||!sIB)return;const e=eISi.value.trim(),t=pISi.value;clearMessages();if(!isValidEmail(e))return void showLoginPopupMessage("Valid email needed.","error");if(!t)return void showLoginPopupMessage("Password needed.","error");sIB.disabled=!0,sIB.textContent="Signing In...",showLoginPopupMessage("Signing in...","info"),auth.signInWithEmailAndPassword(e,t).catch(e=>{pISi&&(pISi.value=""),handleAuthError(e)}).finally(()=>{sIB&&(sIB.disabled=!1,sIB.textContent="[[input-btn-signin]]"),mE?.classList.contains("info")&&clearMessages()})}
+        window.firebaseAuthSendPasswordReset=function(){/* Minified */ if(!auth||!eIR)return;const e=eIR.value.trim();clearMessages();if(!isValidEmail(e))return void showLoginPopupMessage("Valid email needed.","error");showLoginPopupMessage("Sending reset link...","info"),auth.sendPasswordResetEmail(e,actionCodeSettings).then(()=>{showLoginPopupMessage("Reset email sent. Check inbox.","success"),setTimeout(()=>{("function"==typeof firebaseAuthToggleView&&firebaseAuthToggleView("signin"),eIR&&(eIR.value=""))},RESET_SUCCESS_DELAY)}).catch(handleAuthError)}
+        function handleEmailLinkSignInOnLoad(){/* Minified */ if(bD)bD.classList.add("firebase-auth-widget-hidden");if(!auth||"function"!=typeof auth.isSignInWithEmailLink)return;if(auth.isSignInWithEmailLink(window.location.href)){if(lP)lP.classList.remove("firebase-auth-widget-hidden");if(bD)bD.classList.remove("firebase-auth-widget-hidden");if("function"==typeof firebaseAuthToggleView)firebaseAuthToggleView("signin");showLoginPopupMessage("Verifying link...","info");let e=window.localStorage.getItem(EMAIL_STORAGE_KEY);if(!e&&(e=window.prompt("Enter email again:"),!e||!isValidEmail(e)))return showLoginPopupMessage("Valid email needed.","error"),void cleanUrlAfterSignIn();if(!e)return;auth.signInWithEmailLink(e,window.location.href).catch(e=>{handleAuthError(e)}).finally(()=>{window.localStorage.removeItem(EMAIL_STORAGE_KEY),cleanUrlAfterSignIn()})}}
+        window.firebaseAuthSendEmailLink=function(){/* Minified */ if(!auth)return void showLoginPopupMessage("Auth service error.","error");const e=getVisibleEmailInput();if(!e)return void showLoginPopupMessage("Enter email first.","error");const t=e.value.trim();clearMessages();if(!isValidEmail(t))return showLoginPopupMessage("Valid email needed.","error"),void e.focus();showLoginPopupMessage("Sending link...","info"),auth.sendSignInLinkToEmail(t,actionCodeSettings).then(()=>{window.localStorage.setItem(EMAIL_STORAGE_KEY,t),showLoginPopupMessage("Link sent. Check inbox.","success")}).catch(handleAuthError)}
+        window.firebaseAuthLoginWithProvider=function(e){/* Minified */ if(!auth)return void showLoginPopupMessage("Auth service error.","error");clearMessages();let t,n=e.charAt(0).toUpperCase()+e.slice(1);try{switch(e.toLowerCase()){case"google":t=new firebase.auth.GoogleAuthProvider;break;case"facebook":t=new firebase.auth.FacebookAuthProvider;break;case"github":t=new firebase.auth.GithubAuthProvider;break;case"yahoo":t=new firebase.auth.OAuthProvider("yahoo.com");break;case"apple":t=new firebase.auth.OAuthProvider("apple.com");break;default:return void showLoginPopupMessage(\`\${n} login not configured.\`,"error")}showLoginPopupMessage(\`Connecting to \${n}...\`,"info"),auth.signInWithPopup(t).catch(e=>{"auth/popup-closed-by-user"!==e.code&&"auth/cancelled-popup-request"!==e.code?"auth/account-exists-with-different-credential"===e.code?(t=e.customData?.providerId||"other",showLoginPopupMessage(\`Email linked to \${t}. Use that.\`,"error")):handleAuthError(e):clearMessages()})}catch(e){return void showLoginPopupMessage(\`Setup error for \${n}.\`,"error")}}
+        window.firebaseAuthLogout=function(){/* Minified */ auth?auth.signOut().catch(e=>{alert("Logout failed.")}):alert("Logout failed.")};
+
+        // --- Initialize Widget (This runs inside the final user's page) ---
+        if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initializeApp);}else{initializeApp();}
+
+    })();
+    </script>
+
+</body>
+</html>
+`; // End baseWidgetCodeTemplate
+
+    // --- Functions for the Configurator Tool ---
+
+    /** Validates required config fields */
+    function validateConfigInputs() {
+        const required = ['apiKey', 'authDomain', 'projectId', 'appId'];
+        let isValid = true;
+        required.forEach(key => {
+            const inputId = `input-${key}`; // Construct input ID
+            const inputElement = inputElements[inputId];
+            if (inputElement) {
+                if (!inputElement.value.trim()) {
+                    isValid = false;
+                    inputElement.classList.add('invalid-field');
+                } else {
+                    inputElement.classList.remove('invalid-field');
+                }
+            } else { isValid = false; }
+        });
+        return isValid;
+    }
+
+    /** Escapes special characters for use in RegExp */
+    function escapeRegex(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    /** Updates the code in the output textarea based on current input values */
+    function updateOutputCode() {
+        let currentCode = baseWidgetCodeTemplate; // Start fresh each time
+
+        for (const inputId in inputElements) {
+            const element = inputElements[inputId];
+            if (element) {
+                const placeholder = `[[${inputId}]]`; // Create placeholder like [[input-apiKey]]
+                let value = element.value;
+
+                // Escape backslashes and double quotes specifically for JS config strings
+                if (inputId.startsWith('input-apiKey') ||
+                    inputId.startsWith('input-authDomain') ||
+                    inputId.startsWith('input-projectId') ||
+                    inputId.startsWith('input-storageBucket') ||
+                    inputId.startsWith('input-messagingSenderId') ||
+                    inputId.startsWith('input-appId'))
+                {
+                   value = value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+                }
+                // For HTML content like legal text, we might need HTML escaping,
+                // but inserting directly into the template literal handles basic cases.
+                // For CSS values like font-family, quotes might be part of the value.
+
+                try {
+                     const regex = new RegExp(escapeRegex(placeholder), 'g');
+                     currentCode = currentCode.replace(regex, value);
+                } catch (e) {
+                     console.error(`Error replacing placeholder: ${placeholder}`, e);
+                }
+            }
+        }
+
+        // Display the updated code
+        outputCodeTextarea.value = currentCode.trim();
+        // Hide placeholder if code is present
+        outputPlaceholder.style.display = outputCodeTextarea.value ? 'none' : 'block';
+        // Enable/disable copy button based on content
+        copyButton.disabled = !outputCodeTextarea.value || outputCodeTextarea.value === 'Enter configuration and click "Generate Code".';
+    }
+
+    /** Copies the content of the code box to the clipboard */
+    function copyOutputCode() {
+        if (copyButton.disabled) return; // Don't copy if disabled
+
+        if (!navigator.clipboard) { // Fallback
+            outputCodeTextarea.select();
+            try { document.execCommand('copy'); alert('Code copied (fallback)!'); }
+            catch (err) { alert('Failed to copy.'); }
+            window.getSelection()?.removeAllRanges(); return;
+        }
+        navigator.clipboard.writeText(outputCodeTextarea.value)
+            .then(() => alert('Code copied!'))
+            .catch(err => alert('Failed to copy.'));
+    }
+
+    /** Resets input fields and the output code box */
+    function resetInputsAndCode() {
+        if (confirm("Reset all customizations and the code box?")) {
+             for (const id in inputElements) {
+                 if (inputElements[id] && defaultInputValues.hasOwnProperty(id)) {
+                    inputElements[id].value = defaultInputValues[id]; // Restore default value
+                    inputElements[id].classList.remove('invalid-field');
+                 }
+             }
+            // Regenerate code from defaults
+            updateOutputCode();
+            alert("Inputs and code box reset.");
+        }
+    }
+
+    // --- Initial Setup ---
+    function initializeTool() {
+        // Store default values FIRST
+        storeDefaultValues();
+
+        // Add event listeners for instant updates
+        for (const id in inputElements) {
+             if (inputElements[id]) {
+                 inputElements[id].addEventListener('input', updateOutputCode);
+             }
+        }
+        // Initial population of the output box
+        updateOutputCode();
+         // Set initial state of placeholder and copy button
+         outputPlaceholder.style.display = outputCodeTextarea.value ? 'none' : 'block';
+         copyButton.disabled = !outputCodeTextarea.value || outputCodeTextarea.value === 'Enter configuration and click "Generate Code".';
+    }
+
+    // Make functions globally accessible
+    window.copyOutputCode = copyOutputCode;
+    window.resetInputsAndCode = resetInputsAndCode;
+
+    // Run the tool initialization when the DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeTool);
+    } else {
+        initializeTool();
+    }
+
+</script>
+
+</body>
+</html>
