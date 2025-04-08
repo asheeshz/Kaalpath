@@ -28,7 +28,7 @@
       margin-top: 10px;
       display: block;
     }
-    input, textarea {
+    input {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
@@ -51,15 +51,6 @@
     button:disabled {
       background-color: #ccc;
     }
-    .output {
-      background: #f4f4f4;
-      padding: 10px;
-      border-radius: 4px;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      border: 1px solid #ddd;
-      margin-top: 20px;
-    }
   </style>
 </head>
 <body>
@@ -77,15 +68,14 @@
     <label for="appId">App ID:</label>
     <input type="text" id="appId" placeholder="अपना Firebase App ID दर्ज करें">
 
-    <button id="generateCode">कोड जनरेट करें</button>
     <button id="copyCode" disabled>कॉपी करें</button>
     <button id="downloadCode" disabled>डाउनलोड करें</button>
-
-    <div id="output" class="output" style="display:none;"></div>
   </div>
 
   <script>
-    document.getElementById('generateCode').addEventListener('click', function() {
+    let generatedCode = '';
+
+    function generateCode() {
       const apiKey = document.getElementById('apiKey').value.trim();
       const authDomain = document.getElementById('authDomain').value.trim();
       const projectId = document.getElementById('projectId').value.trim();
@@ -96,7 +86,7 @@
         return;
       }
 
-      const generatedCode = `
+      generatedCode = `
         // Firebase कॉन्फ़िगरेशन
         const firebaseConfig = {
           apiKey: "${apiKey}",
@@ -109,17 +99,17 @@
         firebase.initializeApp(firebaseConfig);
       `;
 
-      const outputDiv = document.getElementById('output');
-      outputDiv.textContent = generatedCode.trim();
-      outputDiv.style.display = 'block';
-
       document.getElementById('copyCode').disabled = false;
       document.getElementById('downloadCode').disabled = false;
-    });
+    }
+
+    document.getElementById('apiKey').addEventListener('input', generateCode);
+    document.getElementById('authDomain').addEventListener('input', generateCode);
+    document.getElementById('projectId').addEventListener('input', generateCode);
+    document.getElementById('appId').addEventListener('input', generateCode);
 
     document.getElementById('copyCode').addEventListener('click', function() {
-      const outputDiv = document.getElementById('output');
-      navigator.clipboard.writeText(outputDiv.textContent).then(() => {
+      navigator.clipboard.writeText(generatedCode).then(() => {
         alert('कोड क्लिपबोर्ड में कॉपी हो गया है।');
       }).catch(err => {
         alert('कॉपी करने में समस्या हुई: ' + err);
@@ -127,8 +117,7 @@
     });
 
     document.getElementById('downloadCode').addEventListener('click', function() {
-      const outputDiv = document.getElementById('output');
-      const blob = new Blob([outputDiv.textContent], { type: 'text/javascript' });
+      const blob = new Blob([generatedCode], { type: 'text/javascript' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
