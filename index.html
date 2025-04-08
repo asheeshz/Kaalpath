@@ -1,250 +1,141 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
   <meta charset="UTF-8">
-  <title>Firebase Auth Customizer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-
+  <title>Firebase लॉगिन कस्टमाइज़र टूल</title>
   <style>
     body {
-      display: flex;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
       margin: 0;
-      font-family: sans-serif;
-      background: #f1f1f1;
-    }
-
-    .preview {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 30px;
-    }
-
-    .auth-box {
-      width: 300px;
       padding: 20px;
-      border-radius: 6px;
-      background-color: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      text-align: center;
     }
-
-    .auth-box input, .auth-box button {
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px;
-      font-size: 14px;
-    }
-
-    .customizer {
-      width: 350px;
+    .container {
+      max-width: 800px;
+      margin: auto;
       background: #fff;
       padding: 20px;
-      border-left: 2px solid #ccc;
-      overflow-y: auto;
-      height: 100vh;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
-    .customizer h2 {
-      margin-top: 0;
-      font-size: 18px;
+    h1 {
+      text-align: center;
       color: #333;
     }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
+    label {
+      font-weight: bold;
+      margin-top: 10px;
       display: block;
-      font-size: 13px;
-      margin-bottom: 5px;
     }
-
-    .form-group input, .form-group textarea {
+    input, textarea {
       width: 100%;
-      padding: 8px;
-      font-size: 14px;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
-
-    .btn-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    button.copy-btn, button.download-btn {
-      flex: 1;
-      background: #007BFF;
+    button {
+      background-color: #28a745;
       color: white;
       border: none;
-      padding: 10px;
+      padding: 10px 20px;
+      text-align: center;
+      display: inline-block;
+      font-size: 16px;
+      margin-right: 10px;
       cursor: pointer;
       border-radius: 4px;
     }
-
-    button.copy-btn:hover, button.download-btn:hover {
-      background: #0056b3;
+    button:disabled {
+      background-color: #ccc;
+    }
+    .output {
+      background: #f4f4f4;
+      padding: 10px;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      border: 1px solid #ddd;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>Firebase लॉगिन कस्टमाइज़र टूल</h1>
+    <label for="apiKey">API Key:</label>
+    <input type="text" id="apiKey" placeholder="अपना Firebase API Key दर्ज करें">
 
-<div class="preview">
-  <div class="auth-box" id="authBox">
-    <h2 id="title">Login</h2>
-    <input type="email" placeholder="Email" id="email">
-    <input type="password" placeholder="Password" id="password">
-    <button id="mainBtn">Login</button>
-    <div>
-      <small id="toggle" onclick="toggleForm()" style="color: #007BFF; cursor:pointer;">Don't have an account? Register</small>
-    </div>
-    <div id="msg" style="margin-top:10px; font-size:13px;"></div>
-  </div>
-</div>
+    <label for="authDomain">Auth Domain:</label>
+    <input type="text" id="authDomain" placeholder="अपना Firebase Auth Domain दर्ज करें">
 
-<div class="customizer">
-  <h2>Customizer Tool</h2>
+    <label for="projectId">Project ID:</label>
+    <input type="text" id="projectId" placeholder="अपना Firebase Project ID दर्ज करें">
 
-  <div class="form-group">
-    <label>Firebase API Key</label>
-    <input type="text" id="apiKey">
-  </div>
-  <div class="form-group">
-    <label>Auth Domain</label>
-    <input type="text" id="authDomain">
-  </div>
-  <div class="form-group">
-    <label>Project ID</label>
-    <input type="text" id="projectId">
-  </div>
-  <div class="form-group">
-    <label>App ID</label>
-    <input type="text" id="appId">
-  </div>
-  <div class="form-group">
-    <label>Primary Color</label>
-    <input type="color" id="colorPicker" value="#007BFF">
-  </div>
-  <div class="form-group">
-    <label>Login Button Text</label>
-    <input type="text" id="loginText" value="Login">
-  </div>
-  <div class="form-group">
-    <label>Register Button Text</label>
-    <input type="text" id="registerText" value="Register">
+    <label for="appId">App ID:</label>
+    <input type="text" id="appId" placeholder="अपना Firebase App ID दर्ज करें">
+
+    <button id="generateCode">कोड जनरेट करें</button>
+    <button id="copyCode" disabled>कॉपी करें</button>
+    <button id="downloadCode" disabled>डाउनलोड करें</button>
+
+    <div id="output" class="output" style="display:none;"></div>
   </div>
 
-  <div class="btn-row">
-    <button class="copy-btn" onclick="copyCode()">Copy Code</button>
-    <button class="download-btn" onclick="downloadCode()">Download</button>
-  </div>
-</div>
+  <script>
+    document.getElementById('generateCode').addEventListener('click', function() {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      const authDomain = document.getElementById('authDomain').value.trim();
+      const projectId = document.getElementById('projectId').value.trim();
+      const appId = document.getElementById('appId').value.trim();
 
-<script>
-  let isLogin = true;
-  let config = {};
+      if (!apiKey || !authDomain || !projectId || !appId) {
+        alert('कृपया सभी फ़ील्ड्स भरें।');
+        return;
+      }
 
-  document.getElementById('colorPicker').addEventListener('input', (e) => {
-    document.querySelector('#authBox button').style.backgroundColor = e.target.value;
-  });
+      const generatedCode = `
+        // Firebase कॉन्फ़िगरेशन
+        const firebaseConfig = {
+          apiKey: "${apiKey}",
+          authDomain: "${authDomain}",
+          projectId: "${projectId}",
+          appId: "${appId}"
+        };
 
-  document.getElementById('loginText').addEventListener('input', (e) => {
-    if (isLogin) document.getElementById('mainBtn').innerText = e.target.value;
-  });
+        // Firebase इनिशियलाइज़ करें
+        firebase.initializeApp(firebaseConfig);
+      `;
 
-  document.getElementById('registerText').addEventListener('input', (e) => {
-    if (!isLogin) document.getElementById('mainBtn').innerText = e.target.value;
-  });
+      const outputDiv = document.getElementById('output');
+      outputDiv.textContent = generatedCode.trim();
+      outputDiv.style.display = 'block';
 
-  function toggleForm() {
-    isLogin = !isLogin;
-    document.getElementById('title').innerText = isLogin ? 'Login' : 'Register';
-    document.getElementById('mainBtn').innerText = isLogin ? document.getElementById('loginText').value : document.getElementById('registerText').value;
-    document.getElementById('toggle').innerText = isLogin ? "Don't have an account? Register" : "Already have an account? Login";
-  }
+      document.getElementById('copyCode').disabled = false;
+      document.getElementById('downloadCode').disabled = false;
+    });
 
-  function copyCode() {
-    navigator.clipboard.writeText(generateCode());
-    alert("Code copied!");
-  }
+    document.getElementById('copyCode').addEventListener('click', function() {
+      const outputDiv = document.getElementById('output');
+      navigator.clipboard.writeText(outputDiv.textContent).then(() => {
+        alert('कोड क्लिपबोर्ड में कॉपी हो गया है।');
+      }).catch(err => {
+        alert('कॉपी करने में समस्या हुई: ' + err);
+      });
+    });
 
-  function downloadCode() {
-    const blob = new Blob([generateCode()], {type: "text/html"});
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "firebase-login.html";
-    link.click();
-  }
-
-  function generateCode() {
-    const apiKey = document.getElementById('apiKey').value;
-    const authDomain = document.getElementById('authDomain').value;
-    const projectId = document.getElementById('projectId').value;
-    const appId = document.getElementById('appId').value;
-    const btnColor = document.getElementById('colorPicker').value;
-    const loginText = document.getElementById('loginText').value;
-    const registerText = document.getElementById('registerText').value;
-
-    return `<!DOCTYPE html>
-<html>
-<head>
-  <title>Custom Firebase Login</title>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-</head>
-<body>
-  <div>
-    <h2 id="title">Login</h2>
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
-    <button id="mainBtn" style="background-color:${btnColor}; color:white;">${loginText}</button>
-    <p id="toggle" onclick="toggleForm()" style="color:${btnColor}; cursor:pointer;">Don't have an account? Register</p>
-    <div id="msg"></div>
-  </div>
-<script>
-const firebaseConfig = {
-  apiKey: "${apiKey}",
-  authDomain: "${authDomain}",
-  projectId: "${projectId}",
-  appId: "${appId}"
-};
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-
-let isLogin = true;
-
-function toggleForm() {
-  isLogin = !isLogin;
-  document.getElementById("title").innerText = isLogin ? "Login" : "Register";
-  document.getElementById("mainBtn").innerText = isLogin ? "${loginText}" : "${registerText}";
-  document.getElementById("toggle").innerText = isLogin ? "Don't have an account? Register" : "Already have an account? Login";
-}
-
-document.getElementById("mainBtn").onclick = function() {
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
-  const msg = document.getElementById("msg");
-  if(isLogin){
-    auth.signInWithEmailAndPassword(email, pass)
-      .then(()=> msg.innerText="Login Success")
-      .catch(e=> msg.innerText=e.message);
-  } else {
-    auth.createUserWithEmailAndPassword(email, pass)
-      .then(()=> msg.innerText="Registered Successfully")
-      .catch(e=> msg.innerText=e.message);
-  }
-};
-</script>
-</body>
-</html>`;
-  }
-</script>
-
+    document.getElementById('downloadCode').addEventListener('click', function() {
+      const outputDiv = document.getElementById('output');
+      const blob = new Blob([outputDiv.textContent], { type: 'text/javascript' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'firebase-config.js';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  </script>
 </body>
 </html>
