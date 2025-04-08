@@ -1,0 +1,688 @@
+<!doctype html>
+
+
+    
+    
+    Firebase Authentication Widget - Centered
+
+    <style>
+        /* ======================================== */
+        /*          CSS Variables & Basic Setup     */
+        /* ======================================== */
+        :root {
+            --primary-color: #007BFF; --primary-light-bg: #e7f5ff;
+            --danger-color: #dc3545; --danger-light-bg: #ffe3e3;
+            --success-color: #28a745; --success-dark-text: #155724; --success-light-bg: #eaf7ec; --success-border: #a1d9a5;
+            --info-color: #17a2b8; --info-light-bg: #e8f7fa; --info-border: #bee5eb;
+            --dark-text: #212529; --medium-text: #495057; --light-text: #6c757d; --grey-text: #adb5bd;
+            --bg-body: #f8f9fa;
+            --bg-light: #ffffff;
+            --border-color: #dee2e6; --input-border-color: #ced4da;
+            --border-radius-md: 4px; /* Even smaller radius */
+            --border-radius-lg: 6px; /* Even smaller radius */
+            --box-shadow-light: 0px 1px 2px rgba(0, 0, 0, 0.05); /* Subtler shadow */
+            --box-shadow-strong: 0px 2px 6px rgba(0, 0, 0, 0.1); /* Subtler shadow */
+            --widget-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --facebook-color: #1877F2;
+            --github-color: #333333;
+            --yahoo-color: #6001d2;
+        }
+        /* Apply font to the widget specifically */
+        .firebase-auth-widget-container,
+        .firebase-auth-logout-box,
+        .firebase-auth-popup {
+             font-family: var(--widget-font);
+             font-size: 13px; /* Base font size */
+             box-sizing: border-box;
+        }
+        .firebase-auth-widget-container *,
+        .firebase-auth-logout-box *,
+        .firebase-auth-popup * {
+            box-sizing: border-box;
+        }
+
+        /* --- Utility --- */
+        .firebase-auth-widget-hidden { display: none !important; }
+
+        /* --- Blurred Backdrop --- */
+        #firebase-auth-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.3); /* Semi-transparent dark background */
+            backdrop-filter: blur(4px); /* Apply blur effect */
+            -webkit-backdrop-filter: blur(4px); /* Safari */
+            z-index: 999; /* Below the widget (1000), above page content */
+        }
+        #firebase-auth-backdrop.firebase-auth-widget-hidden {
+            display: none !important;
+        }
+
+
+        /* --- Login Popup WIDGET - CENTERED --- */
+        .firebase-auth-widget-container {
+            position: fixed;
+            /* Center the widget */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px; /* Reduced width */
+            background: var(--bg-light);
+            padding: 18px; /* Reduced padding */
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--box-shadow-strong);
+            display: flex; flex-direction: column;
+            align-items: center;
+            z-index: 1000; /* Above the backdrop */
+            border: 2px solid var(--primary-color); /* Colored border */
+            color: var(--dark-text);
+            max-height: 90vh; /* Prevent overflow on very small screens */
+            overflow-y: auto;   /* Add scroll if content overflows vertically */
+        }
+        .firebase-auth-widget-box { width: 100%; text-align: center; }
+        .firebase-auth-widget-box h2 {
+             color: var(--dark-text); font-weight: 600;
+             font-size: 1.1em; /* Reduced heading size */
+             margin: 0 0 12px 0; /* Reduced margin */
+             line-height: 1.3;
+             flex-shrink: 0; /* Prevent heading shrinking weirdly */
+        }
+
+        /* Input Fields, Buttons, Links etc. */
+        .firebase-auth-input-group { margin-bottom: 10px; width: 100%; flex-shrink: 0;}
+        .firebase-auth-input-group input {
+            width: 100%;
+            padding: 9px 10px; /* Reduced padding */
+            border: 1px solid var(--input-border-color); border-radius: var(--border-radius-md);
+            font-size: 13px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            background-color: var(--bg-light); color: var(--dark-text);
+            margin-bottom: 6px; /* Reduced margin */
+            font-family: inherit;
+        }
+        .firebase-auth-input-group input:last-child { margin-bottom: 0; }
+        .firebase-auth-input-group input::placeholder { color: var(--grey-text); opacity: 1; }
+        .firebase-auth-input-group input:hover { background-color: #f8f9fa; }
+        .firebase-auth-input-group input:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15); background-color: var(--bg-light); }
+
+        .firebase-auth-action-btn {
+             display: flex; align-items: center; justify-content: center; width: 100%;
+             padding: 9px; /* Reduced padding */
+             border: none; cursor: pointer; border-radius: var(--border-radius-md);
+             font-size: 13px;
+             font-weight: 600; transition: background-color 0.2s ease, transform 0.1s ease, filter 0.2s ease, opacity 0.2s ease;
+             margin-top: 5px; /* Reduced margin */
+             font-family: inherit; line-height: 1.2;
+             text-transform: uppercase; letter-spacing: 0.5px;
+             flex-shrink: 0; /* Prevent buttons shrinking */
+        }
+        .firebase-auth-action-btn:hover { opacity: 1; transform: translateY(-1px); filter: brightness(1.1); }
+        .firebase-auth-action-btn:disabled { opacity: 0.65; cursor: not-allowed; filter: brightness(1); transform: none; }
+        .firebase-auth-sign-in-btn { background-color: var(--primary-color); color: white; }
+        .firebase-auth-sign-up-btn { background-color: var(--success-color); color: white; }
+        .firebase-auth-reset-btn { background-color: var(--info-color); color: white; }
+        .firebase-auth-email-link-btn { color: var(--medium-text); background-color: #f1f3f5; border: 1px solid var(--input-border-color); margin-top: 10px; text-transform: none; letter-spacing: normal; font-weight: 500; }
+        .firebase-auth-email-link-btn:hover { background-color: #e9ecef; border-color: #adb5bd; filter: brightness(1); }
+
+        .firebase-auth-link-btn { background: none; border: none; color: var(--primary-color); font-size: 11px; cursor: pointer; padding: 0; text-align: right; width: 100%; display: block; margin-top: 4px; margin-bottom: 8px; font-family: inherit; flex-shrink: 0;}
+        .firebase-auth-link-btn:hover { text-decoration: underline; }
+
+        .firebase-auth-toggle-link { background: none; border: none; color: var(--primary-color); font-size: 12px; cursor: pointer; padding: 5px 0; text-align: center; width: 100%; display: block; margin-top: 10px; font-weight: 500; font-family: inherit; flex-shrink: 0;}
+        .firebase-auth-toggle-link:hover { text-decoration: underline; }
+
+        .firebase-auth-provider-btn { margin: 5px 0; color: white; text-transform: none; letter-spacing: normal; font-weight: 500; }
+        .firebase-auth-provider-btn:hover { filter: brightness(1.1); }
+        .firebase-auth-google-btn { background: #DB4437; }
+        .firebase-auth-facebook-btn-style { background: var(--facebook-color); }
+        .firebase-auth-github-btn-style { background: var(--github-color); }
+        .firebase-auth-yahoo-btn-style { background: var(--yahoo-color); }
+
+        /* General Message Area */
+        .firebase-auth-message {
+            color: var(--danger-color);
+            margin-top: 12px; margin-bottom: 12px; min-height: 1.4em; font-size: 12px;
+            font-weight: 500; text-align: center; width: 100%; line-height: 1.4;
+            word-wrap: break-word; padding: 6px 8px;
+            border-radius: var(--border-radius-md); border: 1px solid transparent; flex-shrink: 0;
+        }
+        .firebase-auth-message.info { color: var(--info-color); background-color: var(--info-light-bg); border-color: var(--info-border); }
+        .firebase-auth-message.error { color: var(--danger-color); background-color: var(--danger-light-bg); border-color: #f5c6cb; }
+        .firebase-auth-message.success { color: var(--success-dark-text); background-color: var(--success-light-bg); border-color: var(--success-border); }
+
+        /* Divider */
+        .firebase-auth-divider {
+             font-size: 11px; color: var(--light-text); margin: 15px 0; text-align: center; position: relative; width: 100%; line-height: 1; flex-shrink: 0;
+         }
+        .firebase-auth-divider::before, .firebase-auth-divider::after { content: ''; position: absolute; top: 50%; width: 37%; height: 1px; background-color: var(--border-color); transform: translateY(-50%); }
+        .firebase-auth-divider::before { left: 0; } .firebase-auth-divider::after { right: 0; }
+
+        /* Legal Text */
+        .firebase-auth-legal-text {
+             font-size: 10px; color: var(--light-text); margin-top: 10px; line-height: 1.3; text-align: center; width: 100%; flex-shrink: 0;
+        }
+        .firebase-auth-legal-text a { color: var(--primary-color); text-decoration: none; }
+        .firebase-auth-legal-text a:hover { text-decoration: underline; }
+
+        /* Success Popup Box Styling - Also Centered */
+        .firebase-auth-popup {
+            position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: auto; max-width: 90%; min-width: 250px;
+            background-color: var(--success-light-bg); color: var(--success-dark-text); border: 1px solid var(--success-border);
+            border-radius: var(--border-radius-lg); padding: 18px 25px; box-shadow: var(--box-shadow-strong);
+            z-index: 2000; /* Above backdrop and widget */
+            text-align: center; font-size: 14px; font-weight: 600; line-height: 1.4;
+        }
+        .firebase-auth-popup p { margin: 0; padding: 0; }
+
+        /* Logout Box Styling - Stays Bottom-Left */
+        .firebase-auth-logout-box {
+            width: auto; padding: 5px 8px; position: fixed; bottom: 15px; left: 15px; background-color: var(--bg-light); color: var(--dark-text);
+            border-radius: 18px; box-shadow: var(--box-shadow-light); border: 1px solid var(--border-color);
+            display: flex; align-items: center; gap: 6px;
+            z-index: 9999; /* Highest z-index */
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .firebase-auth-logout-box.firebase-auth-widget-hidden { display: none !important; }
+        .firebase-auth-logout-box:hover { box-shadow: var(--box-shadow-strong); }
+
+        .firebase-auth-profile-img { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border-color); display: block; }
+        .firebase-auth-profile-initial { width: 24px; height: 24px; border-radius: 50%; background-color: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; line-height: 1; text-transform: uppercase; border: 1px solid var(--border-color); }
+
+        .firebase-auth-logout-box button {
+            background-color: transparent; color: var(--danger-color); border: 1px solid var(--danger-light-bg); padding: 3px 8px; font-size: 11px; font-weight: 600; cursor: pointer; margin: 0; width: auto;
+            border-radius: var(--border-radius-md); transition: all 0.2s ease; font-family: inherit;
+         }
+        .firebase-auth-logout-box button:hover { background-color: var(--danger-color); color: white; border-color: var(--danger-color); text-decoration: none; transform: translateY(-1px); box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1); }
+
+        /* Style for Reset Password instruction paragraph */
+        #firebase-auth-reset-password-section p {
+            font-size: 12px; color: var(--medium-text); margin-bottom: 10px; line-height: 1.4;
+            flex-shrink: 0;
+        }
+
+    </style>
+
+
+
+    <!-- Backdrop Element -->
+    <div id="firebase-auth-backdrop" class="firebase-auth-widget-hidden"></div>
+
+    <!-- Login Widget HTML -->
+    <div id="firebase-auth-login-popup" class="firebase-auth-widget-container firebase-auth-widget-hidden">
+        <div class="firebase-auth-widget-box">
+            <!-- Sign In Section -->
+            <div id="firebase-auth-sign-in-section">
+                <h2>Sign In</h2>
+                <div class="firebase-auth-input-group">
+                    <input type="email" id="firebase-auth-email-input-signin" placeholder="Enter email" aria-label="Email address for Sign In" autocomplete="email" />
+                    <input type="password" id="firebase-auth-password-input-signin" placeholder="Enter password" aria-label="Password for Sign In" autocomplete="current-password" />
+                </div>
+                <button onclick="firebaseAuthToggleView('reset')" class="firebase-auth-link-btn">Forgot Password?</button>
+                <button id="firebase-auth-signin-btn" onclick="firebaseAuthSignInWithEmailPassword()" class="firebase-auth-action-btn firebase-auth-sign-in-btn">Sign In</button>
+                <button onclick="firebaseAuthToggleView('signup')" class="firebase-auth-toggle-link">New user? Sign Up</button>
+            </div>
+            <!-- Sign Up Section -->
+            <div id="firebase-auth-sign-up-section" class="firebase-auth-widget-hidden">
+                <h2>Create Account</h2>
+                <div class="firebase-auth-input-group">
+                    <input type="email" id="firebase-auth-email-input-signup" placeholder="Enter email" aria-label="Email address for Sign Up" autocomplete="email" />
+                    <input type="password" id="firebase-auth-password-input-signup" placeholder="Create password (min. 6 chars)" aria-label="Password for Sign Up" autocomplete="new-password" />
+                    <input type="password" id="firebase-auth-password-confirm-signup" placeholder="Confirm password" aria-label="Confirm Password for Sign Up" autocomplete="new-password" />
+                </div>
+                <button onclick="firebaseAuthSignUpWithEmailPassword()" class="firebase-auth-action-btn firebase-auth-sign-up-btn">Sign Up</button>
+                <button onclick="firebaseAuthToggleView('signin')" class="firebase-auth-toggle-link">Already have an account? Sign In</button>
+            </div>
+            <!-- Reset Password Section -->
+            <div id="firebase-auth-reset-password-section" class="firebase-auth-widget-hidden">
+                 <h2>Reset Password</h2>
+                 <p>Enter your email address below and we'll send you a link to reset your password.</p>
+                <div class="firebase-auth-input-group">
+                    <input type="email" id="firebase-auth-email-input-reset" placeholder="Enter your email" aria-label="Email address for Password Reset" autocomplete="email" />
+                </div>
+                <button onclick="firebaseAuthSendPasswordReset()" class="firebase-auth-action-btn firebase-auth-reset-btn">Send Reset Link</button>
+                <button onclick="firebaseAuthToggleView('signin')" class="firebase-auth-toggle-link">Back to Sign In</button>
+            </div>
+             <!-- General Message Area -->
+             <p id="firebase-auth-message" class="firebase-auth-message" aria-live="polite"></p>
+            <!-- Other Login Methods -->
+            <div id="firebase-auth-other-methods-divider" class="firebase-auth-divider">OR</div>
+            <button id="firebase-auth-magic-link-btn" onclick="firebaseAuthSendEmailLink()" class="firebase-auth-action-btn firebase-auth-email-link-btn">Send Magic Link (Passwordless)</button>
+            <div id="firebase-auth-provider-divider" class="firebase-auth-divider" style="margin-top: 10px;">OR USE</div>
+
+            <!-- Provider Buttons -->
+            <button id="firebase-auth-google-btn" onclick="firebaseAuthLoginWithProvider('google')" class="firebase-auth-action-btn firebase-auth-provider-btn firebase-auth-google-btn">Continue with Google</button>
+            <button id="firebase-auth-facebook-btn" onclick="firebaseAuthLoginWithProvider('facebook')" class="firebase-auth-action-btn firebase-auth-provider-btn firebase-auth-facebook-btn-style">Continue with Facebook</button>
+            <button id="firebase-auth-github-btn" onclick="firebaseAuthLoginWithProvider('github')" class="firebase-auth-action-btn firebase-auth-provider-btn firebase-auth-github-btn-style">Continue with GitHub</button>
+            <button id="firebase-auth-yahoo-btn" onclick="firebaseAuthLoginWithProvider('yahoo')" class="firebase-auth-action-btn firebase-auth-provider-btn firebase-auth-yahoo-btn-style">Continue with Yahoo</button>
+
+            <p class="firebase-auth-legal-text">By signing in, you agree to our <a href="#">Policy</a> & <a href="#">Terms</a>.</p>
+        </div>
+    </div>
+
+    <!-- Logout Box HTML -->
+    <div id="firebase-auth-logout-box" class="firebase-auth-logout-box firebase-auth-widget-hidden">
+        <img id="firebase-auth-profile-pic" src="" alt="User profile picture" class="firebase-auth-profile-img firebase-auth-widget-hidden" />
+        <div id="firebase-auth-profile-fallback" class="firebase-auth-profile-initial firebase-auth-widget-hidden">
+            <span id="firebase-auth-profile-initial-letter"></span>
+        </div>
+        <button onclick="firebaseAuthLogout()">Logout</button>
+    </div>
+
+    <!-- Success Popup Box HTML -->
+    <div id="firebase-auth-success-popup" class="firebase-auth-popup firebase-auth-widget-hidden">
+        <p id="firebase-auth-popup-message"></p>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+    <!-- Application Script -->
+    <script>
+        (function() {
+            "use strict";
+
+            // --- Configuration & Constants ---
+            // Using the configuration you provided
+            const firebaseConfig = {
+                apiKey: "AIzaSyCE32esvVmBmZtw65y3iUkHS8G0EQo2PXg",
+                authDomain: "abhijit-piyush-organisat-f1269.firebaseapp.com",
+                projectId: "abhijit-piyush-organisat-f1269",
+                storageBucket: "abhijit-piyush-organisat-f1269.firebasestorage.app", // Updated storage bucket name
+                messagingSenderId: "200051346063",
+                appId: "1:200051346063:web:16bd9ffb1c4b1522e17efa"
+            };
+            // --- End Configuration ---
+
+            const EMAIL_STORAGE_KEY = 'firebaseAuthEmailForSignIn';
+            const actionCodeSettings = {
+                 url: window.location.href.split('?')[0].split('#')[0], // URL to redirect back to
+                handleCodeInApp: true
+             };
+            const SIGNUP_SUCCESS_DELAY = 4000; // ms
+            const RESET_SUCCESS_DELAY = 3000; // ms
+            const fallbackColors = [ // For profile initials
+                "#007bff", "#6f42c1", "#e83e8c", "#dc3545", "#fd7e14",
+                "#ffc107", "#28a745", "#20c997", "#17a2b8", "#6c757d"
+            ];
+
+            // --- Global Variables ---
+            let auth = null;
+            let app = null;
+
+            // --- DOM Element References ---
+            const loginPopup = document.getElementById('firebase-auth-login-popup');
+            const logoutBox = document.getElementById('firebase-auth-logout-box');
+            const backdrop = document.getElementById('firebase-auth-backdrop');
+            const profilePic = document.getElementById('firebase-auth-profile-pic');
+            const profileFallback = document.getElementById('firebase-auth-profile-fallback');
+            const initialSpan = document.getElementById('firebase-auth-profile-initial-letter');
+            const messageElement = document.getElementById('firebase-auth-message');
+            const signInSection = document.getElementById('firebase-auth-sign-in-section');
+            const signUpSection = document.getElementById('firebase-auth-sign-up-section');
+            const resetPasswordSection = document.getElementById('firebase-auth-reset-password-section');
+            const emailInputSignIn = document.getElementById('firebase-auth-email-input-signin');
+            const passwordInputSignIn = document.getElementById('firebase-auth-password-input-signin');
+            const signInBtn = document.getElementById('firebase-auth-signin-btn');
+            const emailInputSignUp = document.getElementById('firebase-auth-email-input-signup');
+            const passwordInputSignUp = document.getElementById('firebase-auth-password-input-signup');
+            const passwordConfirmInputSignUp = document.getElementById('firebase-auth-password-confirm-signup');
+            const emailInputReset = document.getElementById('firebase-auth-email-input-reset');
+            const successPopup = document.getElementById('firebase-auth-success-popup');
+            const popupMessageElement = document.getElementById('firebase-auth-popup-message');
+            const otherMethodsDivider = document.getElementById('firebase-auth-other-methods-divider');
+            const magicLinkBtn = document.getElementById('firebase-auth-magic-link-btn');
+            const providerDivider = document.getElementById('firebase-auth-provider-divider');
+            const googleBtn = document.getElementById('firebase-auth-google-btn');
+            const facebookBtn = document.getElementById('firebase-auth-facebook-btn');
+            const githubBtn = document.getElementById('firebase-auth-github-btn');
+            const yahooBtn = document.getElementById('firebase-auth-yahoo-btn');
+
+            /**
+             * Gets the currently visible email input field (sign-in, sign-up, or reset).
+             * @returns {HTMLInputElement|null} The visible email input or null.
+             */
+            const getVisibleEmailInput = () => {
+                  if (!signInSection || !signUpSection || !resetPasswordSection || !emailInputSignIn || !emailInputSignUp || !emailInputReset) return null;
+                  if (!signInSection.classList.contains('firebase-auth-widget-hidden')) { return emailInputSignIn; }
+                  else if (!signUpSection.classList.contains('firebase-auth-widget-hidden')) { return emailInputSignUp; }
+                  else if (!resetPasswordSection.classList.contains('firebase-auth-widget-hidden')) { return emailInputReset; }
+                  return emailInputSignIn; // Default fallback
+            };
+
+            // --- Initialization ---
+            function initializeApp() {
+                 const coreElements = [ // Check all required elements exist
+                     loginPopup, logoutBox, backdrop, profilePic, profileFallback, initialSpan,
+                     messageElement, signInSection, signUpSection, resetPasswordSection,
+                     emailInputSignIn, passwordInputSignIn, signInBtn, emailInputSignUp, passwordInputSignUp,
+                     passwordConfirmInputSignUp, emailInputReset, successPopup, popupMessageElement,
+                     otherMethodsDivider, magicLinkBtn, providerDivider, googleBtn, facebookBtn, githubBtn, yahooBtn
+                 ];
+                 if (coreElements.some(el => !el)) {
+                      const missing = coreElements.filter(el => !el).map(el => el?.id || 'unknown'); // Find missing IDs (approx)
+                      console.error("Firebase Auth Widget: Core HTML elements missing. Cannot initialize. Missing:", missing);
+                      if (loginPopup) loginPopup.innerHTML = "<p style='color:red; padding:10px; text-align:center;'>Widget Error: Could not load properly.</p>";
+                      if (loginPopup && backdrop) { // Try to show error state
+                          loginPopup.classList.remove('firebase-auth-widget-hidden');
+                          backdrop.classList.remove('firebase-auth-widget-hidden');
+                      }
+                     return;
+                 }
+                 try {
+                     if (typeof firebase === 'undefined' || !firebase.initializeApp || !firebase.auth) {
+                         throw new Error("Firebase SDK not loaded correctly.");
+                     }
+                     // Check if Firebase is already initialized
+                     if (!firebase.apps.length) {
+                        app = firebase.initializeApp(firebaseConfig); // Initialize with the provided config
+                     } else {
+                        app = firebase.app(); // Get default app if already initialized
+                     }
+                     auth = firebase.auth(app);
+                     console.log("Firebase Initialized for project:", app.options.projectId);
+                     setupAuthentication();
+                     handleEmailLinkSignInOnLoad(); // Check for email link first
+                 } catch (error) {
+                     console.error("Firebase Initialization Failed:", error);
+                     displayGlobalError("Auth widget could not start. Check console.");
+                     if (backdrop) backdrop.classList.remove('firebase-auth-widget-hidden');
+                     if (loginPopup) loginPopup.classList.remove('firebase-auth-widget-hidden');
+                 }
+            }
+
+            // --- Authentication Setup ---
+            function setupAuthentication() {
+                 if (!auth) { console.error("Auth instance not available."); return; }
+                 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+                    .then(() => {
+                        console.log("Firebase Auth: Persistence set to LOCAL.");
+                        auth.onAuthStateChanged(handleAuthStateChange); // Listen after persistence is set
+                    })
+                    .catch((error) => {
+                        console.error("Firebase Auth: Persistence error:", error.code, error.message);
+                        auth.onAuthStateChanged(handleAuthStateChange); // Listen anyway
+                    });
+            }
+
+            // --- UI Toggle Function (Within Widget) ---
+             window.firebaseAuthToggleView = function(viewToShow) {
+                 if (signInSection) signInSection.classList.add('firebase-auth-widget-hidden');
+                 if (signUpSection) signUpSection.classList.add('firebase-auth-widget-hidden');
+                 if (resetPasswordSection) resetPasswordSection.classList.add('firebase-auth-widget-hidden');
+                 if (successPopup) successPopup.classList.add('firebase-auth-widget-hidden');
+                 clearMessages();
+
+                 let showOtherMethods = true;
+
+                 if (viewToShow === 'signin' && signInSection) { signInSection.classList.remove('firebase-auth-widget-hidden'); }
+                 else if (viewToShow === 'signup' && signUpSection) { signUpSection.classList.remove('firebase-auth-widget-hidden'); }
+                 else if (viewToShow === 'reset' && resetPasswordSection) { resetPasswordSection.classList.remove('firebase-auth-widget-hidden'); showOtherMethods = false; }
+
+                 // Toggle visibility of provider buttons etc. based on view
+                 const elementsToToggle = [otherMethodsDivider, magicLinkBtn, providerDivider, googleBtn, facebookBtn, githubBtn, yahooBtn];
+                 elementsToToggle.forEach(el => {
+                     if (el) { el.classList.toggle('firebase-auth-widget-hidden', !showOtherMethods); }
+                 });
+             }
+
+             // --- Get User Color Index Function ---
+            function getUserColorIndex(uid) {
+                 if (!uid) return 0; let hash = 0; for (let i = 0; i < uid.length; i++) { hash = uid.charCodeAt(i) + ((hash << 5) - hash); hash = hash & hash; } const index = Math.abs(hash) % fallbackColors.length; return index;
+             }
+
+            // --- Core Logic: Auth State Change Handler ---
+            function handleAuthStateChange(user) {
+                  if (successPopup) successPopup.classList.add('firebase-auth-widget-hidden');
+                  if (!loginPopup || !logoutBox || !backdrop || !profilePic || !profileFallback || !initialSpan || !passwordInputSignIn) {
+                       console.error("Firebase Auth Widget: UI elements missing for auth state change."); return;
+                  }
+
+                  const isHandlingEmailLink = auth && auth.isSignInWithEmailLink(window.location.href);
+
+                  if (user) { // User is logged IN
+                      loginPopup.classList.add('firebase-auth-widget-hidden');
+                      backdrop.classList.add('firebase-auth-widget-hidden'); // Hide backdrop
+                      logoutBox.classList.remove('firebase-auth-widget-hidden');
+
+                      // Display profile picture or initial
+                      if (user.photoURL) {
+                          profilePic.src = user.photoURL; profilePic.classList.remove('firebase-auth-widget-hidden');
+                          profileFallback.classList.add('firebase-auth-widget-hidden'); console.log("Firebase Auth: Displaying photoURL");
+                      } else {
+                          const email = user.email || ' '; const initial = email.charAt(0).toUpperCase(); const colorIndex = getUserColorIndex(user.uid);
+                          initialSpan.textContent = initial;
+                          if(profileFallback) { profileFallback.style.backgroundColor = fallbackColors[colorIndex]; profileFallback.classList.remove('firebase-auth-widget-hidden'); }
+                          profilePic.classList.add('firebase-auth-widget-hidden'); console.log("Firebase Auth: Displaying fallback initial");
+                      }
+                      console.log("Firebase Auth: User logged in:", user.uid, "| Email:", user.email);
+
+                      // Clear transient messages
+                      if (!messageElement?.classList.contains('success')) { showLoginPopupMessage(''); } else { setTimeout(() => showLoginPopupMessage(''), 3500); }
+
+                      // Clear fields
+                      passwordInputSignIn.value = '';
+                      if(passwordInputSignUp) passwordInputSignUp.value = ''; if(passwordConfirmInputSignUp) passwordConfirmInputSignUp.value = ''; if (emailInputReset) emailInputReset.value = '';
+
+                  } else { // User is logged OUT or initial state
+                      logoutBox.classList.add('firebase-auth-widget-hidden');
+                      profilePic.classList.add('firebase-auth-widget-hidden'); profileFallback.classList.add('firebase-auth-widget-hidden');
+
+                      // Clear fields
+                      passwordInputSignIn.value = '';
+                      if(passwordInputSignUp) passwordInputSignUp.value = ''; if(passwordConfirmInputSignUp) passwordConfirmInputSignUp.value = ''; if (emailInputReset) emailInputReset.value = '';
+
+                      console.log("Firebase Auth: User logged out or initial state.");
+
+                      // Show login popup and backdrop UNLESS currently processing email link sign-in
+                      if (!isHandlingEmailLink) {
+                           loginPopup.classList.remove('firebase-auth-widget-hidden');
+                           backdrop.classList.remove('firebase-auth-widget-hidden'); // Show backdrop
+                           firebaseAuthToggleView('signin'); // Default to sign-in view
+                           clearMessages();
+                      } else {
+                          // Keep things hidden while email link is processed
+                          loginPopup.classList.add('firebase-auth-widget-hidden');
+                          backdrop.classList.add('firebase-auth-widget-hidden');
+                      }
+                  }
+             }
+
+            // --- Email/Password Functions ---
+             window.firebaseAuthSignUpWithEmailPassword = function() {
+                 if (!auth || !emailInputSignUp || !passwordInputSignUp || !passwordConfirmInputSignUp || !successPopup || !popupMessageElement) return;
+                 const email = emailInputSignUp.value.trim(); const password = passwordInputSignUp.value; const confirmPassword = passwordConfirmInputSignUp.value; clearMessages();
+                 if (!isValidEmail(email)) { showLoginPopupMessage('Please enter a valid email address.', 'error'); emailInputSignUp.focus(); return; }
+                 if (password.length < 6) { showLoginPopupMessage('Password must be at least 6 characters long.', 'error'); passwordInputSignUp.focus(); return; }
+                 if (password !== confirmPassword) { showLoginPopupMessage('Passwords do not match. Please try again.', 'error'); passwordConfirmInputSignUp.focus(); return; }
+                 showLoginPopupMessage('Creating your account...', 'info');
+                 auth.createUserWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        console.log("Firebase Auth: Sign up successful:", userCredential.user?.uid); clearMessages();
+                        popupMessageElement.textContent = 'Account created successfully! You can now sign in.';
+                        successPopup.classList.remove('firebase-auth-widget-hidden'); // Show success popup
+                        if(emailInputSignUp) emailInputSignUp.value = ''; if(passwordInputSignUp) passwordInputSignUp.value = ''; if(passwordConfirmInputSignUp) passwordConfirmInputSignUp.value = '';
+                        setTimeout(() => { // Hide popup and switch view after delay
+                            successPopup.classList.add('firebase-auth-widget-hidden'); firebaseAuthToggleView('signin');
+                            if(emailInputSignIn) emailInputSignIn.value = email; if(passwordInputSignIn) passwordInputSignIn.focus();
+                        }, SIGNUP_SUCCESS_DELAY);
+                    })
+                    .catch(error => {
+                        if (successPopup) successPopup.classList.add('firebase-auth-widget-hidden'); // Hide popup on error too
+                        if(passwordInputSignUp) passwordInputSignUp.value = ''; if(passwordConfirmInputSignUp) passwordConfirmInputSignUp.value = ''; handleAuthError(error);
+                    });
+              };
+
+             window.firebaseAuthSignInWithEmailPassword = function() {
+                if (!auth || !emailInputSignIn || !passwordInputSignIn || !signInBtn) return;
+                 const email = emailInputSignIn.value.trim(); const password = passwordInputSignIn.value; clearMessages();
+                 if (!isValidEmail(email)) { showLoginPopupMessage('Please enter a valid email address.', 'error'); emailInputSignIn.focus(); return; }
+                 if (!password) { showLoginPopupMessage('Please enter your password.', 'error'); passwordInputSignIn.focus(); return; }
+                 signInBtn.disabled = true; signInBtn.textContent = 'Signing In...'; showLoginPopupMessage('Signing you in...', 'info');
+                 auth.signInWithEmailAndPassword(email, password)
+                    .then((userCredential) => { console.log("Firebase Auth: Sign in successful:", userCredential.user?.uid); /* onAuthStateChanged handles UI */ })
+                    .catch(error => { if(passwordInputSignIn) passwordInputSignIn.value = ''; handleAuthError(error); })
+                    .finally(() => { // Reset button regardless of success/failure
+                         if(signInBtn) { signInBtn.disabled = false; signInBtn.textContent = 'Sign In'; }
+                         // Clear 'signing in' message only if no other error/success message replaced it
+                         if (messageElement && messageElement.classList.contains('info') && !messageElement.classList.contains('error') && !messageElement.classList.contains('success')) { clearMessages(); }
+                    });
+             };
+
+             window.firebaseAuthSendPasswordReset = function() {
+                 if (!auth || !emailInputReset) return; const email = emailInputReset.value.trim(); clearMessages();
+                 if (!isValidEmail(email)) { showLoginPopupMessage('Please enter your email address.', 'error'); emailInputReset.focus(); return; }
+                 showLoginPopupMessage('Sending password reset instructions...', 'info');
+                 auth.sendPasswordResetEmail(email, actionCodeSettings)
+                    .then(() => {
+                        console.log("Firebase Auth: Password reset email sent to:", email);
+                        showLoginPopupMessage('Password reset email sent. Please check your inbox (and spam folder).', 'success');
+                        setTimeout(() => { firebaseAuthToggleView('signin'); if (emailInputReset) emailInputReset.value = ''; }, RESET_SUCCESS_DELAY);
+                    })
+                    .catch(handleAuthError);
+             };
+
+            // --- Email Link Functions ---
+             function handleEmailLinkSignInOnLoad() {
+                 if (backdrop) backdrop.classList.add('firebase-auth-widget-hidden'); // Keep hidden initially
+                 if (!auth || typeof auth.isSignInWithEmailLink !== 'function') return;
+
+                 if (auth.isSignInWithEmailLink(window.location.href)) {
+                     // Show widget & backdrop while verifying/prompting
+                     if(loginPopup) loginPopup.classList.remove('firebase-auth-widget-hidden');
+                     if(backdrop) backdrop.classList.remove('firebase-auth-widget-hidden');
+                     firebaseAuthToggleView('signin'); // Show sign-in section context
+                     showLoginPopupMessage('Verifying your sign-in link...', 'info');
+
+                     let email = window.localStorage.getItem(EMAIL_STORAGE_KEY);
+                     if (!email) {
+                         email = window.prompt('To complete sign-in, please enter your email address again:');
+                         if (!email || !isValidEmail(email)) {
+                             showLoginPopupMessage('A valid email is needed to finish signing in. Please request a new link.', 'error'); cleanUrlAfterSignIn(); return; // Keep backdrop visible with error
+                         }
+                     }
+                     // Attempt sign-in with email link
+                     auth.signInWithEmailLink(email, window.location.href)
+                        .then((result) => { console.log("Firebase Auth: Signed in via email link:", result.user?.uid); window.localStorage.removeItem(EMAIL_STORAGE_KEY); cleanUrlAfterSignIn(); /* AuthStateChange handles UI */ })
+                        .catch((error) => { console.error("Firebase Auth: Email link sign-in error:", error); window.localStorage.removeItem(EMAIL_STORAGE_KEY); handleAuthError(error); cleanUrlAfterSignIn(); /* Keep backdrop visible with error */ });
+                 }
+             }
+
+             window.firebaseAuthSendEmailLink = function() {
+                 if (!auth) { showLoginPopupMessage('Could not connect to authentication service.', 'error'); return; }
+                  const currentViewEmailInput = getVisibleEmailInput();
+                  if (!currentViewEmailInput) { showLoginPopupMessage('Could not find email input field.', 'error'); return;}
+                  const email = currentViewEmailInput.value.trim(); clearMessages();
+                  if (!isValidEmail(email)) { showLoginPopupMessage('Please enter your email address in the field above first.', 'error'); currentViewEmailInput.focus(); return; }
+                  showLoginPopupMessage('Sending sign-in link...', 'info');
+                  auth.sendSignInLinkToEmail(email, actionCodeSettings)
+                    .then(() => { console.log("Firebase Auth: Sign-in link sent to:", email); window.localStorage.setItem(EMAIL_STORAGE_KEY, email); showLoginPopupMessage('Sign-in link sent! Check your email inbox (and spam folder).', 'success'); })
+                    .catch(handleAuthError);
+            };
+
+            // --- Provider Login Function ---
+            window.firebaseAuthLoginWithProvider = function(providerName) {
+                console.log("Attempting login with:", providerName);
+                 if (!auth) { showLoginPopupMessage('Could not connect to authentication service.', 'error'); return; }
+                 clearMessages(); let provider; let providerDisplayName = providerName.charAt(0).toUpperCase() + providerName.slice(1);
+                 try { // Create the appropriate provider object
+                     switch (providerName.toLowerCase()) {
+                         case 'google': provider = new firebase.auth.GoogleAuthProvider(); providerDisplayName = 'Google'; break;
+                         case 'facebook': provider = new firebase.auth.FacebookAuthProvider(); providerDisplayName = 'Facebook'; break; // Ensure enabled in Firebase Console w/ App ID/Secret
+                         case 'github': provider = new firebase.auth.GithubAuthProvider(); providerDisplayName = 'GitHub'; break;     // Ensure enabled in Firebase Console w/ Client ID/Secret
+                         case 'yahoo': provider = new firebase.auth.OAuthProvider('yahoo.com'); providerDisplayName = 'Yahoo'; break; // Ensure enabled in Firebase Console
+                         default: throw new Error(`Unsupported provider: ${providerName}`);
+                     }
+                 } catch (error) { console.error(`Firebase Auth: Error creating provider object for ${providerName}:`, error); showLoginPopupMessage(`Could not set up login with ${providerDisplayName}.`, 'error'); return; }
+                 showLoginPopupMessage(`Connecting to ${providerDisplayName}...`, 'info');
+                 // Sign in using a popup window
+                 auth.signInWithPopup(provider)
+                    .then(result => { console.log(`Firebase Auth: ${providerDisplayName} sign-in successful:`, result.user?.uid); clearMessages(); /* AuthStateChange handles UI */ })
+                    .catch(error => { // Handle specific popup errors or general errors
+                        if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') { console.log(`Firebase Auth: ${providerDisplayName} popup interaction cancelled/closed.`); clearMessages(); } // User closed popup - not an error
+                        else if (error.code === 'auth/account-exists-with-different-credential') { console.warn("Firebase Auth: Account exists with different credential.", error.email, error.credential); const existingProvider = error.customData?.providerId || 'another method'; showLoginPopupMessage(`This email is already linked to ${existingProvider}. Please sign in using that method.`, 'error'); }
+                        else { handleAuthError(error); } // Handle other auth errors
+                    });
+            };
+
+            // --- Logout Function ---
+            window.firebaseAuthLogout = function() {
+                 if (!auth) { console.error("Firebase Auth: Cannot logout, service not initialized."); alert('Logout failed: Service unavailable.'); return; }
+                 auth.signOut()
+                    .then(() => { console.log("Firebase Auth: Logout successful."); /* AuthStateChange handles UI */ })
+                    .catch((error) => {
+                        console.error("Firebase Auth: Logout error:", error.code, error.message);
+                         // Show error in message area if login popup happens to be visible, else use alert
+                         if (loginPopup && !loginPopup.classList.contains('firebase-auth-widget-hidden') && messageElement) { showLoginPopupMessage('Logout failed. Please try again.', 'error'); }
+                         else { alert('Logout failed. Please try again.'); }
+                    });
+            };
+
+            // --- Helper Functions ---
+            /** Handles Firebase Auth errors and displays user-friendly messages. */
+            function handleAuthError(error) {
+                 console.error("Auth Error Code:", error.code, "| Message:", error.message);
+                 let userMessage = ''; let messageType = 'error'; // Default to error
+                 switch (error.code) { // Provide user-friendly messages for common errors
+                     case 'auth/invalid-login-credentials': userMessage = "Incorrect email or password. Please try again or click 'Sign Up'."; break;
+                     case 'auth/invalid-email': userMessage = "The email address format isn't right. Please check it."; break;
+                     case 'auth/email-already-in-use': userMessage = "This email is already registered. Please 'Sign In' instead."; break;
+                     case 'auth/weak-password': userMessage = "Password is too short (minimum 6 characters)."; break;
+                     case 'auth/requires-recent-login': userMessage = "Please sign in again to make this change."; messageType = 'info'; break;
+                     case 'auth/too-many-requests': userMessage = "Too many attempts. Please wait a moment before trying again."; messageType = 'info'; break;
+                     case 'auth/network-request-failed': userMessage = "Could not connect to the server. Please check your internet connection."; messageType = 'info'; break;
+                     case 'auth/user-disabled': userMessage = "Your account has been disabled."; break;
+                     case 'auth/invalid-action-code': userMessage = "The link used is invalid or has expired."; break;
+                     case 'auth/operation-not-allowed': userMessage = `Sorry, this sign-in method is not currently enabled.`; break; // Check Firebase Console
+                     case 'auth/popup-blocked': userMessage = "Login popup blocked by your browser. Please allow popups for this site."; break;
+                     case 'auth/popup-closed-by-user': case 'auth/cancelled-popup-request': clearMessages(); return; // Handled in provider login, just clear message
+                     case 'auth/account-exists-with-different-credential': const existingProvider = error.customData?.providerId || 'another method'; userMessage = `An account already exists with this email using ${existingProvider}. Try signing in with that method.`; break; // Specific message handled in provider login, fallback here
+                     case 'auth/unauthorized-domain': userMessage = "Login from this website is not allowed."; break; // Check Firebase Console allowed domains
+                     case 'auth/auth-domain-config-required': userMessage = "Login configuration error. Please try again later."; break;
+                     default: console.warn("Firebase Auth: Unhandled Error Code:", error.code); userMessage = "An unexpected issue occurred. Please try again."; if (error.message) { userMessage += ` (${error.code})`; } break; // Add code for debugging unknown errors
+                 }
+                 showLoginPopupMessage(userMessage, messageType);
+            }
+
+            /** Displays a message in the widget's message area. */
+            function showLoginPopupMessage(msg, type = 'error') {
+                 if (messageElement) { messageElement.textContent = msg; messageElement.className = 'firebase-auth-message'; if (msg && type) { messageElement.classList.add(type); } } // Reset classes and add type
+                 else { console.warn("Firebase Auth Widget: General message element not found."); }
+            }
+
+            /** Clears the widget's message area. */
+            function clearMessages() { showLoginPopupMessage(''); }
+
+            /** Basic email format validation. */
+            function isValidEmail(email) {
+                 if (!email) return false; const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; return emailRegex.test(String(email).toLowerCase());
+            }
+
+            /** Removes Firebase Auth parameters from the URL after email link sign-in. */
+            function cleanUrlAfterSignIn() {
+                 if (window.history && window.history.replaceState) { const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + window.location.hash; try { window.history.replaceState({ path: cleanUrl }, '', cleanUrl); console.log("Firebase Auth: URL cleaned."); } catch (e) { console.warn("Firebase Auth: Could not clean URL.", e); } }
+            }
+
+            /** Displays a global error message, attempting to show the widget/backdrop. */
+            function displayGlobalError(message) {
+                 if (messageElement) { showLoginPopupMessage(message, 'error'); if(loginPopup) loginPopup.classList.remove('firebase-auth-widget-hidden'); }
+                 else if (loginPopup) { loginPopup.innerHTML = `<p style='color:var(--danger-color); background-color: var(--danger-light-bg); border: 1px solid #f5c6cb; padding: 10px; text-align: center; border-radius: var(--border-radius-md);'>${message}</p>`; loginPopup.classList.remove('firebase-auth-widget-hidden'); }
+                 else { console.error("Firebase Auth Widget: FATAL ERROR - ", message); alert("Widget Error: " + message); }
+                 // Ensure backdrop is visible if a global error occurs
+                 if (backdrop) backdrop.classList.remove('firebase-auth-widget-hidden');
+            }
+
+            // --- Run Application ---
+            // Initialize the app when the DOM is fully loaded
+            if (document.readyState === 'loading') {
+                 document.addEventListener('DOMContentLoaded', initializeApp);
+            } else {
+                 initializeApp(); // DOM is already loaded
+            }
+
+        })();
+    </script>
+
+
+</!doctype>
