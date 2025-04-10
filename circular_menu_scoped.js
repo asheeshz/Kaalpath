@@ -1,143 +1,125 @@
-// Scoped JavaScript for Circular Menu Widget
+// circle-menu.js
 
-// Wait for the DOM to be fully loaded to ensure all elements are available
-document.addEventListener('DOMContentLoaded', () => {
+// सुनिश्चित करें कि DOM पूरी तरह से लोड हो गया है
+document.addEventListener('DOMContentLoaded', function() {
 
-    // Get the main widget container using its unique ID
-    const widgetContainer = document.getElementById('circle-menu-widget-ash');
+    // सुनिश्चित करें कि JS कोड यूनिक आईडी के अंदर के एलिमेंट को टारगेट करे
+    const menuWidget = document.getElementById('my-unique-circle-menu');
 
-    // Only proceed if the widget container element exists in the DOM
-    if (widgetContainer) {
-        // Select elements *inside* the widget container
-        const menuToggle = widgetContainer.querySelector('.menu-toggle');
-        const categoriesMenu = widgetContainer.querySelector('.menu-categories');
-        const linksMenu = widgetContainer.querySelector('.menu-links');
+    // यदि विजेट मौजूद है, तभी आगे बढ़ें
+    if (menuWidget) {
+        // मेन्यू टॉगल बटन और मेन्यू एलिमेंट्स प्राप्त करें (विजेट के अंदर से)
+        const menuToggle = menuWidget.querySelector('.menu-toggle');
+        const categoriesMenu = menuWidget.querySelector('.menu-categories');
+        const linksMenu = menuWidget.querySelector('.menu-links');
+        // सुनिश्चित करें कि ये एलिमेंट मौजूद हैं, अन्यथा त्रुटि आ सकती है
+        const linksTitle = linksMenu ? linksMenu.querySelector('.links-title') : null;
+        const categoryTitleElement = categoriesMenu ? categoriesMenu.querySelector('.category-title') : null;
 
-        // Check if core menu elements exist before trying to select sub-elements
-        if (categoriesMenu && linksMenu) {
-            const linksTitle = linksMenu.querySelector('.links-title');
-            const categoryTitleElement = categoriesMenu.querySelector('.category-title');
-            const categories = widgetContainer.querySelectorAll('.category'); // Select all category divs within the container
-            const linksContent = widgetContainer.querySelectorAll('.links-content .links'); // Select all links divs within the container
+        // सभी कैटेगरी एलिमेंट्स प्राप्त करें (विजेट के अंदर से)
+        const categories = menuWidget.querySelectorAll('.category');
 
-            // Icon mapping (remains the same)
-            const categoryIcons = {
-                'class-1-5': '<i class="fas fa-book-reader"></i>', 'class-6-8': '<i class="fas fa-graduation-cap"></i>',
-                'class-9-10': '<i class="fas fa-school"></i>', 'class-11-12': '<i class="fas fa-university"></i>',
-                'competitive-exam': '<i class="fas fa-trophy"></i>', 'news-channel': '<i class="fas fa-newspaper"></i>',
-                'yoga-ayurveda': '<i class="fas fa-heart"></i>', 'marriage-links': '<i class="fas fa-ring"></i>',
-                'editorial-links': '<i class="fas fa-edit"></i>', 'government-links': '<i class="fas fa-flag"></i>',
-                'astrology-links': '<i class="fas fa-star"></i>', 'vaidik-links': '<i class="fas fa-om"></i>'
-            };
+        // सभी लिंक्स कंटेंट एलिमेंट्स प्राप्त करें (विजेट के अंदर से)
+        const linksContent = menuWidget.querySelectorAll('.links-content .links');
 
-            // Gradient classes (remains the same)
-            const gradientClasses = [
-                'gradient-1', 'gradient-2', 'gradient-3', 'gradient-4', 'gradient-5', 'gradient-6',
-                'gradient-7', 'gradient-8', 'gradient-9', 'gradient-10', 'gradient-11', 'gradient-12'
-            ];
+        // आइकन मैपिंग (यह वही रहेगा)
+        const categoryIcons = {
+            'class-1-5': '<i class="fas fa-book-reader"></i>', 'class-6-8': '<i class="fas fa-graduation-cap"></i>',
+            'class-9-10': '<i class="fas fa-school"></i>', 'class-11-12': '<i class="fas fa-university"></i>',
+            'competitive-exam': '<i class="fas fa-trophy"></i>', 'news-channel': '<i class="fas fa-newspaper"></i>',
+            'yoga-ayurveda': '<i class="fas fa-heart"></i>', 'marriage-links': '<i class="fas fa-ring"></i>',
+            'editorial-links': '<i class="fas fa-edit"></i>', 'government-links': '<i class="fas fa-flag"></i>',
+            'astrology-links': '<i class="fas fa-star"></i>', 'vaidik-links': '<i class="fas fa-om"></i>'
+        };
 
-            // Function to remove all gradient classes (remains the same)
-            function removeGradientClasses(element) {
-                 if (element) { // Check if element exists
-                    gradientClasses.forEach(cls => element.classList.remove(cls));
-                 }
+        // Gradient classes (यह वही रहेगा)
+        const gradientClasses = [
+            'gradient-1', 'gradient-2', 'gradient-3', 'gradient-4', 'gradient-5', 'gradient-6',
+            'gradient-7', 'gradient-8', 'gradient-9', 'gradient-10', 'gradient-11', 'gradient-12'
+        ];
+
+        // Function to remove all gradient classes (यह वही रहेगा)
+        function removeGradientClasses(element) {
+             if (element) { // Check if element exists
+                 gradientClasses.forEach(cls => element.classList.remove(cls));
              }
+         }
 
-            // Add click event listener to the menu toggle button
-            // Ensure all required elements exist before adding the listener
-            if (menuToggle && categoriesMenu && linksMenu && categoryTitleElement && linksTitle) {
-                menuToggle.addEventListener('click', (event) => {
-                    event.stopPropagation(); // Prevent click from bubbling up to the document
-                    const isActive = categoriesMenu.classList.contains('active');
+        // --- इवेंट लिस्टनर्स ---
 
-                    if (isActive) {
-                        // Close categories menu and links menu
-                        categoriesMenu.classList.remove('active');
-                        linksMenu.classList.remove('show');
-                        categoryTitleElement.style.display = 'none';
-                    } else {
-                         // Close links menu first (if open)
-                         linksMenu.classList.remove('show');
-                         // Open categories menu
-                         categoriesMenu.classList.add('active');
-                         // Show and update category title
-                         categoryTitleElement.style.display = 'block';
-                         removeGradientClasses(categoryTitleElement);
-                         const randomGradientIndex = Math.floor(Math.random() * gradientClasses.length);
-                         categoryTitleElement.classList.add(gradientClasses[randomGradientIndex]);
-                         categoryTitleElement.innerHTML = '<i class="fas fa-hand-point-down"></i> अपनी पसंद पर क्लिक करें';
-                    }
-                });
-            } else {
-                 console.error("Circular Menu Widget Error: Could not find essential toggle/menu elements.");
-            }
+        // मेन्यू टॉगल बटन पर क्लिक इवेंट जोड़ें
+        if (menuToggle && categoriesMenu && linksMenu && categoryTitleElement) {
+            menuToggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const isActive = categoriesMenu.classList.contains('active');
 
+                if (isActive) {
+                    categoriesMenu.classList.remove('active');
+                    linksMenu.classList.remove('show');
+                    categoryTitleElement.style.display = 'none';
+                } else {
+                    linksMenu.classList.remove('show');
+                    categoriesMenu.classList.add('active');
+                    categoryTitleElement.style.display = 'block';
+                    removeGradientClasses(categoryTitleElement);
+                    const randomGradientIndex = Math.floor(Math.random() * gradientClasses.length);
+                    categoryTitleElement.classList.add(gradientClasses[randomGradientIndex]);
+                    categoryTitleElement.innerHTML = '<i class="fas fa-hand-point-down"></i> अपनी पसंद पर क्लिक करें';
+                }
+            });
+        }
 
-             // Add click event listener to each category icon
+         // हर कैटेगरी के लिए क्लिक इवेंट जोड़ें
+         if (categories.length > 0 && linksMenu && linksTitle && categoriesMenu && categoryTitleElement) {
              categories.forEach((category, index) => {
                  category.addEventListener('click', (event) => {
-                     event.stopPropagation(); // Prevent click from bubbling up
+                     event.stopPropagation();
 
                      const categoryData = category.getAttribute('data-category');
                      const titleText = category.getAttribute('data-title');
-                     const iconHtml = categoryIcons[categoryData] || '<i class="fas fa-link"></i>'; // Default icon
+                     const iconHtml = categoryIcons[categoryData] || '<i class="fas fa-link"></i>';
 
-                     // Hide all specific link sections first
+                     // सभी लिंक्स सेक्शन छिपाएं
                      linksContent.forEach(linkBox => {
                          linkBox.style.display = 'none';
                      });
 
-                     // Find and show the target link section within the linksMenu
+                     // सही लिंक्स सेक्शन दिखाएं (विजेट के अंदर से)
                      const targetLinks = linksMenu.querySelector(`.links-content .${categoryData}`);
                      if (targetLinks) {
                          targetLinks.style.display = 'block';
-                     } else {
-                          console.warn(`Circular Menu Widget Warning: No link section found for category "${categoryData}"`);
-                     }
+                     } // वार्निंग हटा दी गई, अगर नहीं मिलता है तो कुछ नहीं होगा
 
-                     // Update the title of the links box
-                     if(linksTitle) {
-                        linksTitle.innerHTML = `${iconHtml} ${titleText}`;
-                        // Apply specific gradient border to the links title
-                        removeGradientClasses(linksTitle);
-                        linksTitle.classList.add(gradientClasses[index % gradientClasses.length]); // Cycle through gradients
-                     }
+                     // लिंक्स टाइटल अपडेट करें
+                     linksTitle.innerHTML = `${iconHtml} ${titleText}`;
 
-                     // Hide categories menu and show the links menu
-                     if(categoriesMenu && linksMenu && categoryTitleElement) {
-                        categoriesMenu.classList.remove('active');
-                        linksMenu.classList.add('show');
-                        categoryTitleElement.style.display = 'none'; // Hide the main category title
-                     }
+                     // लिंक्स टाइटल पर स्पेसिफिक ग्रेडिएंट बॉर्डर लागू करें
+                     removeGradientClasses(linksTitle);
+                     linksTitle.classList.add(gradientClasses[index % gradientClasses.length]);
+
+                     // मेन्यू छिपाएं और दिखाएं
+                     categoriesMenu.classList.remove('active');
+                     linksMenu.classList.add('show');
+                     categoryTitleElement.style.display = 'none';
                  });
              });
+         }
 
-
-            // Add click listener to the document to close menus if clicked outside
-            // This listener remains on the document, not scoped to the widget
-            document.addEventListener('click', (event) => {
-                 // Check if the necessary elements exist before accessing their properties/methods
-                 if (menuToggle && categoriesMenu && linksMenu && categoryTitleElement) {
-                     // Check if the click target is outside the toggle button AND outside the category menu AND outside the links menu
-                     if (
-                         !menuToggle.contains(event.target) &&
-                         !categoriesMenu.contains(event.target) &&
-                         !linksMenu.contains(event.target)
-                     ) {
-                         // If clicked outside, close both menus
-                         categoriesMenu.classList.remove('active');
-                         linksMenu.classList.remove('show');
-                         categoryTitleElement.style.display = 'none';
-                     }
+        // डॉक्यूमेंट पर कहीं और क्लिक होने पर मेन्यू छिपाने के लिए इवेंट जोड़ें
+        document.addEventListener('click', (event) => {
+            // Ensure elements exist before checking contains
+            if (menuToggle && categoriesMenu && linksMenu && categoryTitleElement) {
+                 if (
+                    !menuToggle.contains(event.target) &&
+                    !categoriesMenu.contains(event.target) &&
+                    !linksMenu.contains(event.target)
+                 ) {
+                    categoriesMenu.classList.remove('active');
+                    linksMenu.classList.remove('show');
+                    categoryTitleElement.style.display = 'none';
                  }
-            });
+            }
+        });
 
-        } else {
-             console.error("Circular Menu Widget Error: Could not find categories or links menu container.");
-        }
-
-    } else {
-        console.error("Circular Menu Widget container (#circle-menu-widget-ash) not found in the DOM!");
-    }
-
-}); // End of DOMContentLoaded listener
+    } // End if (menuWidget)
+}); // End DOMContentLoaded listener
