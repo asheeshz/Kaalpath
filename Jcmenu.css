@@ -34,7 +34,7 @@
 #my-unique-circle-menu .menu-categories {
     position: absolute;
     top: 80px;
-    left: -180%; /* समायोजित */
+    right: 50%; /* समायोजित */
     transform: translateX(-50%) scale(0); /* प्रारंभिक स्थिति */
     display: grid;
     grid-template-columns: repeat(4, 1fr);
