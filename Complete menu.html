@@ -1,0 +1,592 @@
+<!doctype html>
+ <!-- भाषा निर्दिष्ट करना अच्छा अभ्यास है -->
+
+     <!-- कैरेक्टर एन्कोडिंग -->
+     <!-- Responsive व्यवहार के लिए -->
+    Circular Menu
+
+    <!-- Font Awesome Icons (यह लिंक आवश्यक है) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- एम्बेडेड CSS -->
+    <style>
+        /* बॉडी स्टाइल */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            overflow-x: hidden;
+        }
+
+        /* सर्कुलर मेन्यू कंटेनर */
+        .circle-menu-container {
+            position: fixed;
+            top: 10px;
+            left: 85%; /* आप इसे अपनी आवश्यकतानुसार समायोजित कर सकते हैं */
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+
+        /* मेन्यू आइकॉन */
+        .menu-toggle {
+            width: 60px;
+            height: 60px;
+            background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhCbarYqIlzfRqB0VbKZvHmwyyPtvU0Y2Nkv1izHDcL_tlX1A6d3u8KtV85jfUhqqZcsUDKds1yQDDn6p_MJbM_wec1tyUHOw50hsTHKlpVzeEfhZR_gkFsL_O4OG0zytlGbKUlJaRQPSDfx7SAqI4D6B_SnWzxSQ-lWz3ld38THUIYWdDwsXE7bBuJx7EN/s374/IMG_20250404_055208.png');
+            background-size: cover;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .menu-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* सब-कैटेगरी मेन्यू */
+        .menu-categories {
+            position: absolute;
+            top: 80px;
+            /* right के बजाय left और transform का उपयोग करना अधिक विश्वसनीय हो सकता है */
+            left: -180%;
+            transform: translateX(-50%) scale(0); /* प्रारंभिक स्थिति */
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            width: 310px;
+            background-color: transparent; /* ट्रांसपेरेंट रखा गया */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 8px;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease, visibility 0.4s ease;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 1001;
+        }
+
+        .menu-categories.active {
+            transform: translateX(-50%) scale(1); /* सही ट्रांसफॉर्म */
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* "अपनी पसंद पर क्लिक करें" टाइटल */
+        .menu-categories .category-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            color: #fff; /* सफेद टेक्स्ट */
+            border-bottom: 1px solid #555; /* थोड़ी डार्क बॉर्डर */
+            display: none; /* डिफ़ॉल्ट रूप से छिपा हुआ */
+            grid-column: 1 / -1; /* पूरी चौड़ाई ले */
+            animation: zoomIn 0.8s ease-out; /* थोड़ी तेज एनिमेशन */
+            background-size: 200% auto;
+            transition: background-position 0.5s ease;
+            cursor: pointer;
+            border-radius: 30px; /* गोल किनारे */
+            /* ग्रेडिएंट JS द्वारा लागू किया जाएगा */
+        }
+
+        /* Gradient Background Styles for category titles (Applied dynamically by JS) */
+        .menu-categories .category-title.gradient-1 { background-image: linear-gradient(135deg, #e74c3c 0%, #e74c3c 10%, #e67e22 10%, #e67e22 20%, #f1c40f 20%, #f1c40f 30%, #2ecc71 30%, #2ecc71 40%, #1abc9c 40%, #1abc9c 50%, #3498db 50%, #3498db 60%, #2980b9 60%, #2980b9 70%, #9b59b6 70%, #9b59b6 80%, #e91e63 80%, #e91e63 90%, #34495e 90%, #34495e 100%); }
+        .menu-categories .category-title.gradient-2 { background-image: linear-gradient(90deg, #3366ff, #cc3399, #ff3366, #ff6600, #ffff33); }
+        .menu-categories .category-title.gradient-3 { background-image: linear-gradient(90deg, #00ffcc, #33ccff, #cc33ff, #ff33cc, #ff0066); }
+        .menu-categories .category-title.gradient-4 { background-image: linear-gradient(90deg, #66ff33, #33ffcc, #3366ff, #6633ff, #cc33ff); }
+        .menu-categories .category-title.gradient-5 { background-image: linear-gradient(90deg, #ff3300, #ff9933, #ffcc66, #ffff99, #ccffcc); }
+        .menu-categories .category-title.gradient-6 { background-image: linear-gradient(90deg, #33ff57, #00ccff, #cc33ff, #ff5733, #ffcc00); }
+        .menu-categories .category-title.gradient-7 { background-image: linear-gradient(90deg, #cc3399, #ff3366, #ff6600, #ffff33, #3366ff); }
+        .menu-categories .category-title.gradient-8 { background-image: linear-gradient(90deg, #33ccff, #cc33ff, #ff33cc, #ff0066, #00ffcc); }
+        .menu-categories .category-title.gradient-9 { background-image: linear-gradient(90deg, #6633ff, #cc33ff, #66ff33, #33ffcc, #3366ff); }
+        .menu-categories .category-title.gradient-10 { background-image: linear-gradient(90deg, #ffcc66, #ffff99, #ccffcc, #ff3300, #ff9933); }
+        .menu-categories .category-title.gradient-11 { background-image: linear-gradient(90deg, #33ff57, #00ccff, #cc33ff, #ff5733, #ffcc00); }
+        .menu-categories .category-title.gradient-12 { background-image: linear-gradient(90deg, #cc3399, #ff3366, #ff6600, #ffff33, #3366ff); }
+
+        /* Gradient Animation on Hover for category titles */
+        .menu-categories .category-title:hover {
+            background-position: right center;
+        }
+
+        @keyframes zoomIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* कैटेगरी आइकॉन स्टाइल */
+        .menu-categories .category {
+            width: 68px;
+            height: 68px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            color: #333;
+            font-size: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-categories .category img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        .menu-categories .category:hover {
+            transform: scale(1.15);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            border-color: #4caf50;
+        }
+
+        /* लिंक बॉक्स */
+        .menu-links {
+            position: absolute;
+            top: 80px;
+            left: -180%; /* कैटेगरी मेन्यू के समान स्थिति */
+            transform: translateX(-50%) scale(0); /* प्रारंभिक स्थिति */
+            width: 340px;
+            background-color: #200000; /* बैकग्राउंड कलर */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* गहरा शैडो */
+            border-radius: 15px;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            max-height: 400px; /* अधिकतम ऊंचाई */
+            overflow-y: auto; /* स्क्रॉल बार */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease, visibility 0.4s ease;
+            display: none; /* Start hidden */
+            z-index: 1000; /* Lower z-index initially */
+        }
+
+        .menu-links.show {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) scale(1); /* दिखने पर सही ट्रांसफॉर्म */
+            z-index: 1002; /* Higher z-index when shown */
+        }
+
+        /* लिंक्स टाइटल स्टाइल (आइकन के साथ) */
+        .menu-links .links-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            animation: fadeInUp 1s ease-in-out;
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            position: relative;
+            z-index: 1;
+            background-color: transparent; /* Ensure background doesn't obscure the border */
+            overflow: hidden; /* Contain the pseudo-element */
+        }
+
+        /* लिंक्स टाइटल के लिए एनिमेटेड बॉर्डर */
+        .menu-links .links-title::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px; /* पूरे क्षेत्र को कवर करें */
+            background-size: 400% 400%;
+            z-index: -1; /* टेक्स्ट के पीछे रखें */
+            border-radius: 10px; /* थोड़ा बड़ा रेडियस ताकि पैरेंट से मैच न करे और बॉर्डर जैसा दिखे */
+            animation: Gradient 5s ease infinite;
+            /* ग्रेडिएंट JS द्वारा लागू किया जाएगा */
+        }
+
+        /* लिंक्स टाइटल बॉर्डर के लिए ग्रेडिएंट एनिमेशन (JS द्वारा लागू) */
+        .menu-links .links-title.gradient-1::before { background-image: linear-gradient(90deg, #ff5733, #ffcc00, #33ff57, #00ccff, #cc33ff, #ff5733, #ffcc00); }
+        .menu-links .links-title.gradient-2::before { background-image: linear-gradient(90deg, #3366ff, #cc3399, #ff3366, #ff6600, #ffff33, #3366ff, #cc3399); }
+        .menu-links .links-title.gradient-3::before { background-image: linear-gradient(90deg, #00ffcc, #33ccff, #cc33ff, #ff33cc, #ff0066, #00ffcc, #33ccff); }
+        .menu-links .links-title.gradient-4::before { background-image: linear-gradient(90deg, #66ff33, #33ffcc, #3366ff, #6633ff, #cc33ff, #66ff33, #33ffcc); }
+        .menu-links .links-title.gradient-5::before { background-image: linear-gradient(90deg, #ff3300, #ff9933, #ffcc66, #ffff99, #ccffcc, #ff3300, #ff9933); }
+        .menu-links .links-title.gradient-6::before { background-image: linear-gradient(90deg, #33ff57, #00ccff, #cc33ff, #ff5733, #ffcc00, #33ff57, #00ccff); }
+        .menu-links .links-title.gradient-7::before { background-image: linear-gradient(90deg, #cc3399, #ff3366, #ff6600, #ffff33, #3366ff, #cc3399, #ff3366); }
+        .menu-links .links-title.gradient-8::before { background-image: linear-gradient(90deg, #33ccff, #cc33ff, #ff33cc, #ff0066, #00ffcc, #33ccff, #cc33ff); }
+        .menu-links .links-title.gradient-9::before { background-image: linear-gradient(90deg, #6633ff, #cc33ff, #66ff33, #33ffcc, #3366ff, #6633ff, #cc33ff); }
+        .menu-links .links-title.gradient-10::before { background-image: linear-gradient(90deg, #ffcc66, #ffff99, #ccffcc, #ff3300, #ff9933, #ffcc66, #ffff99); }
+        .menu-links .links-title.gradient-11::before { background-image: linear-gradient(90deg, #33ff57, #00ccff, #cc33ff, #ff5733, #ffcc00, #33ff57, #00ccff); }
+        .menu-links .links-title.gradient-12::before { background-image: linear-gradient(90deg, #cc3399, #ff3366, #ff6600, #ffff33, #3366ff, #cc3399, #ff3366); }
+
+        @keyframes Gradient {
+            0% { background-position: 0% 50% }
+            50% { background-position: 100% 50% }
+            100% { background-position: 0% 50% }
+        }
+
+        @keyframes fadeInUp {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        /* लिंक स्टाइल (व्यक्तिगत ग्रेडिएंट के साथ) */
+        .links-content a.outer-cont {
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+            cursor: pointer;
+            position: relative;
+            color: #fff; /* सफेद टेक्स्ट */
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); /* गहरा शैडो */
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            overflow: hidden;
+            border: none; /* डिफ़ॉल्ट बॉर्डर हटाएं */
+            box-shadow:
+                inset 0px 0px 4px rgba(255, 255, 255, 0.6), /* थोड़ा सफेद इनसेट */
+                inset 0px 20px 25px rgba(0, 0, 0, 0.7),   /* गहरा इनसेट */
+                0px 4px 8px rgba(0, 0, 0, 0.5);          /* सामान्य शैडो */
+            /* विशिष्ट ग्रेडिएंट नीचे लागू होते हैं */
+        }
+
+        /* होवर/एक्टिव इफेक्ट्स */
+         .links-content a.outer-cont::before {
+            content: "";
+            position: absolute;
+            inset: 0; /* पैरेंट को पूरी तरह से कवर करें */
+            border-radius: 12px; /* पैरेंट से थोड़ा बड़ा ग्लो इफेक्ट के लिए */
+            filter: blur(0);
+            z-index: -1; /* बैकग्राउंड ग्रेडिएंट के पीछे रखें */
+            box-shadow: none; /* स्यूडो-एलिमेंट पर कोई बेस शैडो नहीं */
+            background: conic-gradient(
+                #ffffff33 80deg, /* थोड़ा सफेद */
+                #ffffff66,
+                #ffffff88,
+                #ffffff33 280deg
+            ); /* चमक इफेक्ट */
+            transition: all 0.3s ease;
+            opacity: 0; /* डिफ़ॉल्ट रूप से छिपा हुआ */
+            pointer-events: none; /* सुनिश्चित करें कि यह क्लिक को ब्लॉक न करे */
+        }
+
+        .links-content a.outer-cont:hover {
+             transform: translateY(-2px); /* थोड़ा ऊपर उठाएं */
+             box-shadow:
+                inset 0px 0px 5px rgba(255, 255, 255, 0.7),
+                inset 0px 25px 30px rgba(0, 0, 0, 0.8),
+                0px 6px 12px rgba(0, 0, 0, 0.6); /* होवर पर बेहतर शैडो */
+        }
+
+        .links-content a.outer-cont:hover::before {
+            filter: blur(10px); /* थोड़ा ब्लर */
+            opacity: 0.6; /* थोड़ा दिखाएं */
+        }
+
+        .links-content a.outer-cont:active {
+            transform: translateY(1px); /* दबाने का प्रभाव */
+            box-shadow:
+                inset 0px 0px 6px rgba(255, 255, 255, 0.8),
+                inset 0px 30px 35px rgba(0, 0, 0, 0.9); /* एक्टिव होने पर गहरा इनसेट शैडो */
+             /* margin-top: 1px; /* बटन दबाने का अनुकरण करने के लिए */
+        }
+        .links-content a.outer-cont:active::before {
+            filter: blur(5px);
+            opacity: 0.8;
+        }
+
+        .links-content a.outer-cont img {
+            width: 28px;
+            height: 28px;
+            margin-right: 12px;
+            vertical-align: middle;
+            border-radius: 4px;
+            flex-shrink: 0; /* छवि को सिकुड़ने से रोकें */
+            position: relative; /* सुनिश्चित करें कि छवि स्यूडो-एलिमेंट के ऊपर रहे */
+            z-index: 1;
+        }
+
+        .links-content a.outer-cont span {
+             position: relative; /* सुनिश्चित करें कि टेक्स्ट स्यूडो-एलिमेंट के ऊपर रहे */
+             z-index: 1;
+             flex-grow: 1; /* टेक्स्ट को शेष स्थान लेने दें */
+         }
+
+        /* लिंक सेक्शन डिफ़ॉल्ट रूप से छिपे हुए */
+        .links-content .links {
+            display: none;
+        }
+
+        /* मैनुअल कलर प्रति लिंक (बैकग्राउंड) */
+        /* Specificity सुनिश्चित करें */
+        .links-content .class-1-5 > a:nth-child(1) { background: linear-gradient(90deg, #ffc107, #ff9800, #ff5722); }
+        .links-content .class-1-5 > a:nth-child(2) { background: linear-gradient(90deg, #4caf50, #8bc34a, #cddc39); }
+
+        .links-content .class-6-8 > a:nth-child(1) { background: linear-gradient(90deg, #e91e63, #9c27b0, #673ab7); }
+        .links-content .class-6-8 > a:nth-child(2) { background: linear-gradient(90deg, #f44336, #e53935, #d32f2f); }
+        .links-content .class-6-8 > a:nth-child(3) { background: linear-gradient(90deg, #03a9f4, #00bcd4, #009688); }
+        .links-content .class-6-8 > a:nth-child(4) { background: linear-gradient(90deg, #9c27b0, #ba68c8, #e1bee7); }
+        .links-content .class-6-8 > a:nth-child(5) { background: linear-gradient(90deg, #4caf50, #8bc34a, #cddc39); }
+        .links-content .class-6-8 > a:nth-child(6) { background: linear-gradient(90deg, #ff9800, #ffc107, #ffeb3b); }
+        .links-content .class-6-8 > a:nth-child(7) { background: linear-gradient(90deg, #8bc34a, #cddc39, #f0f4c3); }
+        .links-content .class-6-8 > a:nth-child(8) { background: linear-gradient(90deg, #e91e63, #9c27b0, #673ab7); } /* 9वें को 8वां किया */
+
+        .links-content .class-9-10 > a:nth-child(1) { background: linear-gradient(90deg, #ccffcc, #8bc34a, #4caf50); }
+        .links-content .class-9-10 > a:nth-child(2) { background: linear-gradient(90deg, #ffffcc, #ffeb3b, #ffc107); }
+        .links-content .class-9-10 > a:nth-child(3) { background: linear-gradient(90deg, #ffcccc, #e53935, #f44336); }
+        .links-content .class-9-10 > a:nth-child(4) { background: linear-gradient(90deg, #ccffff, #009688, #00bcd4); }
+        .links-content .class-9-10 > a:nth-child(5) { background: linear-gradient(90deg, #ffccff, #ba68c8, #9c27b0); }
+        .links-content .class-9-10 > a:nth-child(6) { background: linear-gradient(90deg, #cc9999, #a1887f, #795548); }
+        .links-content .class-9-10 > a:nth-child(7) { background: linear-gradient(90deg, #ffc107, #ff9800, #ff5722); }
+        .links-content .class-9-10 > a:nth-child(8) { background: linear-gradient(90deg, #b0c4de, #90a4ae, #607d8b); }
+
+        .links-content .class-11-12 > a:nth-child(1) { background: linear-gradient(90deg, #e91e63, #9c27b0, #673ab7); }
+        .links-content .class-11-12 > a:nth-child(2) { background: linear-gradient(90deg, #00bcd4, #03a9f4, #009688); }
+
+        .links-content .competitive-exam > a:nth-child(1) { background: linear-gradient(90deg, #4caf50, #8bc34a, #cddc39); }
+        .links-content .competitive-exam > a:nth-child(2) { background: linear-gradient(90deg, #708090, #536d7a, #37474f); } /* कर्मख्य - समायोजित */
+        .links-content .competitive-exam > a:nth-child(3) { background: linear-gradient(90deg, #f1c40f, #f39c12, #e67e22); } /* Qbuk */
+
+        .links-content .news-channel > a:nth-child(1) { background: linear-gradient(90deg, #ff9800, #ffc107, #ffeb3b); }
+        .links-content .news-channel > a:nth-child(2) { background: linear-gradient(90deg, #3498db, #2980b9, #1f618d); } /* Fciz */
+
+        .links-content .yoga-ayurveda > a:nth-child(1) { background: linear-gradient(90deg, #00bcd4, #03a9f4, #009688); }
+        .links-content .yoga-ayurveda > a:nth-child(2) { background: linear-gradient(90deg, #8bc34a, #cddc39, #f0f4c3); }
+        .links-content .yoga-ayurveda > a:nth-child(3) { background: linear-gradient(90deg, #708090, #536d7a, #37474f); } /* तंत्रीवाक - समायोजित */
+
+        .links-content .marriage-links > a:nth-child(1) { background: linear-gradient(90deg, #f44336, #e53935, #d32f2f); }
+        .links-content .marriage-links > a:nth-child(2) { background: linear-gradient(90deg, #795548, #a1887f, #d7ccc8); }
+
+        .links-content .editorial-links > a:nth-child(1) { background: linear-gradient(90deg, #9c27b0, #ba68c8, #e1bee7); }
+        .links-content .editorial-links > a:nth-child(2) { background: linear-gradient(90deg, #607d8b, #90a4ae, #cfd8dc); }
+        .links-content .editorial-links > a:nth-child(3) { background: linear-gradient(90deg, #2c3e50, #34495e, #2c3e50); } /* APGO */
+
+        .links-content .government-links > a:nth-child(1) { background: linear-gradient(90deg, #b3e5fc, #81d4fa, #4fc3f7); } /* घटनादर्पण - समायोजित */
+
+        .links-content .astrology-links > a:nth-child(1) { background: linear-gradient(90deg, #4caf50, #8bc34a, #cddc39); }
+        .links-content .astrology-links > a:nth-child(2) { background: linear-gradient(90deg, #f44336, #e53935, #d32f2f); }
+        .links-content .astrology-links > a:nth-child(3) { background: linear-gradient(90deg, #00bcd4, #03a9f4, #009688); }
+
+        .links-content .vaidik-links > a:nth-child(1) { background: linear-gradient(90deg, #ffeb3b, #ffc107, #ff9800); }
+        .links-content .vaidik-links > a:nth-child(2) { background: linear-gradient(90deg, #fff9c4, #fff59d, #fff176); } /* मुक्तसंगः - समायोजित */
+
+        /* मेन्यू लिंक्स के लिए कस्टम स्क्रॉलबार */
+        .menu-links::-webkit-scrollbar { width: 8px; }
+        .menu-links::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.1); border-radius: 10px; } /* सफेद ट्रैक डार्क बैकग्राउंड पर */
+        .menu-links::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.4); border-radius: 10px; border: 2px solid transparent; background-clip: content-box; } /* थोड़ा अधिक दिखने वाला थंब */
+        .menu-links::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.6); }
+    </style>
+    <!-- बाहरी CSS लिंक हटा दिया गया है -->
+
+
+
+
+    <div class="circle-menu-container">
+        <div class="menu-toggle"></div>
+        <div class="menu-categories">
+            <!-- यह टाइटल JS द्वारा नियंत्रित होता है -->
+            <div class="category-title"><i class="fas fa-hand-point-down"></i> अपनी पसंद पर क्लिक करें</div>
+            <!-- कैटेगरी आइकन्स -->
+             <div class="category" data-category="class-1-5" data-title="प्रारंभिक कक्षाएँ"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEilZ3dM55Xz_GsEsZBSYaM0oCI_P9GqRYJuyKhTZdcEy4AdjPMvhJOcV1BR-p3oC1wp4L_KiMAVTJQTtw_1-xtRv1wUuCNMQNH1MdeLNJjsHlp0phRumFY7SIDNz3Jz3BOTlIF73ST_ZI1F-xSUEDDKMAP9vpi9VajiPLTllj4lTFJyWf7HYmdmHiTx8Nny/s1927/IMG_1737028885894.png" alt="कक्षा 1-5" /></div>
+             <div class="category" data-category="class-6-8" data-title="मध्यमिक कक्षाएँ"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgfw6acBTVCVpCY5J0EzY0bPVrWXMjcM1n09DcZs61WdkIwqGJuuWmu87Pm50X0CbxF_KBPn7YfgNr2I1T53EjBXy8yGh0Yx7o25whknaJ5HOKkPy1DivIRCxYj0cmBCKRPOSOzdhgbVIHik9PrpQvcetUh0Myl280acraLYWihsgbRkggN7aJTJv1WwvOY/s1920/IMG_1737029602252.png" alt="कक्षा 6-8" /></div>
+             <div class="category" data-category="class-9-10" data-title="माध्यमिक कक्षाएँ"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgNGlb5DDFB88pvgViQJZcg5AipTVcGaKfXGBr35N9YFH6JRh8JwAUaa5HxJ_ctb4p4mZXwMNzw8HeGwBJkz7kFw44rRE7LtkXMGYI2PLXvwM-iRzQfFr1AhWITmNN8Fkhd3yyyH8KWmH57IzOXc49tess0qWbuWiz5t-ppg1fnW5Bj6RNpFKXMyADrS9lU/s1932/IMG_1737030307619.png" alt="कक्षा 9-10" /></div>
+             <div class="category" data-category="class-11-12" data-title="उच्चतर माध्यमिक कक्षाएँ"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiSMSIpGMWSoWT9cbCtYs0UebIOU9q6I0qgyTODXCi1V5xeCcBP6T8Qh9DaB8Ny0L2pB0Wb6hhXcOXeRYWuLNGaBHlcfUVd7h2y8OVQtWt7BFdHqe0mg4EklsJVZn5PP4iKH-F7z7eYvUEqqfyNt7FsSNNdyRs6M0IDLO-z-zmHsY3wq4jq7_QvxiqKUfrn/s1920/IMG_1737030959966.png" alt="कक्षा 11-12" /></div>
+             <div class="category" data-category="competitive-exam" data-title="प्रतियोगी परीक्षाएँ"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEik6LmPJRY2LLMJxQpJb6E5ApvSEHibTaQUvzK__ubR93p5s4UnOMg9PSgN67Ezry7x0kb_KBSrnZnp3V0YXvRr7Mn-M4ZxevKOSGCjZBHF9zIBnon70Ax9E8L3i8gtcsaWJtB6k9IV8TIHd0RPeTkvxziW9A57PGXytm9Cf6ZLgJXuhQZ-CjqaI8liZUtR/s1936/IMG_1737032416654.png" alt="प्रतियोगी परीक्षा" /></div>
+             <div class="category" data-category="news-channel" data-title="समाचार चैनल"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEimscbBPwLeeDEABAI0MEm_Ec97oI9cP-86fI7xUnQgG37kI8bc_SbkkaK00AIoMfdfBTH2xDtAKm6ds4SoDS5STw739457bXdkEHsPmxvgGLMpkJvc9ozkBep11lCWwZHeItEl-IIHanAxGEqAOQ6Kuq8wa5K7TtmEOR7wflj_OolZYlEgPOUqb3nEJqQn/s360/ei_1737032712023-removebg-preview.png" alt="न्यूज़ चैनल" /></div>
+             <div class="category" data-category="yoga-ayurveda" data-title="योग एवं आयुर्वेद"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhIS0xgui57ahr_TkmScetUIbKuytwQntWUNEq3YpGEOi0ex6e02yYmUNzgfM3nx7pPo30ZRmkXtQRqouuAc9Ec3DsHPw9kc7hLvO8OUTSA2k9RjD_uCtuRXokvsoZK9jkDyx1fmhB46yQkRq7klhaCNVx7KPH2MrUeJy0FPKVXzHD-LV7po5kq3Q_Uubx-/s1920/IMG_1737033609508.png" alt="योग एवं आयुर्वेद" /></div>
+             <div class="category" data-category="marriage-links" data-title="वैवाहिक संबंध"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjUPJ2C-ImxKtFeebozoRX6VOI-0c1X60QjNb3zJ5WctyIXg7yJZIL2zWOgVUt0rDkdV1VUi-V8cHDEbI5XDZmaCvvOgxHK7dyMJ3AzyHKS-YoAbZQT7EhZfrXmFhTmpw7D1bf1xWYBhM3O-_M_a_71Vjp8m9ErVccZI7_JWY9mP45ucONqzCPrRomhOHCT/s1936/IMG_1737037850103.png" alt="वैवाहिक रिश्ता" /></div>
+             <div class="category" data-category="editorial-links" data-title="संपादकीय विचार"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjLFyagxMQqTaoPj45kWuIIqFBAwieWcDc5veBXWjty8Il1RONxrLfosbTFscO4_h8dqHAo2pBDpyivNaAZaN2qzng7K9pvJozBBfpcUuVaSLTKlMEvNbumsAR2yBA2P-G2CxPzQpp8mq9Fhag__UuIR2zi0ODIqa9yzetZZm_wQV2Yl7Fw0-RiE85Fkrqm/s1920/IMG_1737039338978.png" alt="संपादकीय" /></div>
+             <div class="category" data-category="government-links" data-title="सरकारी योजनाएँ"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzCGzcmFfSlKXQ1tVEP1fOG9WrRmaaIjxGyrBeeKP2n0xNgTolpqjebLDoyLQEZl29v181W-ctfwbMEEWI4sBMIin6Qf2CqA-MNmaLi0BMjvrL_0EWkuo4xSWfRIZ-DzQDX3L7rsvYOfkPWMYgPXKl05zDJ5T4jXPlwnNk_ur7m9nYBoOOsBKt9-_YUmZr/s1920/IMG_1737039937417.png" alt="सरकारी योजनाएं" /></div>
+             <div class="category" data-category="astrology-links" data-title="आध्यात्मिक एवं ज्योतिष"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgDUoKsPMq_-9FoU9oHdFrqiUKvRUKiG_Illy-k0ETzQH_1ortJ-qwswSNKJYTIzi_rA-J9uOnSbFd_TOgmlqa4MIfKwXKpci_LobCXQnQJ4fKYYLjItGU2YvsvmZX73zqtZg4OaBCrdUGsLhNGg-icumjss0DPyfWoGfUaMHwC_JkttRYtJZulH8mSzwuM/s1920/IMG_20241210_203857.png" alt="आध्यात्म एवं ज्योतिष" /></div>
+             <div class="category" data-category="vaidik-links" data-title="वेद एवं व्याकरण"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgSJSrmSw18LQ8KkHRCU3zRJYZULUae5E_mVqI3HzqDfHvtkyE0QQnOYY6JkD6_MRiGZF-jBd00trM1_3LDSatJrbTzvqlcnaAZ12eeJnPE-MpwWP40GCOI1HiP_ancRTgMAXq9WOYBlb8iVUsIQIohJ9EIqt4Rugst-aFJyopmmU2q-ByGhG1qQZcWnxVN/s1920/IMG_1737048090628.png" alt="वेद एवं व्याकरण" /></div>
+        </div>
+        <div class="menu-links">
+            <!-- लिंक्स टाइटल JS द्वारा अपडेट होगा -->
+            <div class="links-title">
+                <i class="fas fa-link"></i> <!-- डिफॉल्ट आइकन -->
+            </div>
+            <div class="links-content">
+                <!-- Links Sections (सभी लिंक सेक्शन यहाँ हैं) -->
+                <div class="class-1-5 links">
+                    <a href="https://viprayag.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEge_my0vsh84LVnDtaheqQD-EyyQ2Y0Q6a8BOD_q8mcy19LO_YDu2P26Po2FmfSuKrin13Uu1OdP6j9FjeXrocwZg8BZ9E9t7ZLkboy__14FHcVtcnl9JYLB6LYQSO1DlehQxElALxYxE_qiQc5JjPdvmvQx2h4UajhnSuDQ_IHymkcb3LCxXpC8ltAJ1M/s1882/IMG_20241210_133455.png" alt="विप्रयाग्" /><span> विप्रयाग् : प्राथमिक शिक्षा का माध्यम</span></a>
+                    <a href="https://opeclass.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhiH5h-Tl0IZC4baK9YE0cSfzBvuKTq-WNSXfNLgb39b3q0_liV21kdOIZchyRX8RIYP0_KU0ulcXcEfwmy-tWcW1fEV0MPj9fZ3O8KVtJPvRMY8qTcZvZGswknTNKVzHcWvMahRpBbMS5ERl3piBdC2ExyJfofZsHvxFe_tjHvaV3kHiJ7PYEi6McgOMM/s1920/IMG_1733818781532.png" alt="PeclassO" /><span> PeclassO: पंचम कक्षा का ऑनलाइन शिक्षण</span></a>
+                </div>
+                 <div class="class-6-8 links">
+                    <a href="https://gyanbaddha.blogspot.com" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi41j3-jLIxsAmLLP2Nc-9ZxIw9WiCDIu4cPQ5n39t36m8KSYTUVthmKtjHhOZKMrdMOQfAGUsD2U53G0EImH90BsZdIRzFMc7ffRYi5-XYgsYHkwtGk3WdeeO8pU3ZOY4foR6wcRNZhERDyWAIRy7ARnDEsgj44Fz_Tz7m3vAcbdXV2fkn7Lq3hHR2piU/s1920/IMG_1733819363432.png" alt="ज्ञानबद्ध" /><span> ज्ञानबद्ध : षष्ठम कक्षा का शैक्षणिक पोर्टल</span></a>
+                    <a href="https://iqvc.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjbjiTd3hdMu-RwO2ITI3LiMCivcf35VUlBhLr1qtqi2PFeCT8gIAsg_kANpIcJpJHwoAHMsg84P8LgJD4Z0rsV-ognFunKUSB-2XLzuP95YRP7UUOuRXpM6rxQR34SwkJ2ryOlU8hjV2xuRsPN9G9Z29JhJ54v41FIGiJRZREc-vYf6MwrpOE1_tmBFNY/s1920/IMG_20241210_141118.png" alt="Iqvc" /><span> Iqvc: सप्तम कक्षा का शैक्षणिक माध्यम</span></a>
+                    <a href="https://ythawawat.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEggQygcO7XniXokXdes5wiSVmOmn-CjlzUYaBxc5oRe_c8IjTIhF1vqU6IcPgoRsDcQdruJSClcuwBKNiBZJV9d7LwunfpEN4-wLAp-MrHDhoX9LaZ1EKX-cp1vExYc-9A55inh6ANSuy_IVnNjXJDbpxcKBvMnOHmCthQpz6bWn3EJ4lHVL3_Pw5GWI8s/s1916/IMG_20241210_141720.png" alt="यथावत" /><span> यथावत: अष्टम कक्षा गणित का शिक्षण</span></a>
+                    <a href="https://niryogkshemah.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhYFxuIOcKY7rdxQmkBhhQRP18izXdPVD-QYo1OaND4LDPnoOUzkSKJp-xIJAxAaUlOvavBqHt_TQyLdytZodUQ_vqn6E24g65UAgeZkbMZCyQEdV0X3lwty0pI91E_cU1X1lwBUAxLNtC2rqxv2R3NsH20Pl_1dnZndHbqhLfNpE5I0OeEXkJqq-iO9BA/s1920/IMG_20241210_142418.png" alt="निर्योगक्षेमः" /><span> निर्योगक्षेमः: अष्टम कक्षा हिंदी का शिक्षण</span></a>
+                    <a href="https://querymug.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjrvMwwx55yASQnQkrjIJecm_0JaPXeqDyAKUm52BgDJ__NJKGKbGGLXGuK3reuFHMehR-4XfdoekBBlUQzw7jmu85_1GUy_4mTwDhWQ627gVps5AVRZR2xYNes5FBWceSM4xqAD5MbyYfS44Zw5pkwm4ALvxqM3rwSQzYMRF4Tq1TJkaOcNwjyCkmuseY/s1865/IMG_20241210_145107.png" alt="Query-mug" /><span> Query-mug: अष्टम कक्षा अंग्रेजी का पठन</span></a>
+                    <a href="https://apurya.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiEEZlUWzB-A8TSr0E9H0sUIgJc9RJt2zAzXWT4EAFBw0woZ6DxO2ytsAE4NofzRyL3fN3Z5Ah2aBlcUCyfs9WyMwNzlW2UKD19ag7wpjPmHHKUjywowfk9F1Nbb9UOgEb2qGXb166ly4xnT9U-00kAZlgMCvgKSdnfvM5yIy8R7DN16F9SA2Gu8LsAD2w/s1812/IMG_20241210_150538.png" alt="आपूर्य" /><span> आपूर्य: अष्टम कक्षा सामाजिक विज्ञान</span></a>
+                    <a href="https://vedhasah.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvDG6QMBDPokmOvuIkGKGjQd8Hz-Zl5zF-xWNdXoTca0aWh4Qmff0DB13DaxprA3FCl9gmk4oaDQCJabRhIZ8PEl82BSiMwJecsELf6858Bi3fp1Eqsr3rq_hlB-nVm1ITyg54OoLAYRRJhWcrv9HVCITVUyONVACm50PCN87BzGtZj1UYjGlXqLj1ISQ/s1903/IMG_20241210_153525.png" alt="वेधस्" /><span> वेधस्: अष्टम कक्षा संस्कृत का शिक्षण</span></a>
+                    <a href="https://ctzi.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiyh083bzlFD18QlN88CjeMNSAak8VDXWD3J7zdKVbY-lxV0Pyx9-ljKw13utY_hY8bRoQcCrCuCWV38DYKZiDLXIV4h-z06y12KGg0PKMy1n3piKdzo5OEvpNJP8fMdX0iEdkS2kzYFyNYmIlQFfV_tMS_tYCIdIaaCsRk2d4Zih6XpQWJtPEOESrV5AQ/s1920/IMG_1733826746871.png" alt="Ctzi" /><span> Ctzi: अष्टम कक्षा विज्ञान का शिक्षण</span></a>
+                </div>
+                <div class="class-9-10 links">
+                    <a href="https://stickmemory.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjBDrXer2jXvO8-rwPmT5ySYMLv1okLMi8GtgnoVRmgP6ertLpevWwWITr216VMamHxNi-e3imMnZDvejFQQTUyghk0Vv6AKgO0QnSnrjLIRDRS51fXfKhf8Xn_ZdRAl8i_n-Bm-JCYfvRv_9B9zimArUPZce4TLFsp3ixEIcPMDBW0MyhyzoPbvMZ5UcU/s1920/IMG_1733827984637.png" alt="Stick memory" /><span> Stick memory: नवम कक्षा सामाजिक विज्ञान, गणित, विज्ञान</span></a>
+                    <a href="https://vqlm.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj_DI2yPTtS3P3igxNBWvjf3WlERehHBzKBEvFcTrnKGZY16Vsk7Nq856BWol-8lafdHgvO8PvCx1SskyNm3mRTnl_hX5u5G1lO3p5PjqOzb0YusHhUZi4_VPG9B99UF4XmqCOiSBjFywbWnOx3vmgcy0HiSBz_64QjUQFBdX-a-0rAf4n5BlyDXu_Gw_c/s1920/IMG_1733829505213.png" alt="वेदकुलम्" /><span> वेदकुलम् : नवम कक्षा अंग्रेजी, संस्कृत, हिंदी</span></a>
+                    <a href="https://xmcq.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEikAEXf4e-wSYtzWuesJru3oHDm7YA66gM8nJx069Le3vlHhX6MwyvK23e8-2Hr5Wz2FbEE39fbeJGcfycsUMAR9NCV9aycJxhoJNbxNPbTNYupMJ4ztXXtpyjqwhw4hRBxYpou4NqyKZRx67cmj3cpuvn1rp2nNqbKsM9XbRS_31ICQxZCRloODuBmfuQ/s1843/IMG_20241210_171352.png" alt="Xmcq" /><span> Xmcq : दशम कक्षा हिंदी का शिक्षण</span></a>
+                    <a href="https://memoryurl.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhU2hXCXvdz5pFGihKYtCsS7BkhJZkyNoRCU_salKo9v2H0pYZEX4v3zX8ia10drYKv9n8BwXYd1iVlb41efwnAF3dChyphenhyphen_sf-V7y6d_YLxth5BJJa64Nkx-5K_fNhqmK1GjW6pAiwKvY1hgDUU6dR_bP464gRfxObGGUapGe9lRyHRN9oyPCHA7Txh4QpY/s1920/IMG_1733832061511.png" alt="Memory url" /><span> Memory url : दशम कक्षा सामाजिक विज्ञान</span></a>
+                    <a href="https://kanatva.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjwBAM24so3dfPv1yhmhZSbrb8GkqiZplIT25_N7HCbAUuu7UunQ-s4AAWjsBh4hU8GAbu7-AEQNMI8NhT5_UYNvy1iiKnj2up3szq3qOa_17tZs8QfFi-svDVB0DfJLRDql7y_0IcKFe8uqJwfNi8HGItkyqUg-RFSzbrfXwn2mU1EsflkwKGktu-of0M/s1920/IMG_1733833916710.png" alt="कणत्व:" /><span> कणत्व: : दशम कक्षा अंग्रेजी का अध्ययन</span></a>
+                    <a href="https://gariyashi.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvYlgjghb04ZQJN5ZjUsAGHG5MunIA0PxO1Luu00R2xW86dhoI5sbcpTxddFat6GJy9SLutkLlD8i8CQnUYRLKucAlB7mwemp45bTENRB7F4V3kg-mNJfok1D3fI6T-dlvYR2noHsUOXrpRbC8CwZLGgcLGD-rvgLM70ComSYBDwe-vnjTWqYdqtRtLyY/s1920/IMG_1733834999240.png" alt="गरीयसी" /><span> गरीयसी: दशम कक्षा संस्कृत का शिक्षण</span></a>
+                    <a href="https://jyayashi.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjnCzr75NckOsOSu2YA_aIH8IkFDUqE6jksnM1DW5Y30JNvNdizusATmVGKhy9leSdsNOOxxlfMhUh3n2is3H2YifFP7lAXQUoKpuTJkuFjuUHdSMI8cVMTf4R0GvB1zexfPbwOzGHPYzkBpu4hoJir9G819RXvUiWWvDUR7uV3qpXzFvoBNNaI026jqqA/s1920/IMG_20241210_184006.png" alt="ज्यायसी" /><span> ज्यायसी : दशम कक्षा विज्ञान का अध्ययन</span></a>
+                    <a href="https://vijyatum.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjNxkbOETI7MiZDwq1VdJEAjPekCiYcw-M6Lk777pLkMRMc4_cNllO7i7Y5CWiA9M2gKkPhlG74MM3pkVpSGmDAgftNabxDlmSLE8owRFY_NCOxAHU9NSDmrTS6KamOHPxMrnSpIw48TsnyK_LEvVztDdDI-G27W5oN2NEjKR9NIGxWWXKuZSfKy-hfC_E/s1920/IMG_1733837060242.png" alt="विज्यतुं" /><span> विज्यतुं : दशम कक्षा गणित का शिक्षण</span></a>
+                </div>
+                <div class="class-11-12 links">
+                    <a href="https://ashramshiksha.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjRUW7GukzAmBq_m1pyGMrJkm74RuOE-G2qDKGJLZLgQ3Dvo6bnByHYIK78IRA8N1kbmXuOeldeH8R2XJe-OgyXuRFZnp73FNVMsSc9tQUBfsQIVUYRwmjSnERaefU2GbNPXhs0RENj7X6WsStkS5t7hDRvU1Z1NiOn_0Z4647KJuCu07g-28lCteMh5Qw/s1920/IMG_20241210_190956.png" alt="आश्रम-शिक्षा" /><span> आश्रम-शिक्षा : एकादश कक्षा का पठन</span></a>
+                    <a href="https://vitrashna.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi_EyEi6ERxnHjBYmZ8URfGyjQImI0BGsM0ujbyfvOL6XtJApWf_rUiR4LbDYo6asowOROtxtqN55-gBcw1trCfRA-NaffpiUtooweoPzoc4wAhfn-GrRdE1Eaa3RJe0h7y_pwmOEbMOdHOh4gBmqQyN5UFtYWvWwcratBJnECuKbF9mZNilvouaj6iv2o/s1920/IMG_1733838667056.png" alt="वितृष्णा" /><span> वितृष्णा : द्वादश कक्षा का शिक्षण</span></a>
+                </div>
+                <div class="competitive-exam links">
+                    <a href="https://subandh.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi8ATiuAAwnTMtcKeT2NYjFZBGdCF7u96KYTs5fqQnij7cKTeaICY3GeFFWKNDFJhmE3pSRh3gNmdG-l5LBqVJHmC5icO5qDDHhCEvk_BbmZ6wlSQWd-OBt8n8HOsvTJXZbX6uAbbgFbcfB-TugUEXxQSF92yIdAo6m2bmipNier9nVw3iEuBfUeIif4gY/s1080/IMG_1733839507623.png" alt="सुबंध" /><span> सुबंध: प्रतियोगी परीक्षाओं हेतु सामग्री</span></a>
+                    <a href="https://karmakhya.blogspot.com" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHe4V7pEp7pfoiKhtNmOpTOjO3UfuNocq4lexzFhKAVSUABhRDwICM2TsMgTb87_hKBMMjiNXlrHUbP6nFJ5Qqxk-2_G82ylY9NQYZwBDI2FLNZ_dTqy2gzFyEIkq6vH72W1kWj_G-Nu7MUeeYwrYy6m3CMZut-WdhLIkvOOTDkPwNWHn4NjFmq6NGH9GD/s1920/IMG_1737564976178.png" alt="कर्माख्य" /><span> कर्माख्य : ऐतिहासिक घटनाओं का दर्पण</span></a>
+                    <a href="https://qbuk.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiEyG4-sfy-scauOvXTh-OT_LLoFZPlT-ITuZk0K2-ztiOH1R1YIpbHydrvpwx9-dL9_GICJdYvx9nyYKgmMptzcCgPWbpQFOaGnpHrRmc-1H6ud5ifFxdHuje1MHxtrFRtMYLP1D5whu4EclpkMH_hiUoGHHtLOGwKzLvgmF24FO28VgReGKAGH9bc9QtW/s300/ei_1743597993085-removebg-preview.png" alt="Ⓠⓑⓤⓚ" /><span> Ⓠⓑⓤⓚ: Complete online education for all students</span></a>
+                </div>
+                <div class="news-channel links">
+                    <a href="https://kaalpath.blogspot.com?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEieAI52uVG_olpmLAMZUzL-X1hkuWZvTLXYraZjrnb92jmFdL-pbeL4306Lo9o-4FzBv6ILtrXDm1kKF5ATr7xeIAqhFpJhFkv_XUEHBg3B-r_e5qUZ-nRWUQiuTW72CcD0JGgpYZCRgrBvIZfWHjl3WI2obKVC2DAQdRevzM4Nf2FdLPyMBbR-UYo02mtV/s2190/IMG_1737383925311.png" alt="कालपथ" /><span> कालपथ: समसामयिक घटनाओं का विश्लेषण</span></a>
+                    <a href="https://fciz.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhPnFVVpRRZUsLGplaSflnhcA6cX8ZsuzAudj1eaQ2cVEK5yPQR4NoSWVW1flEXxPTRDWK2refi81Dlp58c8-RMd0zCb3l9TmW7IGR6yLztK0jbAubNb8hyAThcY9jDlN4qwMOCIiTYqTjCerrWBUH4hEXcTMPv5GSn7XYVdBzfy9Pgz_hIyFFcp86saXNW/s707/ei_1743592033448-removebg-preview.png" alt="ᖴᑕᎥ乙ᴺᵉʷˢ" /><span> ᖴᑕᎥ乙ᴺᵉʷˢ: Factual Center for Information and Zeal - आपकी Authentic News का प्रमुख स्रोत</span></a>
+                </div>
+                <div class="yoga-ayurveda links">
+                    <a href="https://tupscharya.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhQ9dgX6Bh-mM_A8vh_sDmCRY2EK3Z6P96A4t8iTsMba84jvtpYUXjOiXc7vr8Gu1RG_B4IrQIhPpLRPVizKenmo8SZzBb0EahkKloGIDy4hsnaUMJ4Ox66U-lmvdTS3Q8K8RltDhm2Tz01vEpCgVSKy9oE6Kw1xyWTzAiQdueV2isrAv6R1oaBzRBVZ38/s1920/IMG_20241210_205208.png" alt="तपस्चर्या" /><span> तपस्चर्या : योग एवं साधना का मार्गदर्शन</span></a>
+                    <a href="https://vanausadhi.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiNPn5Fgfy7CmjasHQv4o9s2lurepiZ6c8jXRHUxMuAvOpdx7-H1rmrfoBpSxToMD4FH90tEZJEO5bl_nE8T47Lql3-SvNLbfq8YYwc3XFVJ__IFgRHwVZDyBq0eDS95hyphenhyphenPLplaTa8ARgz8LcXPMTf27HdbC9QkNdZ4vmK6GN82uDInPD2wxzM6-u7oDpU/s1920/IMG_1733844959838.png" alt="वनौषधि" /><span> वनौषधि: आयुर्वेद का ज्ञानवर्धक माध्यम</span></a>
+                    <a href="https://tantrivak.blogspot.com" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgFyysM-XeYhj-OgUw26_9ZYPApcHML-YLpBBK_mhhtoEoIf3G_Vc_yMfDvLovUmWK_62hIP1M96oevPQeZ-ajNEH-Krm5O2WTPjkSIInR-18pMqIPIdJZ-OLTzweCWsvdyLhcaXlrcKyXFgGAe4HJ_YexJgWSt2UduhuzZMTeXOE8KRw9cbb4jMo48_PBx/s1920/IMG_1737643288202.png" alt="तंत्रिवाक" /><span> तंत्रिवाक: प्राचीन ग्रंथों में वर्णित तंत्र मंत्र</span></a>
+                </div>
+                <div class="marriage-links links">
+                    <a href="https://daampatya.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhJt4ZZUcAxtWRDOyokT3BtB6tr0C6Y2Oq1OuQ11oNgsHfUg1nkuBqyj7Jy7g4Wyc5QVqkfqDuDsNe2uSz4-S_8Bi-Ap9WoQyPfsGaTpbADIGlx6Zghk0Chx0U50F7CDide8_PiR7SWgq8w-dkYJOb7k7h8hCornry-3t9x8VP-VQ_-Lpf4iMrbD1FMGSET/s1920/IMG_1733773600623.png" alt="दाम्पत्य वैवाहिकी" /><span> दाम्पत्य वैवाहिकी : विवाह संबंधों का मार्गदर्शन</span></a>
+                    <a href="https://bujhte.blogspot.com" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgTbGRh4XyUiUekVq2NYB3pbm2QMHaqi1Px0swBbwK8UEzsgZqHtC2aMqB3U0nV1JiEhwTp8b7aZgbGNRmkwzC0mwR3BhEd3ker-APJbQwSyS_06vxr1ksUWKQwhN2hUqIvfzHebzuTokVgsliNfUgfgF0LaKG9hoamLZgRuxsiM4_4lTNX3zzvB7DOxj7d/s1920/IMG_1737302244717.png" alt="बुझते पल" /><span> बुझते पल: मन को झकझोरने वाली कथाएं</span></a>
+                </div>
+                <div class="editorial-links links">
+                    <a href="https://acharyaasheeshmishra.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjbZ7_Uon8hfXYZziqWhnPCQUGuGE6N198G2lCeUMX4NG3lRyAaXrN8d2D8dPh7XgJeEWXdSQehSAK0K9lWlGKO05h_pJvxH74hRYERrTPVOFdOMx4rcqAM38L_DIBvbcQ2ze1QyFxhLpZG1utval86e-Dfpn95Nvs6mdxulB_4B0lohgJSYe6D186TZTtz/s1920/IMG_1733804939628.png" alt="आचार्य आशीष मिश्र" /><span> आचार्य आशीष मिश्र: वैश्विक घटनाक्रमों का विश्लेषण</span></a>
+                    <a href="https://abpiyush.blogspot.com" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgs_yfbBEcb39gF7tnXeiG6T3y87rTQOJCRnImdwoszgiDQwFM5wbO6cpcm0Xhl-5eE_B8Ys32aQw0UALUTcqL0JIF4cQ3Pu7rOc2Sug43VndWGGXorGv8DOsqDB2ZQCHgcMZ-ulz8zp3vFpfQlXR4LNdFRreVjitan7cY0u5HIztEf-7n0-Dtm4SJd03L-/s1920/IMG_1737302096843.png" alt="अभिजित पियूष" /><span> अभिजित पियूष: भूमंडल संरक्षण हेतु संगठन</span></a>
+                    <a href="https://www.apgo.tech/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjy_rfa2D9qUqxHqJfaU7UxH-sPaz4AMWeh_GUr5-kt9xA7WpQy3DkZ3YZ1CZWbiFWaJMkbG_87sOX1tMQhaYuarGv5PW9YQMRYvCdRg7IPr3w11Toc3hIi4av1ZXO36TbEJImjIdHLgiIbbrFLxn7o2h318B4RQqnHAT9pO6ZMcynTP9k3kjH3D0zp2eb6/s500/ei_1743593756057-removebg-preview.png" alt="ᏗᎮᎶᎧ" /><span> ᏗᎮᎶᎧ - Your Academic Platform for Complete Online Study, Guidance, and Opportunities</span></a>
+                </div>
+                <div class="government-links links">
+                    <a href="https://Ghatnadarpan.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj-gmoSmDylPxal_VNanhuM5O122z57gXJsa-zu7dPq7NAWFcqr11hWwP3EiIxK90NqNaTHlma0XgPOhOAxbJLEgNcEYwQXGaJy3gj7GB8qyH-R1AURgkI0UOuOa48Pv5AU6YkudfRi7HheskV359KMQp_M6LpW5V8kUnvgPbbBdGCa9j0c7N9usspAOtC2/s1920/IMG_1733797525404.png" alt="घटना-दर्पण" /><span> घटना-दर्पण : सरकारी योजनाओं की जानकारी</span></a>
+                </div>
+                <div class="astrology-links links">
+                    <a href="https://satyadarasti.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWnYorEp5T1Z3xeA4DEW4UMuNHofv3yfHtS7N2Vi_JAD-qJRvGtMULCdfqSe-dvgd2M6sPZIb9HcqG9iTN4bO2yDa8xceZ2U1mOA_n_xCIDL5zHX4wTQTbtMEwSYOmbI9ksoLrSF5GyzbYnM7CgkPP8d0C7f9Ksx-q4IpTI9LlhLQAXaJEhlxwJp0Eb3g/s1920/IMG_20241210_203857.png" alt="सत्यदृष्टि" /><span> सत्यदृष्टि : ज्योतिषीय परामर्श एवं मार्गदर्शन</span></a>
+                    <a href="https://puranakhyayika.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhqsAnlW7HwTXjS6tbNX2BdynMm5DMP3PZNoXTRmE4SatsMyy6ITlQd2_ZKQZzgGEMq5Mde2IlRRI86jeazHBIDSWOLdHN5vjZdU8gQ2OpyMpQ2NUAWe4rcsg9HU3hYYxYxFoXLOlJ1K6lJ-MilZGB2IvycxlV9CVKmbZIb4oheE4LY9PdwOvWP4tvlBgk/s1080/IMG_20241210_201914.png" alt="पुराणाख्यिका" /><span>पुराणाख्यिका : पौराणिक साहित्य का ज्ञान</span></a>
+                    <a href="https://vipranad.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjVxD_R6USw0Kd-cOt4_oNcPtISEPv2oozCp301pq7I-_AJk6dM5BQwbAmfJ6VhloBopk5CNmxoIxHTiGOk1pWGklQxHYBSXdEeXZQnZIXvTx_UzorYQXGI_FzB67jF7d9LV2oASYWyewPO0boIO82nFobh2qLrx_dDWqeS_2rSnKM3SCpiBo3j6JoM6PY/s1907/IMG_20241210_203111.png" alt="विप्रनादम् " /><span>विप्रनादम् : विविध यज्ञानुष्ठानों का मार्गदर्शन</span></a>
+                </div>
+                <div class="vaidik-links links">
+                    <a href="https://givarn.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj7NXyvr12NnYAiiN0vOsMMBdUoFMyVgdddG5oc3OTepyeazZHmQqKG76xvGrcIH0tW90NCIshQjyNbyq31jTISSxoC6IttoXGk3S_2k-wGtZzw0jOdtnCdu8DV73M_XIlEEnr8sgv8rs6MqbJGDdRQ1y_wIjK9zYiVf0mOdDnWGGi3h8QDt9j-K8nHX6c/s1920/IMG_1733840333072.png" alt="गीवार्णग्रन्थभंडारगारम् " /><span>गीवार्णग्रन्थभंडारगारम् : संस्कृत व्याकरण का अध्ययन</span></a>
+                    <a href="https://muktsangah.blogspot.com/?m=1" target="_blank" class="outer-cont"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEizfKYYTT-t8wA9WsOQ0ydwuauApt7u5IIDgAbXD5Z2qct_MGDMo90yLDa42TuwHROi5rKid9t3d7Rv-WIKSzI53usW7qgyBdRTrpZiZgUa6p9UKFA_wjO6C1obtI5AriRsU2uIt4_FcE0lrgzgIwe8_usBhN4NAc3tUFZ9my8NgtSA_UCAZkCbakwPKEY/s1920/IMG_1733841734683.png" alt="मुक्तसंङ्ग:" /><span>मुक्तसंङ्ग: वैदिक साहित्य का ज्ञान</span></a>
+                </div>
+                <!-- End Links Sections -->
+            </div>
+        </div>
+    </div>
+
+    <!-- जावास्क्रिप्ट (इसे बॉडी के अंत में रखना बेहतर है) -->
+    <script>
+        // मेन्यू टॉगल बटन और मेन्यू एलिमेंट्स प्राप्त करें
+        const menuToggle = document.querySelector('.menu-toggle');
+        const categoriesMenu = document.querySelector('.menu-categories');
+        const linksMenu = document.querySelector('.menu-links');
+        const linksTitle = linksMenu.querySelector('.links-title');
+        const categoryTitleElement = categoriesMenu.querySelector('.category-title');
+
+        // सभी कैटेगरी एलिमेंट्स प्राप्त करें
+        const categories = document.querySelectorAll('.category');
+
+        // सभी लिंक्स कंटेंट एलिमेंट्स प्राप्त करें
+        const linksContent = document.querySelectorAll('.links-content .links');
+
+        // आइकन मैपिंग
+        const categoryIcons = {
+            'class-1-5': '<i class="fas fa-book-reader"></i>', 'class-6-8': '<i class="fas fa-graduation-cap"></i>',
+            'class-9-10': '<i class="fas fa-school"></i>', 'class-11-12': '<i class="fas fa-university"></i>',
+            'competitive-exam': '<i class="fas fa-trophy"></i>', 'news-channel': '<i class="fas fa-newspaper"></i>',
+            'yoga-ayurveda': '<i class="fas fa-heart"></i>', 'marriage-links': '<i class="fas fa-ring"></i>',
+            'editorial-links': '<i class="fas fa-edit"></i>', 'government-links': '<i class="fas fa-flag"></i>',
+            'astrology-links': '<i class="fas fa-star"></i>', 'vaidik-links': '<i class="fas fa-om"></i>'
+        };
+
+        // Gradient classes (Titles और Title Borders के लिए)
+        const gradientClasses = [
+            'gradient-1', 'gradient-2', 'gradient-3', 'gradient-4', 'gradient-5', 'gradient-6',
+            'gradient-7', 'gradient-8', 'gradient-9', 'gradient-10', 'gradient-11', 'gradient-12'
+        ];
+
+        // Function to remove all gradient classes
+        function removeGradientClasses(element) {
+             gradientClasses.forEach(cls => element.classList.remove(cls));
+         }
+
+        // मेन्यू टॉगल बटन पर क्लिक इवेंट जोड़ें (कैटेगरी टाइटल के लिए रैंडम ग्रेडिएंट)
+        menuToggle.addEventListener('click', (event) => {
+            event.stopPropagation(); // इवेंट को ऊपर जाने से रोकें
+            const isActive = categoriesMenu.classList.contains('active');
+
+            if (isActive) {
+                categoriesMenu.classList.remove('active');
+                linksMenu.classList.remove('show'); // लिंक्स मेन्यू भी बंद करें
+                categoryTitleElement.style.display = 'none'; // कैटेगरी टाइटल छिपाएं
+            } else {
+                 linksMenu.classList.remove('show'); // पहले लिंक्स मेन्यू बंद करें
+                 categoriesMenu.classList.add('active');
+                 categoryTitleElement.style.display = 'block'; // कैटेगरी टाइटल दिखाएं
+                 // कैटेगरी टाइटल के लिए रैंडम ग्रेडिएंट लागू करें
+                 removeGradientClasses(categoryTitleElement);
+                 const randomGradientIndex = Math.floor(Math.random() * gradientClasses.length);
+                 categoryTitleElement.classList.add(gradientClasses[randomGradientIndex]);
+                 categoryTitleElement.innerHTML = '<i class="fas fa-hand-point-down"></i> अपनी पसंद पर क्लिक करें'; // सुनिश्चित करें कि टेक्स्ट सही है
+            }
+        });
+
+         // हर कैटेगरी के लिए क्लिक इवेंट जोड़ें
+         categories.forEach((category, index) => {
+             category.addEventListener('click', (event) => {
+                 event.stopPropagation(); // इवेंट को ऊपर जाने से रोकें
+
+                 const categoryData = category.getAttribute('data-category');
+                 const titleText = category.getAttribute('data-title');
+                 const iconHtml = categoryIcons[categoryData] || '<i class="fas fa-link"></i>';
+
+                 // सभी लिंक्स सेक्शन छिपाएं
+                 linksContent.forEach(linkBox => {
+                     linkBox.style.display = 'none';
+                 });
+
+                 // सही लिंक्स सेक्शन दिखाएं
+                 const targetLinks = linksMenu.querySelector(`.links-content .${categoryData}`);
+                 if (targetLinks) {
+                     targetLinks.style.display = 'block';
+                 } else {
+                     console.warn(`Links section for category '${categoryData}' not found.`); // चेतावनी अगर सेक्शन नहीं मिलता है
+                 }
+
+                 // लिंक्स टाइटल अपडेट करें
+                 linksTitle.innerHTML = `${iconHtml} ${titleText}`;
+
+                 // लिंक्स टाइटल पर स्पेसिफिक ग्रेडिएंट बॉर्डर लागू करें
+                 removeGradientClasses(linksTitle); // पहले पुरानी क्लास हटाएं
+                 linksTitle.classList.add(gradientClasses[index % gradientClasses.length]); // नई क्लास जोड़ें
+
+                 // कैटेगरी मेन्यू छिपाएं और लिंक्स मेन्यू दिखाएं
+                 categoriesMenu.classList.remove('active');
+                 linksMenu.classList.add('show');
+                 categoryTitleElement.style.display = 'none'; // कैटेगरी टाइटल छिपाएं जब लिंक्स खुलें
+             });
+         });
+
+
+        // डॉक्यूमेंट पर कहीं और क्लिक होने पर मेन्यू छिपाने के लिए इवेंट जोड़ें
+        document.addEventListener('click', (event) => {
+            // जाँचें कि क्लिक मेन्यू टॉगल, कैटेगरी मेन्यू या लिंक्स मेन्यू के अंदर नहीं हुआ है
+            if (
+                !menuToggle.contains(event.target) &&
+                !categoriesMenu.contains(event.target) &&
+                !linksMenu.contains(event.target)
+            ) {
+                categoriesMenu.classList.remove('active');
+                linksMenu.classList.remove('show');
+                // कैटेगरी टाइटल भी छिपाएं जब बाहर क्लिक हो
+                if (categoryTitleElement) { // सुनिश्चित करें कि एलिमेंट मौजूद है
+                     categoryTitleElement.style.display = 'none';
+                 }
+            }
+        });
+
+    </script>
+
+
+</!doctype>
