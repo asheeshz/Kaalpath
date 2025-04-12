@@ -1,0 +1,233 @@
+.widget-post-content {
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  line-height: 1.7;
+  padding: 10px; /* थोड़ा पैडिंग ताकि कंटेंट किनारों से न चिपके */
+}
+
+.hero-title-container {
+  text-align: center;
+  margin: 30px 0 40px 0;
+  padding: 20px;
+  background: linear-gradient(145deg, #f0f2f5, #e8e8e8); /* हल्का ग्रे ग्रेडिएंट */
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.hero-title-text {
+  font-size: 2.8em; /* बड़ा टेक्स्ट */
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  color: #6a11cb; /* थीम रंग 1 */
+   /* टेक्स्ट ग्रेडिएंट (वैकल्पिक) */
+   /* background: linear-gradient(45deg, #6a11cb, #fc4a1a); */
+   /* -webkit-background-clip: text; */
+   /* -webkit-text-fill-color: transparent; */
+   text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+}
+
+.hero-subtitle-text {
+  font-size: 1.2em;
+  color: #555;
+  margin: 0;
+  font-weight: 300;
+}
+
+.intro-image-container {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.intro-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border: 3px solid white;
+}
+
+.post-section {
+  margin-bottom: 2.5em;
+  padding: 20px;
+  background-color: #ffffff; /* स्पष्टता के लिए सफेद पृष्ठभूमि */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+}
+/* सेक्शन के लिए विशिष्ट पृष्ठभूमि और बॉर्डर */
+.tool-intro-section { background-color: #e7f5ff; border-left: 5px solid #2575fc; } /* नीला */
+.firebase-section { background-color: #fff8e1; border-left: 5px solid #f7b733; } /* पीला */
+.usage-section { background-color: #e8f5e9; border-left: 5px solid #38ef7d; } /* हरा */
+.platform-section { background-color: #f3e5f5; border-left: 5px solid #6a11cb; } /* बैंगनी */
+.rambaan-section { background-color: #fff3e0; border-left: 5px solid #fc4a1a; } /* नारंगी */
+.generated-code-example { background-color: #eceff1; border-left: 5px solid #607d8b; } /* ग्रे */
+.conclusion-section { text-align: center; background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); color: white; } /* ग्रेडिएंट */
+
+
+.post-heading {
+  font-size: 1.8em;
+  font-weight: 700;
+  color: #6a11cb; /* प्राथमिक बैंगनी रंग */
+  margin-top: 0;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #2575fc; /* द्वितीयक नीला रंग */
+  display: inline-block; /* ताकि बॉर्डर टेक्स्ट की चौड़ाई तक ही रहे */
+}
+.conclusion-section .post-heading { color: white; border-bottom-color: white;}
+
+.post-subheading {
+ font-size: 1.4em;
+ font-weight: 600;
+ color: #444;
+ margin-top: 0;
+ margin-bottom: 15px;
+ display: flex;
+ align-items: center;
+ gap: 8px;
+}
+/* उपशीर्षकों में आइकॉन के लिए विशिष्ट रंग */
+.post-subheading i { color: #6a11cb; }
+.firebase-section .post-subheading i { color: #f7b733; }
+.usage-section .post-subheading i { color: #38ef7d; }
+.platform-section .post-subheading i { color: #6a11cb; }
+.rambaan-section .post-subheading i { color: #fc4a1a; }
+
+
+.features-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.features-list li {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start; /* आइकॉन और टेक्स्ट को संरेखित करें */
+  font-size: 1.05em;
+}
+
+.feature-icon {
+  color: #2575fc; /* द्वितीयक नीला रंग */
+  margin-right: 12px;
+  font-size: 1.2em;
+  width: 20px; /* निश्चित चौड़ाई दें */
+  text-align: center;
+  margin-top: 2px; /* थोड़ा नीचे करें */
+}
+
+/* प्लेटफॉर्म लिंक्स के लिए स्टाइल */
+.platform-icon {
+    margin-right: 8px;
+    color: #555;
+    width: 18px;
+    text-align: center;
+}
+.platform-link {
+    color: #2575fc; /* द्वितीयक नीला रंग */
+    text-decoration: none;
+    font-weight: 600;
+}
+.platform-link:hover {
+    text-decoration: underline;
+    color: #6a11cb; /* प्राथमिक बैंगनी रंग */
+}
+
+/* जेनरेट किए गए कोड ब्लॉक स्टाइल */
+.code-block-wrapper {
+  margin-bottom: 20px;
+}
+.code-block-title {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #ccc;
+}
+.code-block {
+  background-color: #2d2d2d; /* डार्क बैकग्राउंड */
+  color: #f8f8f2; /* हल्का टेक्स्ट */
+  font-family: 'Roboto Mono', monospace; /* कोड फॉन्ट */
+  padding: 15px;
+  border-radius: 6px;
+  overflow-x: auto; /* क्षैतिज स्क्रॉल सक्षम करें */
+  font-size: 0.85em;
+  line-height: 1.6;
+  max-height: 400px; /* अधिकतम ऊंचाई ताकि बहुत लंबा न हो */
+  position: relative; /* Scrollbar styling के लिए */
+}
+/* कोड ब्लॉक के लिए स्क्रॉलबार स्टाइल */
+.code-block.thin-scrollbar {
+    scrollbar-color: #666 #333;
+}
+.code-block.thin-scrollbar::-webkit-scrollbar {
+    width: 10px; height: 10px;
+}
+.code-block.thin-scrollbar::-webkit-scrollbar-track {
+    background: #333;
+}
+.code-block.thin-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #666;
+    border-radius: 5px;
+    border: 2px solid #333;
+}
+.code-block.thin-scrollbar:hover::-webkit-scrollbar-thumb {
+    background-color: #888;
+}
+
+/* Inline copy button for usage section */
+.inline-copy-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 6px;
+    font-size: 0.8em;
+    font-family: 'Poppins', sans-serif; /* मुख्य फॉन्ट */
+    color: #212529; /* डार्क टेक्स्ट */
+    background-color: #f7b733; /* पीला */
+    border: none;
+    border-radius: 4px;
+    cursor: default; /* इसे क्लिक करने योग्य न बनाएं */
+    vertical-align: middle; /* टेक्स्ट के साथ संरेखित करें */
+}
+.inline-copy-button i { font-size: 1em; }
+
+
+/* सामान्य लिंक स्टाइल */
+.widget-post-content a {
+  color: #2575fc; /* द्वितीयक नीला */
+  text-decoration: none;
+  font-weight: 600;
+}
+.widget-post-content a:hover {
+  color: #6a11cb; /* प्राथमिक बैंगनी */
+  text-decoration: underline;
+}
+
+/* छोटे स्क्रीन्स के लिए समायोजन */
+@media (max-width: 768px) {
+  .hero-title-text { font-size: 2.2em; }
+  .hero-subtitle-text { font-size: 1.1em; }
+  .post-heading { font-size: 1.6em; }
+  .post-subheading { font-size: 1.3em; }
+  .section-container { padding: 20px; } /* पोस्ट सेक्शन के लिए */
+  .widget-post-content { padding: 5px; } /* मुख्य पोस्ट के लिए */
+}
+@media (max-width: 480px) {
+  .hero-title-text { font-size: 1.8em; }
+  .hero-subtitle-text { font-size: 1em; }
+  .post-heading { font-size: 1.4em; }
+  .post-subheading { font-size: 1.2em; }
+  .section-container { padding: 15px; } /* पोस्ट सेक्शन के लिए */
+  .widget-post-content { padding: 0px; } /* मुख्य पोस्ट के लिए */
+  .code-block { font-size: 0.8em; padding: 10px; }
+}
+
+/* Thin scrollbar class (पहले से परिभाषित) */
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.2) rgba(0,0,0,0.05); /* डिफ़ॉल्ट स्क्रॉलबार रंग */
+}
+.thin-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+.thin-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 4px;}
+.thin-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.2); border-radius: 4px; border: 2px solid rgba(0,0,0,0.05); }
+.thin-scrollbar:hover::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.4); }
