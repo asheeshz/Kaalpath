@@ -1,3 +1,134 @@
+/* ============================================= */
+/* ===== नए पोस्ट एलिमेंट्स के लिए अतिरिक्त CSS ===== */
+/* ============================================= */
+
+/* टूल लिंक सेक्शन स्टाइल */
+.tool-link-section {
+  background-color: #e3f2fd; /* हल्का नीला */
+  border: 1px solid #90caf9;
+  border-left: 5px solid #2196f3; /* गहरा नीला */
+  padding: 20px 25px;
+  margin: 30px 0;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.tool-link-section h3 {
+  margin-top: 0;
+  color: #1e88e5;
+  font-size: 1.4em;
+  margin-bottom: 10px; /* थोड़ा स्पेस */
+}
+.tool-link-section p {
+    margin-bottom: 15px; /* बटन से पहले स्पेस */
+    color: #333;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 12px 30px;
+  background: linear-gradient(45deg, #ff7e5f, #feb47b); /* नारंगी ग्रेडिएंट */
+  color: white !important; /* महत्वपूर्ण ताकि लिंक का रंग ओवरराइड हो */
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: none !important; /* महत्वपूर्ण ताकि लिंक अंडरलाइन न हो */
+  border-radius: 50px; /* गोल बटन */
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(252, 116, 78, 0.4);
+  border: none;
+  cursor: pointer;
+}
+
+.cta-button i {
+  margin-right: 8px;
+  font-size: 1em; /* थोड़ा छोटा */
+}
+
+.cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(252, 116, 78, 0.6);
+  background: linear-gradient(45deg, #feb47b, #ff7e5f);
+  color: white !important;
+   text-decoration: none !important;
+}
+
+/* संबंधित लिंक सेक्शन (प्लेसहोल्डर स्टाइल) */
+.related-links-section {
+  background-color: #f9fbe7; /* हल्का पीला-हरा */
+  border: 1px solid #e6ee9c;
+  border-left: 5px solid #c0ca33; /* गहरा पीला-हरा */
+  padding: 15px 20px;
+  margin: 30px 0;
+  border-radius: 8px;
+}
+.related-links-section h3 {
+   margin-top: 0;
+   color: #827717;
+   font-size: 1.3em;
+   margin-bottom: 10px;
+}
+.related-links-section ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+.related-links-section li {
+    margin-bottom: 8px;
+}
+.related-links-section a {
+    color: #558b2f !important; /* महत्वपूर्ण ताकि सामान्य लिंक रंग ओवरराइड हो */
+    font-weight: normal !important; /* सामान्य लिंक से अलग */
+    text-decoration: none !important;
+}
+.related-links-section a:hover {
+    color: #33691e !important;
+    text-decoration: underline !important;
+}
+
+
+/* इंटरनल लिंक स्टाइल (वैकल्पिक, थोड़ा अलग दिखाने के लिए) */
+.internal-nav-link {
+  text-decoration: underline !important;
+  text-decoration-style: dashed !important;
+  text-decoration-color: #6a11cb !important; /* थीम रंग */
+  font-weight: normal !important; /* सामान्य लिंक से अलग */
+  color: #333 !important; /* सामान्य टेक्स्ट जैसा रंग */
+  background-color: transparent; /* डिफ़ॉल्ट */
+  transition: background-color 0.2s ease;
+  padding: 0 2px; /* हल्का पैडिंग */
+}
+.internal-nav-link:hover {
+   background-color: #f3e5f5 !important; /* हल्का बैंगनी हॉवर */
+   text-decoration: underline !important;
+   text-decoration-style: solid !important;
+   color: #6a11cb !important;
+}
+
+
+/* कस्टम पोस्ट फुटर स्टाइल */
+.post-footer {
+  margin-top: 40px;
+  padding: 20px;
+  text-align: center;
+  font-size: 0.9em;
+  color: #777;
+  background-color: #f8f8f8; /* हल्का ग्रे */
+  border-top: 1px solid #eee;
+  border-radius: 0 0 8px 8px; /* यदि पोस्ट सेक्शन में रेडियस है */
+}
+
+.post-footer p {
+  margin: 5px 0;
+}
+
+.post-footer a {
+  color: #555 !important;
+  text-decoration: underline !important;
+  font-weight: normal !important;
+}
+.post-footer a:hover {
+  color: #000 !important;
+}
 .widget-post-content {
   font-family: 'Poppins', sans-serif;
   color: #333;
