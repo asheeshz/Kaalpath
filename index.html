@@ -1,130 +1,928 @@
+
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Firebase लॉगिन कस्टमाइज़र टूल</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f9;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    label {
-      font-weight: bold;
-      margin-top: 10px;
-      display: block;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    button {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      text-align: center;
-      display: inline-block;
-      font-size: 16px;
-      margin-right: 10px;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-    button:disabled {
-      background-color: #ccc;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Widget Customizer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        :root {
+          --ui-color-1: #6a11cb;
+          --ui-color-2: #2575fc;
+          --ui-color-3: #38ef7d;
+          --ui-color-4: #f7b733;
+          --ui-color-5: #fc4a1a;
+          --ui-text-light: #f8f9fa;
+          --ui-text-dark: #212529;
+          --ui-border-light: rgba(255, 255, 255, 0.3);
+          --ui-border-dark: rgba(0, 0, 0, 0.1);
+          --scrollbar-thumb-color: rgba(255, 255, 255, 0.3);
+          --scrollbar-thumb-hover-color: rgba(255, 255, 255, 0.5);
+          --scrollbar-track-color: rgba(0, 0, 0, 0.1);
+          --grad-controls: linear-gradient(135deg, var(--ui-color-1) 0%, var(--ui-color-2) 100%);
+          --grad-codebox: linear-gradient(60deg, var(--ui-color-3) 0%, var(--ui-color-2) 100%);
+          --grad-preview: linear-gradient(-45deg, var(--ui-color-4) 0%, var(--ui-color-5) 100%);
+          --customizer-font-primary: 'Poppins', sans-serif;
+          --customizer-font-code: 'Roboto Mono', monospace;
+        }
+        body {
+            font-family: var(--customizer-font-primary);
+            background-color: #f0f2f5;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .customizer-wrapper {
+            padding: 0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-container {
+            margin-bottom: 2em;
+            border-radius: 12px;
+            padding: 25px 30px;
+            color: var(--ui-text-light);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .section-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin: 0 0 18px 0;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--ui-border-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+        .section-title i {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        .thin-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
+        }
+        .thin-scrollbar::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        .thin-scrollbar::-webkit-scrollbar-track {
+          background: var(--scrollbar-track-color);
+          border-radius: 4px;
+        }
+        .thin-scrollbar::-webkit-scrollbar-thumb {
+          background-color: var(--scrollbar-thumb-color);
+          border-radius: 4px;
+          border: 2px solid var(--scrollbar-track-color);
+        }
+        .thin-scrollbar:hover::-webkit-scrollbar-thumb {
+          background-color: var(--scrollbar-thumb-hover-color);
+        }
+        .master-controls-container {
+            background: var(--grad-controls);
+            border: 2px solid var(--ui-color-1);
+        }
+        .master-controls {
+            padding: 0;
+            background-color: transparent;
+            border: none;
+            border-radius: 0;
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .master-controls h3 {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin: 0 0 18px 0;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--ui-border-light);
+            color: var(--ui-text-light);
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+        .master-controls h3 i { font-size: 0.9em; opacity: 0.8;}
+        .slider-container {
+            position: relative;
+            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: auto;
+            width: 100%;
+            max-height: 320px;
+            min-height: 250px;
+            margin-bottom: 15px;
+            padding: 10px 5px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: 6px;
+             composes: thin-scrollbar;
+             scrollbar-color: var(--ui-color-2) rgba(255, 255, 255, 0.1);
+        }
+        .slider-container::-webkit-scrollbar-thumb { background-color: var(--ui-color-2); }
+        .slider-container:hover::-webkit-scrollbar-thumb { background-color: var(--ui-color-1); }
+        .control-group.slider-slide {
+            width: 100%;
+            padding: 15px;
+            margin: 0;
+            border-bottom: none;
+            display: none;
+            flex-wrap: wrap;
+            gap: 10px 15px;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            visibility: hidden;
+            background-color: transparent;
+        }
+        .control-group.slider-slide.active-slide {
+            display: flex;
+            opacity: 1;
+            position: relative;
+            visibility: visible;
+            animation: fadeInUp 0.5s ease-out;
+        }
+        .control-group-title {
+            font-weight: 600;
+            font-size: 1em;
+            font-family: var(--customizer-font-primary);
+            color: var(--ui-text-light);
+            margin-bottom: 15px;
+            display: block;
+            width: 100%;
+            flex-basis: 100%;
+            text-align: center;
+            border-bottom: 1px dashed var(--ui-border-light);
+            padding-bottom: 8px;
+            opacity: 0.9;
+        }
+        .control-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-basis: calc(50% - 15px);
+            flex-grow: 1;
+            min-width: 240px;
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 8px 10px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+        @media (min-width: 768px) {
+            .control-item {
+                 flex-basis: calc(33.33% - 15px);
+            }
+        }
+        .control-item:hover { background-color: rgba(0, 0, 0, 0.2); }
+        .control-item.full-width { flex-basis: 100%; max-width: none; }
+        .control-item label { font-family: var(--customizer-font-primary); font-size: 0.85em; color: var(--ui-text-light); opacity: 0.85; margin-right: 5px; min-width: 110px; text-align: right; flex-shrink: 0; font-weight: 400; }
+        .control-item input[type="color"] { height: 28px; width: 40px; padding: 2px; border: 1px solid var(--ui-border-light); cursor: pointer; flex-shrink: 0; border-radius: 4px; transition: transform 0.2s ease; }
+        .control-item input[type="color"]:hover { transform: scale(1.1); }
+        .control-item input[type="number"],
+        .control-item input[type="text"] { padding: 6px 10px; border: 1px solid var(--ui-border-light); border-radius: 4px; font-size: 0.9em; background-color: rgba(255, 255, 255, 0.1); color: var(--ui-text-light); transition: border-color 0.2s ease, background-color 0.2s ease; }
+         .control-item input[type="number"]:focus,
+        .control-item input[type="text"]:focus { background-color: rgba(255, 255, 255, 0.2); border-color: var(--ui-color-4); outline: none; }
+        .control-item input[type="number"] { width: 65px; flex-shrink: 0; text-align: center;}
+        .control-item input[type="text"] { flex-grow: 1; min-width: 160px; max-width: none; font-family: var(--customizer-font-primary); }
+        .control-item input[type="text"].config-input { font-family: var(--customizer-font-code); font-size: 0.85em; }
+        .control-item .unit-label { font-size: 0.8em; color: var(--ui-text-light); opacity: 0.7; margin-left: -2px; }
+        .slider-navigation {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            margin: 15px auto 0 auto;
+            padding: 10px;
+            border-top: 1px solid var(--ui-border-light);
+        }
+        .slider-buttons-row {
+             display: flex;
+             justify-content: space-between;
+             width: 100%;
+             margin-bottom: 10px;
+        }
+        #current-slide-info {
+            font-family: var(--customizer-font-primary);
+            font-size: 0.95em;
+            color: var(--ui-text-light);
+            font-weight: 600;
+            text-align: center;
+            padding: 6px 10px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            opacity: 0.9;
+            transition: background-color 0.3s ease;
+        }
+        #current-slide-info:hover { background-color: rgba(0, 0, 0, 0.3); }
+        .slider-navigation button {
+            padding: 8px 25px;
+            min-width: 120px;
+            font-size: 0.9em;
+            font-family: var(--customizer-font-primary);
+            font-weight: 600;
+            color: var(--ui-text-light);
+            background-color: var(--ui-color-2);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .slider-navigation button:hover:not(:disabled) { background-color: var(--ui-color-1); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        .slider-navigation button:disabled { background-color: #adb5bd; cursor: not-allowed; opacity: 0.6; transform: none; box-shadow: none; }
+        .code-box-wrapper-container {
+             background: var(--grad-codebox);
+             border: 2px solid var(--ui-color-3);
+        }
+        .code-box-wrapper { margin-bottom: 0; }
+        .code-box-container {
+            border: none;
+            border-radius: 0;
+            background-color: transparent;
+            position: relative;
+            color: var(--ui-text-light);
+        }
+        .code-box-header {
+            display: flex;
+            align-items: center;
+            padding: 0 0 12px 0;
+            background-color: transparent;
+            border-bottom: 1px solid var(--ui-border-light);
+            margin-bottom: 10px;
+        }
+        .code-box-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--ui-text-light);
+            font-family: var(--customizer-font-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeInDown 0.6s ease-out 0.1s;
+            margin: 0;
+        }
+        .code-box-title i { font-size: 0.9em; opacity: 0.8;}
+        .copy-code-button {
+            margin-bottom: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 18px;
+            min-width: 100px;
+            white-space: nowrap;
+            font-size: 0.9em;
+            font-family: var(--customizer-font-primary);
+            color: var(--ui-text-dark);
+            background-color: var(--ui-color-4);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: 600;
+            gap: 8px;
+        }
+        .copy-code-button i { font-size: 1.1em;}
+        .copy-code-button:hover { background-color: var(--ui-color-5); color: var(--ui-text-light); transform: scale(1.05); }
+        .copy-code-button:active { transform: scale(1); background-color: var(--ui-color-3); }
+        .copy-code-button:disabled { background-color: #ccc; color: #666; transform: none; cursor: default; }
+        .code-display-textarea {
+            width: 100%;
+            display: block;
+            height: 380px;
+            border: none;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 6px;
+            font-family: var(--customizer-font-code);
+            font-size: 12px;
+            line-height: 1.5;
+            box-sizing: border-box;
+            white-space: pre;
+            overflow: auto;
+            resize: vertical;
+            direction: ltr;
+            text-align: left;
+            color: #e0f2f7;
+            cursor: default;
+             composes: thin-scrollbar;
+             scrollbar-color: var(--ui-color-3) rgba(0, 0, 0, 0.4);
+        }
+        .code-display-textarea::-webkit-scrollbar { width: 10px; height: 10px; background-color: rgba(0, 0, 0, 0.2); }
+        .code-display-textarea::-webkit-scrollbar-thumb { background-color: rgba(56, 239, 125, 0.3); border-radius: 5px; border: none; }
+        .code-display-textarea:hover::-webkit-scrollbar-thumb { background-color: rgba(56, 239, 125, 0.7); }
+        .code-display-textarea::-webkit-scrollbar-corner { background-color: rgba(0, 0, 0, 0.2); }
+        .widget-preview-wrapper-container {
+             background: var(--grad-preview);
+             border: 2px solid var(--ui-color-5);
+        }
+        .widget-preview-wrapper {
+            margin-top: 0; padding: 0; border: none; border-radius: 0; background: transparent; box-shadow: none; color: var(--ui-text-light);
+        }
+        .widget-preview-title {
+            font-family: var(--customizer-font-primary); font-size: 1.5em; color: var(--ui-text-light); margin: 0 0 18px 0; font-weight: 700; text-align: left; width: 100%; border-bottom: 1px solid var(--ui-border-light); padding-bottom: 12px; display: flex; align-items: center; gap: 10px; animation: fadeInDown 0.6s ease-out 0.2s;
+        }
+         .widget-preview-title i { font-size: 0.9em; opacity: 0.8;}
+        .widget-preview-container {
+            border: none; border-radius: 6px; padding: 15px; background-color: rgba(255, 255, 255, 0.1); position: relative; overflow: auto; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 480px; max-height: 65vh;
+             composes: thin-scrollbar;
+             scrollbar-color: var(--ui-color-5) rgba(255, 255, 255, 0.2);
+        }
+        .widget-preview-container::-webkit-scrollbar-thumb { background-color: var(--ui-color-5); }
+        .widget-preview-container:hover::-webkit-scrollbar-thumb { background-color: var(--ui-color-4); }
+         #live-preview-area .firebase-auth-widget-container, #live-preview-area .firebase-auth-logout-box, #live-preview-area .firebase-auth-popup { font-family: var(--widget-font); font-size: var(--widget-base-font-size); box-sizing: border-box; }
+         #live-preview-area .firebase-auth-widget-container *, #live-preview-area .firebase-auth-logout-box *, #live-preview-area .firebase-auth-popup * { box-sizing: border-box; }
+         #live-preview-area .firebase-auth-widget-hidden { display: none !important; }
+         #live-preview-area #firebase-auth-login-popup { position: relative !important; top: auto !important; left: auto !important; transform: none !important; z-index: 1 !important; margin-top: 15px; margin-bottom: 15px; display: flex !important; width: var(--widget-width-preview); background: var(--bg-light); padding: var(--widget-padding-preview); border-radius: var(--border-radius-lg); box-shadow: var(--box-shadow-strong); flex-direction: column; align-items: center; border: var(--widget-border-width) solid var(--widget-border-color); color: var(--dark-text); max-height: none; overflow-y: visible; }
+         #live-preview-area #firebase-auth-backdrop { display: none !important; }
+         #live-preview-area #firebase-auth-logout-box, #live-preview-area #firebase-auth-success-popup { position: absolute !important; transform: none !important; z-index: 2 !important; }
+         #live-preview-area #firebase-auth-logout-box { bottom: 10px !important; left: 10px !important; top: auto !important; }
+         #live-preview-area #firebase-auth-success-popup { left: 50% !important; top: 40% !important; transform: translate(-50%, -50%) !important; bottom: auto !important; }
+         #live-preview-area .firebase-auth-widget-box { width: 100%; text-align: center; }
+         #live-preview-area .firebase-auth-widget-box h2 { color: var(--dark-text); font-weight: 600; font-size: calc(var(--widget-base-font-size) * 1.1); margin: 0 0 12px 0; line-height: 1.3; flex-shrink: 0; }
+         #live-preview-area .firebase-auth-input-group { margin-bottom: 10px; width: 100%; flex-shrink: 0;}
+         #live-preview-area .firebase-auth-input-group input { width: 100%; padding: var(--input-padding-vertical) var(--input-padding-horizontal); border: 1px solid var(--input-border-color); border-radius: var(--border-radius-md); font-size: var(--widget-base-font-size); background-color: var(--bg-light); color: var(--dark-text); margin-bottom: 6px; font-family: inherit; }
+         #live-preview-area .firebase-auth-input-group input:last-child { margin-bottom: 0; }
+         #live-preview-area .firebase-auth-input-group input::placeholder { color: var(--grey-text); opacity: 1; }
+         #live-preview-area .firebase-auth-input-group input:hover { background-color: #f8f9fa; }
+         #live-preview-area .firebase-auth-input-group input:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 2px var(--input-focus-shadow-color); background-color: var(--bg-light); }
+         #live-preview-area .firebase-auth-action-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: var(--button-padding-vertical) var(--button-padding-horizontal); border: none; cursor: pointer; border-radius: var(--border-radius-md); font-size: var(--widget-base-font-size); font-weight: 600; margin-top: 5px; font-family: inherit; line-height: 1.2; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; transition: all 0.2s ease; }
+         #live-preview-area .firebase-auth-action-btn:hover { opacity: 1; transform: translateY(-1px); filter: brightness(1.1); }
+         #live-preview-area .firebase-auth-action-btn:disabled { opacity: 0.65; cursor: not-allowed; filter: brightness(1); transform: none; }
+         #live-preview-area .firebase-auth-sign-in-btn { background-color: var(--primary-color); color: white; }
+         #live-preview-area .firebase-auth-sign-up-btn { background-color: var(--success-color); color: white; }
+         #live-preview-area .firebase-auth-reset-btn { background-color: var(--info-color); color: white; }
+         #live-preview-area .firebase-auth-email-link-btn { color: var(--medium-text); background-color: #f1f3f5; border: 1px solid var(--input-border-color); margin-top: 10px; text-transform: none; letter-spacing: normal; font-weight: 500; }
+         #live-preview-area .firebase-auth-link-btn { background: none; border: none; color: var(--primary-color); font-size: calc(var(--widget-base-font-size) * 0.85); cursor: pointer; padding: 0; text-align: right; width: 100%; display: block; margin-top: 4px; margin-bottom: 8px; font-family: inherit; flex-shrink: 0;}
+         #live-preview-area .firebase-auth-toggle-link { background: none; border: none; color: var(--primary-color); font-size: calc(var(--widget-base-font-size) * 0.92); cursor: pointer; padding: 5px 0; text-align: center; width: 100%; display: block; margin-top: 10px; font-weight: 500; font-family: inherit; flex-shrink: 0;}
+         #live-preview-area .firebase-auth-provider-btn { margin: 5px 0; color: white; text-transform: none; letter-spacing: normal; font-weight: 500; border-radius: var(--border-radius-md); }
+         #live-preview-area .firebase-auth-google-btn { background: #DB4437; }
+         #live-preview-area .firebase-auth-facebook-btn-style { background: var(--facebook-color); }
+         #live-preview-area .firebase-auth-github-btn-style { background: var(--github-color); }
+         #live-preview-area .firebase-auth-yahoo-btn-style { background: var(--yahoo-color); }
+         #live-preview-area .firebase-auth-message { color: var(--danger-color); margin-top: 12px; margin-bottom: 12px; min-height: 1.4em; font-size: calc(var(--widget-base-font-size) * 0.92); font-weight: 500; text-align: center; width: 100%; line-height: 1.4; word-wrap: break-word; padding: 6px 8px; border-radius: var(--border-radius-md); border: 1px solid transparent; flex-shrink: 0; }
+         #live-preview-area .firebase-auth-message.info { color: var(--info-color); background-color: var(--info-light-bg); border-color: var(--info-border); }
+         #live-preview-area .firebase-auth-message.error { color: var(--danger-color); background-color: var(--danger-light-bg); border-color: var(--danger-border-color); }
+         #live-preview-area .firebase-auth-message.success { color: var(--success-dark-text); background-color: var(--success-light-bg); border-color: var(--success-border); }
+         #live-preview-area .firebase-auth-divider { font-size: calc(var(--widget-base-font-size) * 0.85); color: var(--light-text); margin: 15px 0; text-align: center; position: relative; width: 100%; line-height: 1; flex-shrink: 0; }
+         #live-preview-area .firebase-auth-divider::before, #live-preview-area .firebase-auth-divider::after { content: ''; position: absolute; top: 50%; width: 37%; height: 1px; background-color: var(--border-color); transform: translateY(-50%); }
+         #live-preview-area .firebase-auth-divider::before { left: 0; } #live-preview-area .firebase-auth-divider::after { right: 0; }
+         #live-preview-area .firebase-auth-legal-text { font-size: calc(var(--widget-base-font-size) * 0.77); color: var(--light-text); margin-top: 10px; line-height: 1.3; text-align: center; width: 100%; flex-shrink: 0; }
+         #live-preview-area .firebase-auth-legal-text a { color: var(--primary-color); text-decoration: none; }
+         #live-preview-area .firebase-auth-legal-text a:hover { text-decoration: underline; }
+         #live-preview-area .firebase-auth-popup { width: auto; max-width: 90%; min-width: 250px; background-color: var(--success-light-bg); color: var(--success-dark-text); border: 1px solid var(--success-border); border-radius: var(--border-radius-lg); padding: 18px 25px; box-shadow: var(--box-shadow-strong); text-align: center; font-size: 14px; font-weight: 600; line-height: 1.4; }
+         #live-preview-area .firebase-auth-popup p { margin: 0; padding: 0; }
+         #live-preview-area .firebase-auth-logout-box { width: auto; padding: 5px 8px; background-color: var(--bg-light); color: var(--dark-text); border-radius: 18px; box-shadow: var(--box-shadow-light); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 6px; transition: background-color 0.2s ease, box-shadow 0.2s ease; }
+         #live-preview-area .firebase-auth-logout-box:hover { box-shadow: var(--box-shadow-strong); }
+         #live-preview-area .firebase-auth-profile-img { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border-color); display: block; }
+         #live-preview-area .firebase-auth-profile-initial { width: 24px; height: 24px; border-radius: 50%; background-color: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; line-height: 1; text-transform: uppercase; border: 1px solid var(--border-color); }
+         #live-preview-area .firebase-auth-logout-box button { background-color: transparent; color: var(--danger-color); border: 1px solid var(--danger-light-bg); padding: 3px 8px; font-size: 11px; font-weight: 600; cursor: pointer; margin: 0; width: auto; border-radius: var(--border-radius-md); transition: all 0.2s ease; font-family: inherit; }
+         #live-preview-area #firebase-auth-reset-password-section-preview p { font-size: calc(var(--widget-base-font-size) * 0.92); color: var(--medium-text); margin-bottom: 10px; line-height: 1.4; flex-shrink: 0; }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(15px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInDown {
+          from { opacity: 0; transform: translateY(-15px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Firebase लॉगिन कस्टमाइज़र टूल</h1>
-    <label for="apiKey">API Key:</label>
-    <input type="text" id="apiKey" placeholder="अपना Firebase API Key दर्ज करें">
-
-    <label for="authDomain">Auth Domain:</label>
-    <input type="text" id="authDomain" placeholder="अपना Firebase Auth Domain दर्ज करें">
-
-    <label for="projectId">Project ID:</label>
-    <input type="text" id="projectId" placeholder="अपना Firebase Project ID दर्ज करें">
-
-    <label for="appId">App ID:</label>
-    <input type="text" id="appId" placeholder="अपना Firebase App ID दर्ज करें">
-
-    <button id="copyCode" disabled>कॉपी करें</button>
-    <button id="downloadCode" disabled>डाउनलोड करें</button>
-  </div>
-
-  <script>
-    let generatedCode = '';
-
-    function generateCode() {
-      const apiKey = document.getElementById('apiKey').value.trim();
-      const authDomain = document.getElementById('authDomain').value.trim();
-      const projectId = document.getElementById('projectId').value.trim();
-      const appId = document.getElementById('appId').value.trim();
-
-      if (!apiKey || !authDomain || !projectId || !appId) {
-        alert('कृपया सभी फ़ील्ड्स भरें।');
-        return;
-      }
-
-      generatedCode = `
-        // Firebase कॉन्फ़िगरेशन
-        const firebaseConfig = {
-          apiKey: "${apiKey}",
-          authDomain: "${authDomain}",
-          projectId: "${projectId}",
-          appId: "${appId}"
-        };
-
-        // Firebase इनिशियलाइज़ करें
-        firebase.initializeApp(firebaseConfig);
-      `;
-
-      document.getElementById('copyCode').disabled = false;
-      document.getElementById('downloadCode').disabled = false;
+    <div class="customizer-wrapper">
+        <div class="section-container master-controls-container">
+            <div class="master-controls">
+                <h3><i class="fa-solid fa-sliders"></i>Customize Widget</h3>
+                <div class="slider-container thin-scrollbar">
+                    <div class="control-group slider-slide active-slide">
+                       <span class="control-group-title">Backend Configuration</span>
+                        <div class="control-item full-width"><label for="input-fb-apiKey">API Key:</label><input class="config-input" type="text" id="input-fb-apiKey" data-config-key="apiKey" value="AIzaSy_YourApiKeyHere"></div>
+                        <div class="control-item full-width"><label for="input-fb-authDomain">Auth Domain:</label><input class="config-input" type="text" id="input-fb-authDomain" data-config-key="authDomain" value="your-project-id.firebaseapp.com"></div>
+                        <div class="control-item full-width"><label for="input-fb-projectId">Project ID:</label><input class="config-input" type="text" id="input-fb-projectId" data-config-key="projectId" value="your-project-id"></div>
+                        <div class="control-item full-width"><label for="input-fb-storageBucket">Storage Bucket:</label><input class="config-input" type="text" id="input-fb-storageBucket" data-config-key="storageBucket" value="your-project-id.appspot.com"></div>
+                        <div class="control-item full-width"><label for="input-fb-messagingSenderId">Messaging Sender ID:</label><input class="config-input" type="text" id="input-fb-messagingSenderId" data-config-key="messagingSenderId" value="1234567890"></div>
+                        <div class="control-item full-width"><label for="input-fb-appId">App ID:</label><input class="config-input" type="text" id="input-fb-appId" data-config-key="appId" value="1:1234567890:web:abcdef12345"></div>
+                        <p style="font-size: 11px; color: var(--ui-text-light); opacity: 0.7; width: 100%; text-align: center; margin-top: 10px; flex-basis: 100%;"> (These settings only update the code in the 'Full Widget Code' box below)</p>
+                    </div>
+                    <div class="control-group slider-slide">
+                       <span class="control-group-title">Main Colors</span>
+                        <div class="control-item"><label for="input-primary-color">Primary:</label><input type="color" id="input-primary-color" data-variable="--primary-color" value="#007bff"></div>
+                        <div class="control-item"><label for="input-danger-color">Danger:</label><input type="color" id="input-danger-color" data-variable="--danger-color" value="#dc3545"></div>
+                        <div class="control-item"><label for="input-success-color">Success:</label><input type="color" id="input-success-color" data-variable="--success-color" value="#28a745"></div>
+                        <div class="control-item"><label for="input-info-color">Info:</label><input type="color" id="input-info-color" data-variable="--info-color" value="#17a2b8"></div>
+                    </div>
+                     <div class="control-group slider-slide">
+                       <span class="control-group-title">Text & Backgrounds</span>
+                        <div class="control-item"><label for="input-bg-light">Widget BG:</label><input type="color" id="input-bg-light" data-variable="--bg-light" value="#ffffff"></div>
+                        <div class="control-item"><label for="input-dark-text">Dark Text:</label><input type="color" id="input-dark-text" data-variable="--dark-text" value="#212529"></div>
+                        <div class="control-item"><label for="input-medium-text">Medium Text:</label><input type="color" id="input-medium-text" data-variable="--medium-text" value="#495057"></div>
+                        <div class="control-item"><label for="input-light-text">Light Text:</label><input type="color" id="input-light-text" data-variable="--light-text" value="#6c757d"></div>
+                         <div class="control-item"><label for="input-grey-text">Placeholder:</label><input type="color" id="input-grey-text" data-variable="--grey-text" value="#adb5bd"></div>
+                    </div>
+                     <div class="control-group slider-slide">
+                       <span class="control-group-title">Borders & Radius</span>
+                        <div class="control-item"><label for="input-border-color">Divider/Border:</label><input type="color" id="input-border-color" data-variable="--border-color" value="#dee2e6"></div>
+                        <div class="control-item"><label for="input-input-border-color">Input Border:</label><input type="color" id="input-input-border-color" data-variable="--input-border-color" value="#ced4da"></div>
+                        <div class="control-item"><label for="input-widget-border-color-ctrl">Widget Border:</label><input type="color" id="input-widget-border-color-ctrl" data-variable="--widget-border-color" value="#007bff"></div>
+                        <div class="control-item"><label for="input-widget-border-width">Widget Brdr W:</label><input type="number" id="input-widget-border-width" data-variable="--widget-border-width" data-unit="px" value="2" min="0" max="5" step="1"><span class="unit-label">px</span></div>
+                        <div class="control-item"><label for="input-border-radius-lg">Radius (Lg):</label><input type="number" id="input-border-radius-lg" data-variable="--border-radius-lg" data-unit="px" value="6" min="0" max="30" step="1"><span class="unit-label">px</span></div>
+                        <div class="control-item"><label for="input-border-radius-md">Radius (Md):</label><input type="number" id="input-border-radius-md" data-variable="--border-radius-md" data-unit="px" value="4" min="0" max="20" step="1"><span class="unit-label">px</span></div>
+                        <div class="control-item"><label for="input-focus-shadow-color">Input Focus:</label><input type="color" id="input-focus-shadow-color" data-variable="--input-focus-shadow-color" value="#007bff"></div>
+                    </div>
+                    <div class="control-group slider-slide">
+                       <span class="control-group-title">Sizing & Font</span>
+                        <div class="control-item"><label for="input-widget-width">Widget Width:</label><input type="number" id="input-widget-width" data-variable="--widget-width-preview" data-unit="px" value="300" min="250" max="500" step="10"><span class="unit-label">px</span></div>
+                        <div class="control-item"><label for="input-widget-padding">W. Padding:</label><input type="number" id="input-widget-padding" data-variable="--widget-padding-preview" data-unit="px" value="18" min="10" max="30" step="1"><span class="unit-label">px</span></div>
+                        <div class="control-item"><label for="input-base-font-size">Base Font:</label><input type="number" id="input-base-font-size" data-variable="--widget-base-font-size" data-unit="px" value="13" min="10" max="16" step="0.5"><span class="unit-label">px</span></div>
+                        <div class="control-item full-width"><label for="input-widget-font">Font Family:</label><input type="text" id="input-widget-font" data-variable="--widget-font" value="-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif"></div>
+                        <div class="control-item"><label for="input-input-pad-v">Input Pad V:</label><input type="number" id="input-input-pad-v" data-variable="--input-padding-vertical" data-unit="px" value="9" min="4" max="15" step="1"><span class="unit-label">px</span></div>
+                        <div class="control-item"><label for="input-input-pad-h">Input Pad H:</label><input type="number" id="input-input-pad-h" data-variable="--input-padding-horizontal" data-unit="px" value="10" min="5" max="15" step="1"><span class="unit-label">px</span></div>
+                        <div class="control-item"><label for="input-btn-pad-v">Button Pad V:</label><input type="number" id="input-btn-pad-v" data-variable="--button-padding-vertical" data-unit="px" value="9" min="4" max="15" step="1"><span class="unit-label">px</span></div>
+                        <div class="control-item"><label for="input-btn-pad-h">Button Pad H:</label><input type="number" id="input-btn-pad-h" data-variable="--button-padding-horizontal" data-unit="px" value="9" min="5" max="15" step="1"><span class="unit-label">px</span></div>
+                    </div>
+                     <div class="control-group slider-slide">
+                       <span class="control-group-title">Message Styles</span>
+                       <div class="control-item"><label for="input-msg-error-bg">Error BG:</label><input type="color" id="input-msg-error-bg" data-variable="--danger-light-bg" value="#ffe3e3"></div>
+                       <div class="control-item"><label for="input-msg-error-border">Error Border:</label><input type="color" id="input-msg-error-border" data-variable="--danger-border-color" value="#f5c6cb"></div>
+                       <div class="control-item"><label for="input-msg-success-bg">Success BG:</label><input type="color" id="input-msg-success-bg" data-variable="--success-light-bg" value="#eaf7ec"></div>
+                       <div class="control-item"><label for="input-msg-success-border">Success Brdr:</label><input type="color" id="input-msg-success-border" data-variable="--success-border" value="#a1d9a5"></div>
+                       <div class="control-item"><label for="input-msg-success-text">Success Text:</label><input type="color" id="input-msg-success-text" data-variable="--success-dark-text" value="#155724"></div>
+                       <div class="control-item"><label for="input-msg-info-bg">Info BG:</label><input type="color" id="input-msg-info-bg" data-variable="--info-light-bg" value="#e8f7fa"></div>
+                       <div class="control-item"><label for="input-msg-info-border">Info Border:</label><input type="color" id="input-msg-info-border" data-variable="--info-border" value="#bee5eb"></div>
+                    </div>
+                     <div class="control-group slider-slide">
+                       <span class="control-group-title">Provider Colors</span>
+                       <div class="control-item"><label for="input-facebook-color">Facebook:</label><input type="color" id="input-facebook-color" data-variable="--facebook-color" value="#1877F2"></div>
+                       <div class="control-item"><label for="input-github-color">GitHub:</label><input type="color" id="input-github-color" data-variable="--github-color" value="#333333"></div>
+                       <div class="control-item"><label for="input-yahoo-color">Yahoo:</label><input type="color" id="input-yahoo-color" data-variable="--yahoo-color" value="#6001d2"></div>
+                       <p style="font-size: 11px; color: var(--ui-text-light); opacity: 0.7; width: 100%; text-align: center; margin-top: 10px; flex-basis: 100%;">(Google button color is fixed)</p>
+                    </div>
+                </div>
+                <div class="slider-navigation">
+                    <div class="slider-buttons-row">
+                        <button id="prev-slide-btn">Previous</button>
+                        <button id="next-slide-btn">Next</button>
+                    </div>
+                    <span id="current-slide-info">Backend Configuration</span>
+                </div>
+            </div>
+        </div>
+        <div class="section-container code-box-wrapper-container">
+            <div class="code-box-wrapper">
+                <div class="code-box-container">
+                    <div class="code-box-header">
+                        <span class="code-box-title"><i class="fa-solid fa-code"></i>Full Widget Code</span>
+                    </div>
+                    <button class="copy-code-button" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i>Copy</button>
+                    <textarea readonly class="code-display-textarea thin-scrollbar" id="fullCodeArea"><!doctype html>
+<style>
+    :root {
+        --primary-color: #007bff;
+        --danger-color: #dc3545;
+        --success-color: #28a745;
+        --info-color: #17a2b8;
+        --bg-light: #ffffff;
+        --dark-text: #212529;
+        --medium-text: #495057;
+        --light-text: #6c757d;
+        --grey-text: #adb5bd;
+        --border-color: #dee2e6;
+        --input-border-color: #ced4da;
+        --widget-border-color: #007bff;
+        --widget-border-width: 2px;
+        --border-radius-lg: 6px;
+        --border-radius-md: 4px;
+        --input-focus-shadow-color: rgba(0, 123, 255, 0.15);
+        --widget-width-preview: 300px;
+        --widget-padding-preview: 18px;
+        --widget-base-font-size: 13px;
+        --widget-font: "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif";
+        --input-padding-vertical: 9px;
+        --input-padding-horizontal: 10px;
+        --button-padding-vertical: 9px;
+        --button-padding-horizontal: 9px;
+        --danger-light-bg: #ffe3e3;
+        --danger-border-color: #f5c6cb;
+        --success-light-bg: #eaf7ec;
+        --success-border: #a1d9a5;
+        --success-dark-text: #155724;
+        --info-light-bg: #e8f7fa;
+        --info-border: #bee5eb;
+        --facebook-color: #1877F2;
+        --github-color: #333333;
+        --yahoo-color: #6001d2;
+        --primary-light-bg: #e7f5ff;
+        --bg-body: #f8f9fa;
+        --box-shadow-light: 0px 1px 2px rgba(0, 0, 0, 0.05);
+        --box-shadow-strong: 0px 2px 6px rgba(0, 0, 0, 0.1);
     }
-
-    document.getElementById('apiKey').addEventListener('input', generateCode);
-    document.getElementById('authDomain').addEventListener('input', generateCode);
-    document.getElementById('projectId').addEventListener('input', generateCode);
-    document.getElementById('appId').addEventListener('input', generateCode);
-
-    document.getElementById('copyCode').addEventListener('click', function() {
-      navigator.clipboard.writeText(generatedCode).then(() => {
-        alert('कोड क्लिपबोर्ड में कॉपी हो गया है।');
-      }).catch(err => {
-        alert('कॉपी करने में समस्या हुई: ' + err);
-      });
-    });
-
-    document.getElementById('downloadCode').addEventListener('click', function() {
-      const blob = new Blob([generatedCode], { type: 'text/javascript' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'firebase-config.js';
-      a.click();
-      URL.revokeObjectURL(url);
-    });
-  </script>
+     .firebase-auth-widget-container,        .firebase-auth-logout-box,        .firebase-auth-popup { font-family: var(--widget-font); font-size: var(--widget-base-font-size); box-sizing: border-box; }        .firebase-auth-widget-container *, .firebase-auth-logout-box *, .firebase-auth-popup * { box-sizing: border-box; }        .firebase-auth-widget-hidden { display: none !important; }        #firebase-auth-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.3); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999; }        #firebase-auth-backdrop.firebase-auth-widget-hidden { display: none !important; }        .firebase-auth-widget-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: var(--widget-width-preview); background: var(--bg-light); padding: var(--widget-padding-preview); border-radius: var(--border-radius-lg); box-shadow: var(--box-shadow-strong); display: flex; flex-direction: column; align-items: center; z-index: 1000; border: var(--widget-border-width) solid var(--widget-border-color); color: var(--dark-text); max-height: 90vh; overflow-y: auto; }        .firebase-auth-widget-box { width: 100%; text-align: center; }        .firebase-auth-widget-box h2 { color: var(--dark-text); font-weight: 600; font-size: calc(var(--widget-base-font-size) * 1.1); margin: 0 0 12px 0; line-height: 1.3; flex-shrink: 0; }        .firebase-auth-input-group { margin-bottom: 10px; width: 100%; flex-shrink: 0;}        .firebase-auth-input-group input { width: 100%; padding: var(--input-padding-vertical) var(--input-padding-horizontal); border: 1px solid var(--input-border-color); border-radius: var(--border-radius-md); font-size: var(--widget-base-font-size); transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease; background-color: var(--bg-light); color: var(--dark-text); margin-bottom: 6px; font-family: inherit; }        .firebase-auth-input-group input:last-child { margin-bottom: 0; }        .firebase-auth-input-group input::placeholder { color: var(--grey-text); opacity: 1; }        .firebase-auth-input-group input:hover { background-color: #f8f9fa; }        .firebase-auth-input-group input:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 2px var(--input-focus-shadow-color); background-color: var(--bg-light); }        .firebase-auth-action-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: var(--button-padding-vertical) var(--button-padding-horizontal); border: none; cursor: pointer; border-radius: var(--border-radius-md); font-size: var(--widget-base-font-size); font-weight: 600; transition: all 0.2s ease; margin-top: 5px; font-family: inherit; line-height: 1.2; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }        .firebase-auth-action-btn:hover { opacity: 1; transform: translateY(-1px); filter: brightness(1.1); }        .firebase-auth-action-btn:disabled { opacity: 0.65; cursor: not-allowed; filter: brightness(1); transform: none; }        .firebase-auth-sign-in-btn { background-color: var(--primary-color); color: white; }        .firebase-auth-sign-up-btn { background-color: var(--success-color); color: white; }        .firebase-auth-reset-btn { background-color: var(--info-color); color: white; }        .firebase-auth-email-link-btn { color: var(--medium-text); background-color: #f1f3f5; border: 1px solid var(--input-border-color); margin-top: 10px; text-transform: none; letter-spacing: normal; font-weight: 500; }        .firebase-auth-email-link-btn:hover { background-color: #e9ecef; border-color: #adb5bd; filter: brightness(1); }        .firebase-auth-link-btn { background: none; border: none; color: var(--primary-color); font-size: calc(var(--widget-base-font-size) * 0.85); cursor: pointer; padding: 0; text-align: right; width: 100%; display: block; margin-top: 4px; margin-bottom: 8px; font-family: inherit; flex-shrink: 0;}        .firebase-auth-link-btn:hover { text-decoration: underline; }        .firebase-auth-toggle-link { background: none; border: none; color: var(--primary-color); font-size: calc(var(--widget-base-font-size) * 0.92); cursor: pointer; padding: 5px 0; text-align: center; width: 100%; display: block; margin-top: 10px; font-weight: 500; font-family: inherit; flex-shrink: 0;}        .firebase-auth-toggle-link:hover { text-decoration: underline; }        .firebase-auth-provider-btn { margin: 5px 0; color: white; text-transform: none; letter-spacing: normal; font-weight: 500; border-radius: var(--border-radius-md); }        .firebase-auth-provider-btn:hover { filter: brightness(1.1); }        .firebase-auth-google-btn { background: #DB4437; }        .firebase-auth-facebook-btn-style { background: var(--facebook-color); }        .firebase-auth-github-btn-style { background: var(--github-color); }        .firebase-auth-yahoo-btn-style { background: var(--yahoo-color); }        .firebase-auth-message { color: var(--danger-color); margin-top: 12px; margin-bottom: 12px; min-height: 1.4em; font-size: calc(var(--widget-base-font-size) * 0.92); font-weight: 500; text-align: center; width: 100%; line-height: 1.4; word-wrap: break-word; padding: 6px 8px; border-radius: var(--border-radius-md); border: 1px solid transparent; flex-shrink: 0; }        .firebase-auth-message.info { color: var(--info-color); background-color: var(--info-light-bg); border-color: var(--info-border); }        .firebase-auth-message.error { color: var(--danger-color); background-color: var(--danger-light-bg); border-color: var(--danger-border-color); }        .firebase-auth-message.success { color: var(--success-dark-text); background-color: var(--success-light-bg); border-color: var(--success-border); }        .firebase-auth-divider { font-size: calc(var(--widget-base-font-size) * 0.85); color: var(--light-text); margin: 15px 0; text-align: center; position: relative; width: 100%; line-height: 1; flex-shrink: 0; }        .firebase-auth-divider::before, .firebase-auth-divider::after { content: ''; position: absolute; top: 50%; width: 37%; height: 1px; background-color: var(--border-color); transform: translateY(-50%); }        .firebase-auth-divider::before { left: 0; } .firebase-auth-divider::after { right: 0; }        .firebase-auth-legal-text { font-size: calc(var(--widget-base-font-size) * 0.77); color: var(--light-text); margin-top: 10px; line-height: 1.3; text-align: center; width: 100%; flex-shrink: 0; }        .firebase-auth-legal-text a { color: var(--primary-color); text-decoration: none; }        .firebase-auth-legal-text a:hover { text-decoration: underline; }        .firebase-auth-popup { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: auto; max-width: 90%; min-width: 250px; background-color: var(--success-light-bg); color: var(--success-dark-text); border: 1px solid var(--success-border); border-radius: var(--border-radius-lg); padding: 18px 25px; box-shadow: var(--box-shadow-strong); z-index: 2000; text-align: center; font-size: 14px; font-weight: 600; line-height: 1.4; }        .firebase-auth-popup p { margin: 0; padding: 0; }        .firebase-auth-logout-box { width: auto; padding: 5px 8px; position: fixed; bottom: 15px; left: 15px; background-color: var(--bg-light); color: var(--dark-text); border-radius: 18px; box-shadow: var(--box-shadow-light); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 6px; z-index: 9999; transition: background-color 0.2s ease, box-shadow 0.2s ease; }        .firebase-auth-logout-box.firebase-auth-widget-hidden { display: none !important; }        .firebase-auth-logout-box:hover { box-shadow: var(--box-shadow-strong); }        .firebase-auth-profile-img { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border-color); display: block; }        .firebase-auth-profile-initial { width: 24px; height: 24px; border-radius: 50%; background-color: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; line-height: 1; text-transform: uppercase; border: 1px solid var(--border-color); }        .firebase-auth-logout-box button { background-color: transparent; color: var(--danger-color); border: 1px solid var(--danger-light-bg); padding: 3px 8px; font-size: 11px; font-weight: 600; cursor: pointer; margin: 0; width: auto; border-radius: var(--border-radius-md); transition: all 0.2s ease; font-family: inherit; }        .firebase-auth-logout-box button:hover { background-color: var(--danger-color); color: white; border-color: var(--danger-color); text-decoration: none; transform: translateY(-1px); box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1); }        #firebase-auth-reset-password-section p { font-size: calc(var(--widget-base-font-size) * 0.92); color: var(--medium-text); margin-bottom: 10px; line-height: 1.4; flex-shrink: 0; }
+</style>
+<div id="firebase-auth-backdrop" class="firebase-auth-widget-hidden"></div>
+<div id="firebase-auth-login-popup" class="firebase-auth-widget-container firebase-auth-widget-hidden">
+    <div class="firebase-auth-widget-box">
+        <div id="firebase-auth-sign-in-section"><h2>Sign In</h2><div class="firebase-auth-input-group"><input type="email" id="firebase-auth-email-input-signin" placeholder="Enter email" aria-label="Email address for Sign In" autocomplete="email" /><input type="password" id="firebase-auth-password-input-signin" placeholder="Enter password" aria-label="Password for Sign In" autocomplete="current-password" /></div><button onclick="firebaseAuthToggleView('reset')" class="firebase-auth-link-btn">Forgot Password?</button><button id="firebase-auth-signin-btn" onclick="firebaseAuthSignInWithEmailPassword()" class="firebase-auth-action-btn firebase-auth-sign-in-btn">Sign In</button><button onclick="firebaseAuthToggleView('signup')" class="firebase-auth-toggle-link">New user? Sign Up</button></div>
+        <div id="firebase-auth-sign-up-section" class="firebase-auth-widget-hidden"><h2>Create Account</h2><div class="firebase-auth-input-group"><input type="email" id="firebase-auth-email-input-signup" placeholder="Enter email" aria-label="Email address for Sign Up" autocomplete="email" /><input type="password" id="firebase-auth-password-input-signup" placeholder="Create password (min. 6 chars)" aria-label="Password for Sign Up" autocomplete="new-password" /><input type="password" id="firebase-auth-password-confirm-signup" placeholder="Confirm password" aria-label="Confirm Password for Sign Up" autocomplete="new-password" /></div><button onclick="firebaseAuthSignUpWithEmailPassword()" class="firebase-auth-action-btn firebase-auth-sign-up-btn">Sign Up</button><button onclick="firebaseAuthToggleView('signin')" class="firebase-auth-toggle-link">Already have an account? Sign In</button></div>
+        <div id="firebase-auth-reset-password-section" class="firebase-auth-widget-hidden"><h2>Reset Password</h2><p>Enter your email address below and we'll send you a link to reset your password.</p><div class="firebase-auth-input-group"><input type="email" id="firebase-auth-email-input-reset" placeholder="Enter your email" aria-label="Email address for Password Reset" autocomplete="email" /></div><button onclick="firebaseAuthSendPasswordReset()" class="firebase-auth-action-btn firebase-auth-reset-btn">Send Reset Link</button><button onclick="firebaseAuthToggleView('signin')" class="firebase-auth-toggle-link">Back to Sign In</button></div>
+         <p id="firebase-auth-message" class="firebase-auth-message" aria-live="polite"></p>
+        <div id="firebase-auth-other-methods-divider" class="firebase-auth-divider">OR</div>
+        <button id="firebase-auth-magic-link-btn" onclick="firebaseAuthSendEmailLink()" class="firebase-auth-action-btn firebase-auth-email-link-btn">Send Magic Link (Passwordless)</button>
+        <div id="firebase-auth-provider-divider" class="firebase-auth-divider" style="margin-top: 10px;">OR USE</div>
+        <button id="firebase-auth-google-btn" onclick="firebaseAuthLoginWithProvider('google')" class="firebase-auth-action-btn firebase-auth-provider-btn firebase-auth-google-btn">Continue with Google</button>
+        <button id="firebase-auth-facebook-btn" onclick="firebaseAuthLoginWithProvider('facebook')" class="firebase-auth-action-btn firebase-auth-provider-btn firebase-auth-facebook-btn-style">Continue with Facebook</button>
+        <button id="firebase-auth-github-btn" onclick="firebaseAuthLoginWithProvider('github')" class="firebase-auth-action-btn firebase-auth-provider-btn firebase-auth-github-btn-style">Continue with GitHub</button>
+        <button id="firebase-auth-yahoo-btn" onclick="firebaseAuthLoginWithProvider('yahoo')" class="firebase-auth-action-btn firebase-auth-provider-btn firebase-auth-yahoo-btn-style">Continue with Yahoo</button>
+        <p class="firebase-auth-legal-text">By signing in, you agree to our <a href="#">Policy</a> &amp; <a href="#">Terms</a>.</p>
+    </div>
+</div>
+<div id="firebase-auth-logout-box" class="firebase-auth-logout-box firebase-auth-widget-hidden"><img id="firebase-auth-profile-pic" src="" alt="User profile picture" class="firebase-auth-profile-img firebase-auth-widget-hidden" /><div id="firebase-auth-profile-fallback" class="firebase-auth-profile-initial firebase-auth-widget-hidden"><span id="firebase-auth-profile-initial-letter"></span></div><button onclick="firebaseAuthLogout()">Logout</button></div>
+<div id="firebase-auth-success-popup" class="firebase-auth-popup firebase-auth-widget-hidden"><p id="firebase-auth-popup-message"></p></div>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script>
+    (function() {
+        "use strict";
+        const firebaseConfig = {
+            apiKey: "PLACEHOLDER_API_KEY",
+            authDomain: "PLACEHOLDER_AUTH_DOMAIN",
+            projectId: "PLACEHOLDER_PROJECT_ID",
+            storageBucket: "PLACEHOLDER_STORAGE_BUCKET",
+            messagingSenderId: "PLACEHOLDER_SENDER_ID",
+            appId: "PLACEHOLDER_APP_ID"
+        };
+        const EMAIL_STORAGE_KEY = 'loginWidgetEmailForSignIn';
+        const actionCodeSettings = { url: window.location.href.split('?')[0].split('#')[0], handleCodeInApp: true };
+        const SIGNUP_SUCCESS_DELAY = 4000;
+        const RESET_SUCCESS_DELAY = 3000;
+        const fallbackColors = ["#007bff","#6f42c1","#e83e8c","#dc3545","#fd7e14","#ffc107","#28a745","#20c997","#17a2b8","#6c757d"];
+        let auth = null; let app = null;
+        const loginPopup=document.getElementById('firebase-auth-login-popup'),logoutBox=document.getElementById('firebase-auth-logout-box'),backdrop=document.getElementById('firebase-auth-backdrop'),profilePic=document.getElementById('firebase-auth-profile-pic'),profileFallback=document.getElementById('firebase-auth-profile-fallback'),initialSpan=document.getElementById('firebase-auth-profile-initial-letter'),messageElement=document.getElementById('firebase-auth-message'),signInSection=document.getElementById('firebase-auth-sign-in-section'),signUpSection=document.getElementById('firebase-auth-sign-up-section'),resetPasswordSection=document.getElementById('firebase-auth-reset-password-section'),emailInputSignIn=document.getElementById('firebase-auth-email-input-signin'),passwordInputSignIn=document.getElementById('firebase-auth-password-input-signin'),signInBtn=document.getElementById('firebase-auth-signin-btn'),emailInputSignUp=document.getElementById('firebase-auth-email-input-signup'),passwordInputSignUp=document.getElementById('firebase-auth-password-input-signup'),passwordConfirmInputSignUp=document.getElementById('firebase-auth-password-confirm-signup'),emailInputReset=document.getElementById('firebase-auth-email-input-reset'),successPopup=document.getElementById('firebase-auth-success-popup'),popupMessageElement=document.getElementById('firebase-auth-popup-message'),otherMethodsDivider=document.getElementById('firebase-auth-other-methods-divider'),magicLinkBtn=document.getElementById('firebase-auth-magic-link-btn'),providerDivider=document.getElementById('firebase-auth-provider-divider'),googleBtn=document.getElementById('firebase-auth-google-btn'),facebookBtn=document.getElementById('firebase-auth-facebook-btn'),githubBtn=document.getElementById('firebase-auth-github-btn'),yahooBtn=document.getElementById('firebase-auth-yahoo-btn');
+        const getVisibleEmailInput=()=>{ return signInSection && !signInSection.classList.contains('firebase-auth-widget-hidden') ? emailInputSignIn : (signUpSection && !signUpSection.classList.contains('firebase-auth-widget-hidden') ? emailInputSignUp : emailInputReset); };
+        function isValidEmail(e){return!!e&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e).toLowerCase())};
+        function getUserColorIndex(e){if(!e)return 0;let t=0;for(let n=0;n<e.length;n++)t=e.charCodeAt(n)+((t<<5)-t),t&=t;return Math.abs(t)%fallbackColors.length};
+        function showLoginPopupMessage(e,t="error"){if(messageElement){messageElement.textContent=e;messageElement.className="firebase-auth-message";if(e&&t)messageElement.classList.add(t)}};
+        function clearMessages(){showLoginPopupMessage("")};
+        function showSuccessPopup(message, duration) { if (!successPopup || !popupMessageElement) return; popupMessageElement.textContent = message; successPopup.classList.remove('firebase-auth-widget-hidden'); setTimeout(() => { successPopup.classList.add('firebase-auth-widget-hidden'); }, duration); }
+        function cleanUrlAfterSignIn(){if(window.history&&window.history.replaceState){const e=window.location.protocol+"//"+window.location.host+window.location.pathname+window.location.hash;try{window.history.replaceState({path:e},"",e)}catch(err){console.warn("Could not clean URL:",err)}}};
+        function displayGlobalError(e){console.error("GLOBAL WIDGET ERROR:",e);if(messageElement){showLoginPopupMessage(e,"error");if(loginPopup)loginPopup.classList.remove("firebase-auth-widget-hidden")}else if(loginPopup){loginPopup.innerHTML=`<p style='color:red; font-weight:bold; padding: 10px;'>${e}</p>`;loginPopup.classList.remove("firebase-auth-widget-hidden")}else{alert("Widget Error: "+e)}if(backdrop)backdrop.classList.remove("firebase-auth-widget-hidden")};
+        function initializeApp(){
+           const requiredElements = [loginPopup, logoutBox, backdrop, profilePic, profileFallback, initialSpan, messageElement, signInSection, signUpSection, resetPasswordSection, emailInputSignIn, passwordInputSignIn, signInBtn, emailInputSignUp, passwordInputSignUp, passwordConfirmInputSignUp, emailInputReset, successPopup, popupMessageElement];
+           if (requiredElements.some(el => !el)) { displayGlobalError("Widget Initialization Error: Missing required HTML elements."); return; }
+           try {
+               if (typeof firebase === "undefined" || !firebase.initializeApp || !firebase.auth) { throw new Error("Backend service SDKs not loaded correctly."); }
+               if (!firebase.apps.length) { app = firebase.initializeApp(firebaseConfig); } else { app = firebase.app(); }
+               auth = firebase.auth(app);
+               console.log("Authentication service initialized for project:", app.options.projectId);
+               setupAuthentication();
+               handleEmailLinkSignInOnLoad();
+           } catch(e) { console.error("Initialization Failed:", e); displayGlobalError("Widget failed to start: " + (e.message || "Init error")); }
+        };
+        function setupAuthentication(){if(!auth)return;auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{auth.onAuthStateChanged(handleAuthStateChange)}).catch(e=>{console.error("Persistence error:",e);auth.onAuthStateChanged(handleAuthStateChange)})};
+        window.firebaseAuthToggleView=e=>{if(!signInSection||!signUpSection||!resetPasswordSection)return;signInSection.classList.add("firebase-auth-widget-hidden");signUpSection.classList.add("firebase-auth-widget-hidden");resetPasswordSection.classList.add("firebase-auth-widget-hidden");successPopup&&successPopup.classList.add("firebase-auth-widget-hidden");clearMessages();let t=!0;"signin"===e?signInSection.classList.remove("firebase-auth-widget-hidden"):"signup"===e?signUpSection.classList.remove("firebase-auth-widget-hidden"):"reset"===e&&(resetPasswordSection.classList.remove("firebase-auth-widget-hidden"),t=!1);[otherMethodsDivider,magicLinkBtn,providerDivider,googleBtn,facebookBtn,githubBtn,yahooBtn].forEach(el=>{el&&el.classList.toggle("firebase-auth-widget-hidden",!t)})};
+        function handleAuthStateChange(e){ successPopup&&successPopup.classList.add("firebase-auth-widget-hidden");if(!loginPopup||!logoutBox||!backdrop||!profilePic||!profileFallback||!initialSpan||!passwordInputSignIn)return;const t=auth&&auth.isSignInWithEmailLink(window.location.href);if(e){loginPopup.classList.add("firebase-auth-widget-hidden");backdrop.classList.add("firebase-auth-widget-hidden");logoutBox.classList.remove("firebase-auth-widget-hidden");if(e.photoURL){profilePic.src=e.photoURL;profilePic.classList.remove("firebase-auth-widget-hidden");profileFallback.classList.add("firebase-auth-widget-hidden")}else{const i=(e.displayName?.charAt(0)||e.email?.charAt(0)||"U").toUpperCase(),c=getUserColorIndex(e.uid);initialSpan.textContent=i;if(profileFallback){profileFallback.style.backgroundColor=fallbackColors[c];profileFallback.classList.remove("firebase-auth-widget-hidden")}profilePic.classList.add("firebase-auth-widget-hidden")}console.log("User logged in:",e.uid);messageElement?.classList.contains("success")?setTimeout(()=>clearMessages(),3500):clearMessages();passwordInputSignIn.value="";if(passwordInputSignUp)passwordInputSignUp.value="";if(passwordConfirmInputSignUp)passwordConfirmInputSignUp.value="";if(emailInputReset)emailInputReset.value=""}else{logoutBox.classList.add("firebase-auth-widget-hidden");profilePic.classList.add("firebase-auth-widget-hidden");profileFallback.classList.add("firebase-auth-widget-hidden");passwordInputSignIn.value="";if(passwordInputSignUp)passwordInputSignUp.value="";if(passwordConfirmInputSignUp)passwordConfirmInputSignUp.value="";if(emailInputReset)emailInputReset.value="";console.log("User logged out or not logged in.");if(!t){loginPopup.classList.remove("firebase-auth-widget-hidden");backdrop.classList.remove("firebase-auth-widget-hidden");firebaseAuthToggleView("signin");clearMessages()}else{loginPopup.classList.add("firebase-auth-widget-hidden");backdrop.classList.add("firebase-auth-widget-hidden")}}};
+        window.firebaseAuthSignUpWithEmailPassword=()=>{ if(!auth||!emailInputSignUp||!passwordInputSignUp||!passwordConfirmInputSignUp)return;const e=emailInputSignUp.value.trim(),t=passwordInputSignUp.value,n=passwordConfirmInputSignUp.value;clearMessages();if(!isValidEmail(e))return showLoginPopupMessage("Invalid email format","error"),void emailInputSignUp.focus();if(t.length<6)return showLoginPopupMessage("Password must be at least 6 characters","error"),void passwordInputSignUp.focus();if(t!==n)return showLoginPopupMessage("Passwords do not match","error"),void passwordConfirmInputSignUp.focus();showLoginPopupMessage("Creating account...","info");auth.createUserWithEmailAndPassword(e,t).then(t=>{console.log("Sign up OK:",t.user?.uid);clearMessages();showSuccessPopup("Account created! You can now sign in.", SIGNUP_SUCCESS_DELAY);if(emailInputSignUp)emailInputSignUp.value="";if(passwordInputSignUp)passwordInputSignUp.value="";if(passwordConfirmInputSignUp)passwordConfirmInputSignUp.value="";setTimeout(()=>{firebaseAuthToggleView("signin");if(emailInputSignIn)emailInputSignIn.value=e;if(passwordInputSignIn)passwordInputSignIn.focus()},SIGNUP_SUCCESS_DELAY)}).catch(handleAuthError)};
+        window.firebaseAuthSignInWithEmailPassword=()=>{ if(!auth||!emailInputSignIn||!passwordInputSignIn||!signInBtn)return;const e=emailInputSignIn.value.trim(),t=passwordInputSignIn.value;clearMessages();if(!isValidEmail(e))return showLoginPopupMessage("Invalid email format","error"),void emailInputSignIn.focus();if(!t)return showLoginPopupMessage("Please enter your password","error"),void passwordInputSignIn.focus();signInBtn.disabled=!0;signInBtn.textContent="Signing In...";showLoginPopupMessage("Signing in...","info");auth.signInWithEmailAndPassword(e,t).then(e=>{console.log("Sign in OK:",e.user?.uid);}).catch(e=>{if(passwordInputSignIn)passwordInputSignIn.value="";handleAuthError(e)}).finally(()=>{if(signInBtn){signInBtn.disabled=!1;signInBtn.textContent="Sign In"}if(messageElement&&messageElement.classList.contains("info")&&!messageElement.classList.contains("error")&&!messageElement.classList.contains("success"))clearMessages()})};
+        window.firebaseAuthSendPasswordReset=()=>{ if(!auth||!emailInputReset)return;const e=emailInputReset.value.trim();clearMessages();if(!isValidEmail(e))return showLoginPopupMessage("Please enter a valid email address","error"),void emailInputReset.focus();showLoginPopupMessage("Sending password reset link...","info");auth.sendPasswordResetEmail(e,actionCodeSettings).then(()=>{console.log("Reset email sent:",e);showSuccessPopup("Password reset email sent. Check your inbox.", RESET_SUCCESS_DELAY);setTimeout(()=>{firebaseAuthToggleView("signin");if(emailInputReset)emailInputReset.value=""},RESET_SUCCESS_DELAY)}).catch(handleAuthError)};
+        function handleEmailLinkSignInOnLoad(){ if(backdrop)backdrop.classList.add("firebase-auth-widget-hidden");if(!auth||typeof auth.isSignInWithEmailLink!=="function")return;if(auth.isSignInWithEmailLink(window.location.href)){if(loginPopup)loginPopup.classList.remove("firebase-auth-widget-hidden");if(backdrop)backdrop.classList.remove("firebase-auth-widget-hidden");firebaseAuthToggleView("signin");showLoginPopupMessage("Verifying magic link...","info");let e=window.localStorage.getItem(EMAIL_STORAGE_KEY);if(!e){e=window.prompt("Please provide your email address again:");if(!e||!isValidEmail(e))return showLoginPopupMessage("Valid email required. Try the link again.","error"),void cleanUrlAfterSignIn()}auth.signInWithEmailLink(e,window.location.href).then(e=>{console.log("Email link sign-in OK:",e.user?.uid);window.localStorage.removeItem(EMAIL_STORAGE_KEY);cleanUrlAfterSignIn();}).catch(e=>{console.error("Email link sign-in error:",e);window.localStorage.removeItem(EMAIL_STORAGE_KEY);handleAuthError(e);cleanUrlAfterSignIn()})}};
+        window.firebaseAuthSendEmailLink=()=>{ if(!auth)return void showLoginPopupMessage("Auth service unavailable","error");const e=getVisibleEmailInput();if(!e)return void showLoginPopupMessage("Email field not found","error");const t=e.value.trim();clearMessages();if(!isValidEmail(t))return showLoginPopupMessage("Enter email first","error"),void e.focus();showLoginPopupMessage("Sending magic link...","info");auth.sendSignInLinkToEmail(t,actionCodeSettings).then(()=>{console.log("Sign-in link sent to:",t);window.localStorage.setItem(EMAIL_STORAGE_KEY,t);showLoginPopupMessage("Magic link sent! Check your email.","success")}).catch(handleAuthError)};
+        window.firebaseAuthLoginWithProvider=e=>{ console.log("Login with:",e);if(!auth)return void showLoginPopupMessage("Auth service unavailable","error");clearMessages();let t,n=e.charAt(0).toUpperCase()+e.slice(1);try{switch(e.toLowerCase()){case"google":t=new firebase.auth.GoogleAuthProvider;n="Google";break;case"facebook":t=new firebase.auth.FacebookAuthProvider;n="Facebook";break;case"github":t=new firebase.auth.GithubAuthProvider;n="GitHub";break;case"yahoo":t=new firebase.auth.OAuthProvider("yahoo.com");n="Yahoo";break;default:throw new Error(`Unsupported provider: ${e}`)}}catch(err){return console.error(`Provider error ${n}:`,err),void showLoginPopupMessage(`Cannot setup ${n}`,"error")}showLoginPopupMessage(`Connecting to ${n}...`,"info");auth.signInWithPopup(t).then(e=>{console.log(`${n} sign-in OK:`,e.user?.uid);clearMessages()}).catch(e=>{if("auth/popup-closed-by-user"===e.code||"auth/cancelled-popup-request"===e.code){console.log(`${n} popup closed`);clearMessages()}else if("auth/account-exists-with-different-credential"===e.code){console.warn("Account exists",e.email);const provider=e.customData?.providerId||"other method";showLoginPopupMessage(`Email linked to ${provider}. Sign in that way.`,"error")}else{handleAuthError(e)}})};
+        window.firebaseAuthLogout=()=>{ if(!auth)return console.error("Logout fail: No auth"),void alert("Logout failed: Service unavailable.");auth.signOut().then(()=>{console.log("Logout OK")}).catch(e=>{console.error("Logout error:",e);(loginPopup&&!loginPopup.classList.contains("firebase-auth-widget-hidden")&&messageElement)?showLoginPopupMessage("Logout failed","error"):alert("Logout failed: "+e.message)})};
+        function handleAuthError(e){ console.error("Auth Error:",e.code,e.message);let t="",n="error";switch(e.code){case"auth/invalid-login-credentials":case"auth/invalid-credential":t="Incorrect email or password.";break;case"auth/invalid-email":t="Invalid email format.";break;case"auth/email-already-in-use":t="Email already registered.";break;case"auth/weak-password":t="Password too short.";break;case"auth/requires-recent-login":t="Sign in again.",n="info";break;case"auth/too-many-requests":t="Too many attempts. Wait.",n="info";break;case"auth/network-request-failed":t="Network error.",n="info";break;case"auth/user-disabled":t="Account disabled.";break;case"auth/user-not-found":t="No account found with this email.";break;case"auth/wrong-password":t="Incorrect password.";break;case"auth/invalid-action-code":t="Link invalid/expired.";break;case"auth/operation-not-allowed":t="Method not enabled.";break;case"auth/popup-blocked":t="Popup blocked.";break;case"auth/popup-closed-by-user":case"auth/cancelled-popup-request":return void clearMessages();case"auth/account-exists-with-different-credential":t=`Email uses ${e.customData?.providerId||"other method"}.`;break;case"auth/unauthorized-domain":t="Domain not allowed.";break;case"auth/auth-domain-config-required":t="Config error.";break;default:console.warn("Unhandled Error:",e.code),t=`Unexpected issue (${e.code}).`}showLoginPopupMessage(t,n)};
+        "loading"===document.readyState?document.addEventListener("DOMContentLoaded",initializeApp):initializeApp();
+    })();
+</script>
+</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="section-container widget-preview-wrapper-container">
+            <div class="widget-preview-wrapper">
+                <h3 class="widget-preview-title"><i class="fa-solid fa-eye"></i>Live Preview (Appearance Only)</h3>
+                <div class="widget-preview-container thin-scrollbar" id="live-preview-area">
+                    <style id="preview-styles">
+                        #live-preview-area {
+                          --primary-color: #007bff; --danger-color: #dc3545; --success-color: #28a745;
+                          --info-color: #17a2b8; --bg-light: #ffffff; --dark-text: #212529;
+                          --medium-text: #495057; --light-text: #6c757d; --grey-text: #adb5bd;
+                          --border-color: #dee2e6; --input-border-color: #ced4da;
+                          --widget-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                          --widget-base-font-size: 13px; --border-radius-lg: 6px; --border-radius-md: 4px;
+                          --widget-width-preview: 300px; --widget-padding-preview: 18px;
+                          --widget-border-width: 2px; --widget-border-color: #007bff;
+                          --input-padding-vertical: 9px; --input-padding-horizontal: 10px;
+                          --button-padding-vertical: 9px; --button-padding-horizontal: 9px;
+                          --input-focus-shadow-color: rgba(0, 123, 255, 0.15);
+                          --danger-light-bg: #ffe3e3; --danger-border-color: #f5c6cb;
+                          --success-light-bg: #eaf7ec; --success-border: #a1d9a5; --success-dark-text: #155724;
+                          --info-light-bg: #e8f7fa; --info-border: #bee5eb;
+                          --facebook-color: #1877F2; --github-color: #333333; --yahoo-color: #6001d2;
+                          --primary-light-bg: #e7f5ff; --bg-body: #f8f9fa;
+                          --box-shadow-light: 0px 1px 2px rgba(0,0,0,0.05); --box-shadow-strong: 0px 2px 6px rgba(0,0,0,0.1);
+                        }
+                         #live-preview-area .firebase-auth-widget-container, #live-preview-area .firebase-auth-logout-box, #live-preview-area .firebase-auth-popup { font-family: var(--widget-font); font-size: var(--widget-base-font-size); box-sizing: border-box; }
+                         #live-preview-area .firebase-auth-widget-container *, #live-preview-area .firebase-auth-logout-box *, #live-preview-area .firebase-auth-popup * { box-sizing: border-box; }
+                         #live-preview-area .firebase-auth-widget-hidden { display: none !important; }
+                         #live-preview-area #firebase-auth-login-popup { position: relative !important; top: auto !important; left: auto !important; transform: none !important; z-index: 1 !important; margin-top: 15px; margin-bottom: 15px; display: flex !important; width: var(--widget-width-preview); background: var(--bg-light); padding: var(--widget-padding-preview); border-radius: var(--border-radius-lg); box-shadow: var(--box-shadow-strong); flex-direction: column; align-items: center; border: var(--widget-border-width) solid var(--widget-border-color); color: var(--dark-text); max-height: none; overflow-y: visible; }
+                         #live-preview-area #firebase-auth-backdrop { display: none !important; }
+                         #live-preview-area #firebase-auth-logout-box, #live-preview-area #firebase-auth-success-popup { position: absolute !important; transform: none !important; z-index: 2 !important; }
+                         #live-preview-area #firebase-auth-logout-box { bottom: 10px !important; left: 10px !important; top: auto !important; }
+                         #live-preview-area #firebase-auth-success-popup { left: 50% !important; top: 40% !important; transform: translate(-50%, -50%) !important; bottom: auto !important; }
+                         #live-preview-area .firebase-auth-widget-box { width: 100%; text-align: center; }
+                         #live-preview-area .firebase-auth-widget-box h2 { color: var(--dark-text); font-weight: 600; font-size: calc(var(--widget-base-font-size) * 1.1); margin: 0 0 12px 0; line-height: 1.3; flex-shrink: 0; }
+                         #live-preview-area .firebase-auth-input-group { margin-bottom: 10px; width: 100%; flex-shrink: 0;}
+                         #live-preview-area .firebase-auth-input-group input { width: 100%; padding: var(--input-padding-vertical) var(--input-padding-horizontal); border: 1px solid var(--input-border-color); border-radius: var(--border-radius-md); font-size: var(--widget-base-font-size); background-color: var(--bg-light); color: var(--dark-text); margin-bottom: 6px; font-family: inherit; }
+                         #live-preview-area .firebase-auth-input-group input:last-child { margin-bottom: 0; }
+                         #live-preview-area .firebase-auth-input-group input::placeholder { color: var(--grey-text); opacity: 1; }
+                         #live-preview-area .firebase-auth-input-group input:hover { background-color: #f8f9fa; }
+                         #live-preview-area .firebase-auth-input-group input:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 2px var(--input-focus-shadow-color); background-color: var(--bg-light); }
+                         #live-preview-area .firebase-auth-action-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: var(--button-padding-vertical) var(--button-padding-horizontal); border: none; cursor: pointer; border-radius: var(--border-radius-md); font-size: var(--widget-base-font-size); font-weight: 600; margin-top: 5px; font-family: inherit; line-height: 1.2; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; transition: all 0.2s ease; }
+                         #live-preview-area .firebase-auth-action-btn:hover { opacity: 1; transform: translateY(-1px); filter: brightness(1.1); }
+                         #live-preview-area .firebase-auth-action-btn:disabled { opacity: 0.65; cursor: not-allowed; filter: brightness(1); transform: none; }
+                         #live-preview-area .firebase-auth-sign-in-btn { background-color: var(--primary-color); color: white; }
+                         #live-preview-area .firebase-auth-sign-up-btn { background-color: var(--success-color); color: white; }
+                         #live-preview-area .firebase-auth-reset-btn { background-color: var(--info-color); color: white; }
+                         #live-preview-area .firebase-auth-email-link-btn { color: var(--medium-text); background-color: #f1f3f5; border: 1px solid var(--input-border-color); margin-top: 10px; text-transform: none; letter-spacing: normal; font-weight: 500; }
+                         #live-preview-area .firebase-auth-link-btn { background: none; border: none; color: var(--primary-color); font-size: calc(var(--widget-base-font-size) * 0.85); cursor: pointer; padding: 0; text-align: right; width: 100%; display: block; margin-top: 4px; margin-bottom: 8px; font-family: inherit; flex-shrink: 0;}
+                         #live-preview-area .firebase-auth-toggle-link { background: none; border: none; color: var(--primary-color); font-size: calc(var(--widget-base-font-size) * 0.92); cursor: pointer; padding: 5px 0; text-align: center; width: 100%; display: block; margin-top: 10px; font-weight: 500; font-family: inherit; flex-shrink: 0;}
+                         #live-preview-area .firebase-auth-provider-btn { margin: 5px 0; color: white; text-transform: none; letter-spacing: normal; font-weight: 500; border-radius: var(--border-radius-md); }
+                         #live-preview-area .firebase-auth-google-btn { background: #DB4437; }
+                         #live-preview-area .firebase-auth-facebook-btn-style { background: var(--facebook-color); }
+                         #live-preview-area .firebase-auth-github-btn-style { background: var(--github-color); }
+                         #live-preview-area .firebase-auth-yahoo-btn-style { background: var(--yahoo-color); }
+                         #live-preview-area .firebase-auth-message { color: var(--danger-color); margin-top: 12px; margin-bottom: 12px; min-height: 1.4em; font-size: calc(var(--widget-base-font-size) * 0.92); font-weight: 500; text-align: center; width: 100%; line-height: 1.4; word-wrap: break-word; padding: 6px 8px; border-radius: var(--border-radius-md); border: 1px solid transparent; flex-shrink: 0; }
+                         #live-preview-area .firebase-auth-message.info { color: var(--info-color); background-color: var(--info-light-bg); border-color: var(--info-border); }
+                         #live-preview-area .firebase-auth-message.error { color: var(--danger-color); background-color: var(--danger-light-bg); border-color: var(--danger-border-color); }
+                         #live-preview-area .firebase-auth-message.success { color: var(--success-dark-text); background-color: var(--success-light-bg); border-color: var(--success-border); }
+                         #live-preview-area .firebase-auth-divider { font-size: calc(var(--widget-base-font-size) * 0.85); color: var(--light-text); margin: 15px 0; text-align: center; position: relative; width: 100%; line-height: 1; flex-shrink: 0; }
+                         #live-preview-area .firebase-auth-divider::before, #live-preview-area .firebase-auth-divider::after { content: ''; position: absolute; top: 50%; width: 37%; height: 1px; background-color: var(--border-color); transform: translateY(-50%); }
+                         #live-preview-area .firebase-auth-divider::before { left: 0; } #live-preview-area .firebase-auth-divider::after { right: 0; }
+                         #live-preview-area .firebase-auth-legal-text { font-size: calc(var(--widget-base-font-size) * 0.77); color: var(--light-text); margin-top: 10px; line-height: 1.3; text-align: center; width: 100%; flex-shrink: 0; }
+                         #live-preview-area .firebase-auth-legal-text a { color: var(--primary-color); text-decoration: none; }
+                         #live-preview-area .firebase-auth-legal-text a:hover { text-decoration: underline; }
+                         #live-preview-area .firebase-auth-popup { width: auto; max-width: 90%; min-width: 250px; background-color: var(--success-light-bg); color: var(--success-dark-text); border: 1px solid var(--success-border); border-radius: var(--border-radius-lg); padding: 18px 25px; box-shadow: var(--box-shadow-strong); text-align: center; font-size: 14px; font-weight: 600; line-height: 1.4; }
+                         #live-preview-area .firebase-auth-popup p { margin: 0; padding: 0; }
+                         #live-preview-area .firebase-auth-logout-box { width: auto; padding: 5px 8px; background-color: var(--bg-light); color: var(--dark-text); border-radius: 18px; box-shadow: var(--box-shadow-light); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 6px; transition: background-color 0.2s ease, box-shadow 0.2s ease; }
+                         #live-preview-area .firebase-auth-logout-box:hover { box-shadow: var(--box-shadow-strong); }
+                         #live-preview-area .firebase-auth-profile-img { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border-color); display: block; }
+                         #live-preview-area .firebase-auth-profile-initial { width: 24px; height: 24px; border-radius: 50%; background-color: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; line-height: 1; text-transform: uppercase; border: 1px solid var(--border-color); }
+                         #live-preview-area .firebase-auth-logout-box button { background-color: transparent; color: var(--danger-color); border: 1px solid var(--danger-light-bg); padding: 3px 8px; font-size: 11px; font-weight: 600; cursor: pointer; margin: 0; width: auto; border-radius: var(--border-radius-md); transition: all 0.2s ease; font-family: inherit; }
+                         #live-preview-area #firebase-auth-reset-password-section-preview p { font-size: calc(var(--widget-base-font-size) * 0.92); color: var(--medium-text); margin-bottom: 10px; line-height: 1.4; flex-shrink: 0; }
+                    </style>
+                    <div id="firebase-auth-login-popup" class="firebase-auth-widget-container">
+                       <div class="firebase-auth-widget-box">
+                           <div id="firebase-auth-sign-in-section"><h2>Sign In</h2><div class="firebase-auth-input-group"><input type="email" id="firebase-auth-email-input-signin-preview" placeholder="Enter email"/><input type="password" id="firebase-auth-password-input-signin-preview" placeholder="Enter password"/></div><button onclick="firebaseAuthToggleViewPreview('reset')" class="firebase-auth-link-btn">Forgot Password?</button><button id="firebase-auth-signin-btn-preview" onclick="firebaseAuthSignInWithEmailPasswordPreview()" class="firebase-auth-action-btn firebase-auth-sign-in-btn">Sign In</button><button onclick="firebaseAuthToggleViewPreview('signup')" class="firebase-auth-toggle-link">New user? Sign Up</button></div>
+                           <div id="firebase-auth-sign-up-section-preview" class="firebase-auth-widget-hidden"><h2>Create Account</h2><div class="firebase-auth-input-group"><input type="email" id="firebase-auth-email-input-signup-preview" placeholder="Enter email"/><input type="password" id="firebase-auth-password-input-signup-preview" placeholder="Create password"/><input type="password" id="firebase-auth-password-confirm-signup-preview" placeholder="Confirm password"/></div><button onclick="firebaseAuthSignUpWithEmailPasswordPreview()" class="firebase-auth-action-btn firebase-auth-sign-up-btn">Sign Up</button><button onclick="firebaseAuthToggleViewPreview('signin')" class="firebase-auth-toggle-link">Already have account? Sign In</button></div>
+                           <div id="firebase-auth-reset-password-section-preview" class="firebase-auth-widget-hidden"><h2>Reset Password</h2><p>Enter email for reset link.</p><div class="firebase-auth-input-group"><input type="email" id="firebase-auth-email-input-reset-preview" placeholder="Enter email"/></div><button onclick="firebaseAuthSendPasswordResetPreview()" class="firebase-auth-action-btn firebase-auth-reset-btn">Send Reset Link</button><button onclick="firebaseAuthToggleViewPreview('signin')" class="firebase-auth-toggle-link">Back to Sign In</button></div>
+                           <p id="firebase-auth-message-preview" class="firebase-auth-message" aria-live="polite"></p>
+                           <div id="firebase-auth-other-methods-divider-preview" class="firebase-auth-divider">OR</div>
+                           <button id="firebase-auth-magic-link-btn-preview" onclick="firebaseAuthSendEmailLinkPreview()" class="firebase-auth-action-btn firebase-auth-email-link-btn">Send Magic Link</button>
+                           <div id="firebase-auth-provider-divider-preview" class="firebase-auth-divider" style="margin-top:10px">OR USE</div>
+                           <button id="firebase-auth-google-btn-preview" onclick="firebaseAuthLoginWithProviderPreview('google')" class="firebase-auth-action-btn firebase-auth-provider-btn firebase-auth-google-btn">Continue with Google</button>
+                           <button id="firebase-auth-facebook-btn-preview" onclick="firebaseAuthLoginWithProviderPreview('facebook')" class="firebase-auth-action-btn firebase-auth-provider-btn firebase-auth-facebook-btn-style">Continue with Facebook</button>
+                           <button id="firebase-auth-github-btn-preview" onclick="firebaseAuthLoginWithProviderPreview('github')" class="firebase-auth-action-btn firebase-auth-provider-btn firebase-auth-github-btn-style">Continue with GitHub</button>
+                           <button id="firebase-auth-yahoo-btn-preview" onclick="firebaseAuthLoginWithProviderPreview('yahoo')" class="firebase-auth-action-btn firebase-auth-provider-btn firebase-auth-yahoo-btn-style">Continue with Yahoo</button>
+                           <p class="firebase-auth-legal-text">By signing in, you agree to our <a href="#">Policy</a> & <a href="#">Terms</a>.</p>
+                       </div>
+                    </div>
+                    <div id="firebase-auth-logout-box-preview" class="firebase-auth-logout-box firebase-auth-widget-hidden"><img id="firebase-auth-profile-pic-preview" src="" alt="User profile picture" class="firebase-auth-profile-img firebase-auth-widget-hidden"/><div id="firebase-auth-profile-fallback-preview" class="firebase-auth-profile-initial firebase-auth-widget-hidden"><span id="firebase-auth-profile-initial-letter-preview"></span></div><button onclick="firebaseAuthLogoutPreview()">Logout</button></div>
+                    <div id="firebase-auth-success-popup-preview" class="firebase-auth-popup firebase-auth-widget-hidden"><p id="firebase-auth-popup-message-preview"></p></div>
+                    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+                    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+                    <script>
+                     (function(){"use strict"; const e={apiKey:"PREVIEW_KEY",authDomain:"preview.firebaseapp.com",projectId:"preview-id"}; const t="loginWidgetEmailForSignIn_Preview",o={url:window.location.href.split("?")[0].split("#")[0],handleCodeInApp:!0},n=2e3,r=1500,i=800; const a=["#007bff","#6f42c1","#e83e8c","#dc3545","#fd7e14","#ffc107","#28a745","#20c997","#17a2b8","#6c757d"]; let d=null; const c=document.currentScript.closest(".widget-preview-container"); if(!c)return; const u=c.querySelector("#firebase-auth-login-popup"),p=c.querySelector("#firebase-auth-logout-box-preview"),m=c.querySelector("#firebase-auth-profile-pic-preview"),h=c.querySelector("#firebase-auth-profile-fallback-preview"),f=c.querySelector("#firebase-auth-profile-initial-letter-preview"),g=c.querySelector("#firebase-auth-message-preview"),w=c.querySelector("#firebase-auth-sign-in-section"),v=c.querySelector("#firebase-auth-sign-up-section-preview"),y=c.querySelector("#firebase-auth-reset-password-section-preview"),b=c.querySelector("#firebase-auth-email-input-signin-preview"),k=c.querySelector("#firebase-auth-password-input-signin-preview"),S=c.querySelector("#firebase-auth-signin-btn-preview"),E=c.querySelector("#firebase-auth-email-input-signup-preview"),x=c.querySelector("#firebase-auth-password-input-signup-preview"),L=c.querySelector("#firebase-auth-password-confirm-signup-preview"),A=c.querySelector("#firebase-auth-email-input-reset-preview"),C=c.querySelector("#firebase-auth-success-popup-preview"),B=c.querySelector("#firebase-auth-popup-message-preview"); const M=()=>{return b}; const N=()=>{P(d)}; window.firebaseAuthToggleViewPreview=e=>{if(!w||!v||!y)return; w.classList.add("firebase-auth-widget-hidden"),v.classList.add("firebase-auth-widget-hidden"),y.classList.add("firebase-auth-widget-hidden"),D("");let t=!0;"signin"===e?w.classList.remove("firebase-auth-widget-hidden"):"signup"===e?v.classList.remove("firebase-auth-widget-hidden"):"reset"===e&&(y.classList.remove("firebase-auth-widget-hidden"),t=!1); [c.querySelector('#firebase-auth-other-methods-divider-preview'),c.querySelector('#firebase-auth-magic-link-btn-preview'),c.querySelector('#firebase-auth-provider-divider-preview'),c.querySelector('#firebase-auth-google-btn-preview'),c.querySelector('#firebase-auth-facebook-btn-preview'),c.querySelector('#firebase-auth-github-btn-preview'),c.querySelector('#firebase-auth-yahoo-btn-preview')].forEach(el => el?.classList.toggle('firebase-auth-widget-hidden', !t))}; const O=e=>{if(!e)return 0;let t=0;for(let n=0;n<e.length;n++)t=e.charCodeAt(n)+((t<<5)-t),t&=t;return Math.abs(t)%a.length}; const P=e=>{d=e,C&&C.classList.add("firebase-auth-widget-hidden");if(!u||!p||!m||!h||!f)return; if(e){u.classList.add("firebase-auth-widget-hidden"),p.classList.remove("firebase-auth-widget-hidden");const t=(e.email||"U").charAt(0).toUpperCase(),n=O(e.uid);f&&(f.textContent=t),h&&(h.style.backgroundColor=a[n],h.classList.remove("firebase-auth-widget-hidden")),m&&m.classList.add("firebase-auth-widget-hidden")}else p.classList.add("firebase-auth-widget-hidden"),m&&m.classList.add("firebase-auth-widget-hidden"),h&&h.classList.add("firebase-auth-widget-hidden"),u&&u.classList.remove("firebase-auth-widget-hidden"),window.firebaseAuthToggleViewPreview("signin"); k&&(k.value=""),x&&(x.value=""),L&&(L.value=""),A&&(A.value=""),g&&!g.classList.contains("success")&&D("")}; const D=e=>{if(g){g.textContent=e}}; const Q=e=>{return!!e&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e).toLowerCase())}; window.firebaseAuthSignUpWithEmailPasswordPreview=()=>{const e=E?.value,t=x?.value,a=L?.value; D(""); if(!Q(e))return D("Invalid email"); if(!t||t.length<6)return D("Password too short"); if(t!==a)return D("Passwords don't match"); D("Creating..."),setTimeout(()=>{D(""),B&&(B.textContent="Account created!"),C&&C.classList.remove("firebase-auth-widget-hidden"),setTimeout(()=>{C&&C.classList.add("firebase-auth-widget-hidden"),window.firebaseAuthToggleViewPreview("signin")},n)},i)}; window.firebaseAuthSignInWithEmailPasswordPreview=()=>{const e=b?.value,t=k?.value; D(""); if(!Q(e))return D("Invalid email"); if(!t)return D("Enter password"); S&&(S.disabled=!0,S.textContent="Signing In..."),D("Signing in..."),setTimeout(()=>{P({uid:"sim-user-123",email:b?.value}),S&&(S.disabled=!1,S.textContent="Sign In"), D("")},i)}; window.firebaseAuthSendPasswordResetPreview=()=>{const e=A?.value;D("");if(!Q(e))return D("Enter email");D("Sending..."),setTimeout(()=>{D("Reset link sent."),setTimeout(()=>{window.firebaseAuthToggleViewPreview("signin")},r)},i)}; window.firebaseAuthSendEmailLinkPreview=()=>{const e=M()?.value;D("");if(!Q(e))return D("Enter email first");D("Sending..."),setTimeout(()=>{D("Magic link sent.")},i)}; window.firebaseAuthLoginWithProviderPreview=e=>{D(""),D(`Connecting to ${e}...`),setTimeout(()=>{P({uid:`sim-${e}-user`,email:`${e}@example.com`})},i)}; window.firebaseAuthLogoutPreview=()=>{P(null)}; (function(){try{N(),window.firebaseAuthToggleViewPreview("signin")}catch(e){console.error("Preview Init Error",e)}})();
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let fullCodeTemplate = '';
+        let slides = [];
+        let currentSlideIndex = 0;
+        let slideContainer, slideInfoElement, nextBtn, prevBtn;
+        function copyCode(button) {
+            const container = button.closest('.code-box-container');
+            if (!container) return;
+            const textArea = container.querySelector('.code-display-textarea');
+            if (!textArea) return;
+            navigator.clipboard.writeText(textArea.value).then(() => {
+                const originalContent = button.innerHTML;
+                button.innerHTML = '<i class="fa-solid fa-check"></i>Copied!';
+                button.disabled = true;
+                setTimeout(() => {
+                    button.innerHTML = originalContent;
+                    button.disabled = false;
+                }, 1500);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Copy failed!');
+            });
+        }
+        function getValueForCode(input) {
+            const variable = input.dataset.variable;
+            const unit = input.dataset.unit || '';
+            let value = input.value;
+            if (variable === '--input-focus-shadow-color') {
+                try {
+                    if (value.startsWith('#')) {
+                        const r = parseInt(value.slice(1, 3), 16),
+                              g = parseInt(value.slice(3, 5), 16),
+                              b = parseInt(value.slice(5, 7), 16);
+                        if (isNaN(r) || isNaN(g) || isNaN(b)) return 'rgba(0, 123, 255, 0.15)';
+                        return `rgba(${r}, ${g}, ${b}, 0.15)`;
+                    }
+                    if (value.startsWith('rgba(') && value.endsWith(')')) return value;
+                    return 'rgba(0, 123, 255, 0.15)';
+                } catch { return 'rgba(0, 123, 255, 0.15)'; }
+            } else if (variable === '--widget-font') {
+                if ((value.includes(' ') || value.includes(',')) && !((value.startsWith("'") && value.endsWith("'")) || (value.startsWith('"') && value.endsWith('"')))) {
+                   return `"${value.replace(/"/g, '\\"')}"`;
+                }
+                return value;
+            } else { return value + unit; }
+        }
+        function showSlide(index) {
+            if (!slides || slides.length === 0 || index < 0 || index >= slides.length) {
+                console.error("Invalid slide index:", index); return;
+            }
+            const currentActive = slideContainer.querySelector('.active-slide');
+            if (currentActive) { currentActive.classList.remove('active-slide'); }
+            const newSlide = slides[index];
+            newSlide.classList.add('active-slide');
+            currentSlideIndex = index;
+            const titleElement = newSlide.querySelector('.control-group-title');
+            if (slideInfoElement && titleElement) { slideInfoElement.textContent = titleElement.textContent; }
+            else if (slideInfoElement) { slideInfoElement.textContent = `Settings ${index + 1}`; }
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === slides.length - 1;
+        }
+        function nextSlide() {
+            let nextIndex = currentSlideIndex + 1;
+            if (nextIndex < slides.length) { showSlide(nextIndex); }
+        }
+        function prevSlide() {
+            let prevIndex = currentSlideIndex - 1;
+            if (prevIndex >= 0) { showSlide(prevIndex); }
+        }
+        function updatePreviewStyle(input) {
+            const variable = input.dataset.variable;
+            if (!variable) return;
+            const unit = input.dataset.unit || '';
+            let value = input.value;
+            const previewArea = document.getElementById('live-preview-area');
+            if (!previewArea) return;
+            if (variable === '--widget-border-color' || variable === '--widget-border-width') {
+                const colorInput = document.getElementById('input-widget-border-color-ctrl');
+                const widthInput = document.getElementById('input-widget-border-width');
+                const colorVal = colorInput ? colorInput.value : '#007bff';
+                const widthVal = widthInput ? widthInput.value : '2';
+                previewArea.style.setProperty('--widget-border-color', colorVal);
+                previewArea.style.setProperty('--widget-border-width', `${widthVal}px`);
+                const widgetContainer = previewArea.querySelector('#firebase-auth-login-popup');
+                if(widgetContainer) widgetContainer.style.border = `${widthVal}px solid ${colorVal}`;
+            }
+            else if (variable === '--input-focus-shadow-color') {
+                try {
+                    let rgbaVal = value;
+                    if (value.startsWith('#')) {
+                        const r = parseInt(value.slice(1, 3), 16), g = parseInt(value.slice(3, 5), 16), b = parseInt(value.slice(5, 7), 16);
+                         if (isNaN(r) || isNaN(g) || isNaN(b)) throw new Error("Invalid hex");
+                        rgbaVal = `rgba(${r}, ${g}, ${b}, 0.15)`;
+                    } else if (!(value.startsWith('rgba(') && value.endsWith(')'))) { rgbaVal = 'rgba(0, 123, 255, 0.15)'; }
+                    previewArea.style.setProperty(variable, rgbaVal);
+                } catch { previewArea.style.setProperty(variable, 'rgba(0, 123, 255, 0.15)'); }
+            }
+            else { previewArea.style.setProperty(variable, value + unit); }
+        }
+        function updateFullCodeArea() {
+            const codeArea = document.getElementById('fullCodeArea');
+            if (!codeArea || !fullCodeTemplate) return;
+            let currentCode = fullCodeTemplate;
+            let cssVarsBlock = "        :root {\n";
+            const styleInputs = document.querySelectorAll('.master-controls input[data-variable]');
+            const controlledVars = {};
+            styleInputs.forEach(input => {
+                const variable = input.dataset.variable;
+                const value = getValueForCode(input);
+                controlledVars[variable] = value;
+            });
+            Object.entries(controlledVars).forEach(([variable, value]) => { cssVarsBlock += `            ${variable}: ${value};\n`; });
+            const originalRootMatch = fullCodeTemplate.match(/:root\s*\{([\s\S]*?)\}/);
+            if (originalRootMatch && originalRootMatch[1]) {
+                const originalVars = originalRootMatch[1].trim().split(';');
+                originalVars.forEach(line => {
+                    line = line.trim();
+                    if (line && line.includes(':')) {
+                        const parts = line.split(':');
+                        const varName = parts[0].trim();
+                        if (varName.startsWith('--') && !controlledVars.hasOwnProperty(varName)) {
+                            const varValue = parts.slice(1).join(':').trim();
+                            if (varValue) { cssVarsBlock += `            ${varName}: ${varValue};\n`; }
+                        }
+                    }
+                });
+            }
+             cssVarsBlock += "        }";
+            currentCode = currentCode.replace(/:root\s*\{[\s\S]*?\}/, cssVarsBlock);
+            const configInputs = document.querySelectorAll('.master-controls input[data-config-key]');
+            const configRegex = /const\s+firebaseConfig\s*=\s*\{[\s\S]*?\};/;
+            let configObjectString = "const firebaseConfig = {\n";
+            configInputs.forEach(input => {
+                const key = input.dataset.configKey;
+                const value = input.value.trim();
+                configObjectString += `                ${key}: "${value.replace(/"/g, '\\"')}",\n`;
+            });
+            configObjectString = configObjectString.replace(/,\n$/, '\n');
+            configObjectString += "            };";
+            if (configRegex.test(currentCode)) { currentCode = currentCode.replace(configRegex, configObjectString); }
+            else { console.warn("Could not find firebaseConfig block to replace in the code template."); }
+            codeArea.value = currentCode;
+        }
+        function initializeCustomizer() {
+            const previewArea = document.getElementById('live-preview-area');
+            const codeArea = document.getElementById('fullCodeArea');
+            slideContainer = document.querySelector('.master-controls .slider-container');
+            slideInfoElement = document.getElementById('current-slide-info');
+            nextBtn = document.getElementById('next-slide-btn');
+            prevBtn = document.getElementById('prev-slide-btn');
+            if (!previewArea || !codeArea || !slideContainer || !slideInfoElement || !nextBtn || !prevBtn) {
+                console.error("Customizer initialization failed: Required elements missing."); return;
+            }
+            if (!fullCodeTemplate) { fullCodeTemplate = codeArea.value; }
+            if (!fullCodeTemplate) { console.error("Customizer initialization failed: Could not capture code template from textarea."); return; }
+            slides = Array.from(slideContainer.querySelectorAll('.slider-slide'));
+            if(slides.length === 0) { console.error("Customizer initialization failed: No slides found."); return; }
+            const allInputs = document.querySelectorAll('.master-controls input[data-variable], .master-controls input[data-config-key]');
+            allInputs.forEach(input => {
+                const variable = input.dataset.variable;
+                const unit = input.dataset.unit || '';
+                let initialValue = '';
+                if (input.hasAttribute('value')) { initialValue = input.getAttribute('value'); }
+                else { initialValue = input.defaultValue || (input.type === 'color' ? '#000000' : (input.type === 'number' ? '0' : '')); }
+                 if (variable) {
+                    try {
+                        if (unit && initialValue.endsWith(unit)) { initialValue = initialValue.slice(0, -unit.length); }
+                        if (input.type === 'color') {
+                            if (initialValue.startsWith('rgb')) {
+                                const rgb = initialValue.match(/\d+/g);
+                                initialValue = (rgb && rgb.length >= 3) ? `#${parseInt(rgb[0]).toString(16).padStart(2, '0')}${parseInt(rgb[1]).toString(16).padStart(2, '0')}${parseInt(rgb[2]).toString(16).padStart(2, '0')}` : '#000000';
+                            } else if (!initialValue.startsWith('#')) { initialValue = input.value || '#000000'; }
+                             initialValue = initialValue.toLowerCase();
+                        }
+                         if (variable === '--input-focus-shadow-color' && initialValue.startsWith('rgba')) {
+                            try {
+                                const rgba = initialValue.match(/[\d.]+/g);
+                                initialValue = (rgba && rgba.length >= 3) ? `#${parseInt(rgba[0]).toString(16).padStart(2, '0')}${parseInt(rgba[1]).toString(16).padStart(2, '0')}${parseInt(rgba[2]).toString(16).padStart(2, '0')}` : '#007bff';
+                            } catch { initialValue = '#007bff'; }
+                         }
+                         else if (variable === '--widget-font') {
+                            if ((initialValue.startsWith("'") && initialValue.endsWith("'")) || (initialValue.startsWith('"') && initialValue.endsWith('"'))) { initialValue = initialValue.slice(1, -1); }
+                         }
+                    } catch (e) {
+                         console.warn(`Error cleaning initial value for ${variable}:`, e);
+                         initialValue = input.defaultValue || (input.type === 'color' ? '#000000' : (input.type === 'number' ? '0' : ''));
+                    }
+                }
+                input.value = initialValue;
+                input.removeEventListener('input', handleInputChange);
+                input.addEventListener('input', handleInputChange);
+                if (variable) { updatePreviewStyle(input); }
+            });
+            nextBtn.addEventListener('click', nextSlide);
+            prevBtn.addEventListener('click', prevSlide);
+            triggerPreviewBorderUpdate();
+            updateFullCodeArea();
+            showSlide(0);
+        }
+        function handleInputChange(event) {
+            const input = event.target;
+            if (input.dataset.variable) { updatePreviewStyle(input); }
+            updateFullCodeArea();
+        }
+        function triggerPreviewBorderUpdate() {
+            const colorInput = document.getElementById('input-widget-border-color-ctrl');
+            const widthInput = document.getElementById('input-widget-border-width');
+            if (colorInput && colorInput.dataset.variable) { updatePreviewStyle(colorInput); }
+            else if (widthInput && widthInput.dataset.variable) { updatePreviewStyle(widthInput); }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => setTimeout(initializeCustomizer, 350));
+        } else { setTimeout(initializeCustomizer, 350); }
+    </script>
 </body>
 </html>
