@@ -1,5 +1,4 @@
-    /* --- सामान्य चर और स्टाइल --- */
-    :root {
+root {
         /* रंग पैलेट */
         --toc-color-1: #6a11cb; /* गहरा बैंगनी */
         --toc-color-2: #2575fc; /* नीला */
@@ -339,4 +338,15 @@
        }
        #toc-sidebar-internal-close:hover {
            background-color: rgba(0,0,0,0.07);
-           color: var(--toc-close-icon
+           color: var(--toc-close-icon-hover);
+           transform: translateY(-50%); /* रोटेशन हटाएँ */
+       }
+       #toc-sidebar-external-close:hover {
+           transform: translateY(-50%) scale(1.05); /* स्केल कम करें, रोटेशन हटाएँ */
+           box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+       }
+       #floating-toc-icon:hover {
+           transform: translateY(-50%); /* स्केल/रोटेशन हटाएँ */
+           filter: brightness(1.1); /* हल्की चमक */
+       }
+    }
