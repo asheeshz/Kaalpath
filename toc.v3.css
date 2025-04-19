@@ -1,7 +1,12 @@
-/* ===== TOC & Highlight Styles v3.2 (Namespaced) - START ===== */
-/* विवरण: थीम टकराव से बचने के लिए #toc-container से नेम्सपेस्ड */
+/* =====================================
+   TOC और हाइलाइट स्टाइल्स v3.2 (Namespaced)
+   विवरण: थीम टकराव से बचने के लिए #toc-container से नेम्सपेस्ड
+   ===================================== */
 
-/* --- रंग वेरिएबल्स (Global - इन्हें Namespace नहीं किया जा सकता) --- */
+/* --- रंग वेरिएबल्स (इस मॉड्यूल के लिए विशिष्ट) --- */
+/* :root सेलेक्टर यहाँ अनावश्यक है क्योंकि ये वेरिएबल्स केवल
+   #toc-container या ग्लोबल हाइलाइट रूल्स द्वारा उपयोग किए जाएंगे।
+   लेकिन स्पष्टता के लिए इन्हें रखना ठीक है। */
 :root {
   --toc-bg-start: #fff0f5;         /* लैवेंडर ब्लश */
   --toc-bg-end: #fffacd;           /* लेमन शिफॉन */
@@ -30,31 +35,13 @@
   --button-glow: rgba(255, 99, 71, 0.7); /* बटन ग्लो रंग */
 }
 
-/* --- एनिमेशन्स (Global Names - इन्हें Namespace नहीं किया जा सकता) --- */
-@keyframes tocFadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+/* --- एनिमेशन्स (इस मॉड्यूल के लिए विशिष्ट) --- */
+@keyframes tocFadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes tocGradientShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes buttonPulseGlow { 0%{box-shadow:0 0 6px var(--button-glow), 0 0 12px var(--button-glow);transform:scale(1)} 50%{box-shadow:0 0 12px var(--button-glow), 0 0 24px var(--button-glow), 0 0 36px var(--button-glow);transform:scale(1.03)} 100%{box-shadow:0 0 6px var(--button-glow), 0 0 12px var(--button-glow);transform:scale(1)} }
+@keyframes highlightPulse { 0%{box-shadow:0 0 0 2px var(--highlight-border), 0 0 0 4px var(--highlight-pulse-glow);background-color:var(--highlight-bg);transform:scale(1)} 50%{box-shadow:0 0 0 4px var(--highlight-border), 0 0 0 8px var(--highlight-pulse-glow);background-color:#fff59d;transform:scale(1.01)} 100%{box-shadow:0 0 0 2px var(--highlight-border), 0 0 0 4px var(--highlight-pulse-glow);background-color:var(--highlight-bg);transform:scale(1)} }
 
-@keyframes tocGradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes buttonPulseGlow {
-  0% { box-shadow: 0 0 6px var(--button-glow), 0 0 12px var(--button-glow); transform: scale(1); }
-  50% { box-shadow: 0 0 12px var(--button-glow), 0 0 24px var(--button-glow), 0 0 36px var(--button-glow); transform: scale(1.03); }
-  100% { box-shadow: 0 0 6px var(--button-glow), 0 0 12px var(--button-glow); transform: scale(1); }
-}
-
-@keyframes highlightPulse {
-  0% { box-shadow: 0 0 0 2px var(--highlight-border), 0 0 0 4px var(--highlight-pulse-glow); background-color: var(--highlight-bg); transform: scale(1); }
-  50% { box-shadow: 0 0 0 4px var(--highlight-border), 0 0 0 8px var(--highlight-pulse-glow); background-color: #fff59d; transform: scale(1.01); }
-  100% { box-shadow: 0 0 0 2px var(--highlight-border), 0 0 0 4px var(--highlight-pulse-glow); background-color: var(--highlight-bg); transform: scale(1); }
-}
-
-/* --- TOC Container Wrapper (यह हमारा Namespace है) --- */
+/* --- TOC Container Wrapper (Namespace) --- */
 #toc-container {
   margin-top: 25px;
   margin-bottom: 30px;
@@ -62,354 +49,85 @@
   position: relative;
 }
 
-/* --- अब सभी नियम #toc-container के अंदर लागू होंगे --- */
-
 /* --- TOC Toggle Button --- */
 #toc-container #toc-toggle-button {
-  display: block;
-  width: 100%;
-  box-sizing: border-box; /* <<-- यह जोड़ा गया था */
-  padding: 8px 25px;
-  font-size: 1.05em;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* या आपकी पसंद का फॉन्ट */
-  text-align: center;
-  cursor: pointer;
+  display: block; width: 100%; box-sizing: border-box; padding: 8px 25px;
+  font-size: 1.05em; font-weight: 600; letter-spacing: 0.5px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center; cursor: pointer;
   background: linear-gradient(140deg, var(--button-bg-start), var(--button-bg-end));
-  color: #ffffff;
-  border: 1px solid var(--button-border);
-  border-radius: 8px;
+  color: #ffffff; border: 1px solid var(--button-border); border-radius: 8px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.3s ease, border-radius 0.2s ease;
-  position: relative;
-  overflow: hidden;
+  position: relative; overflow: hidden;
 }
-#toc-container #toc-toggle-button.toc-closed-effect {
-   animation: buttonPulseGlow 2s infinite ease-in-out;
-}
-
-#toc-container #toc-toggle-button:hover {
-  background: linear-gradient(140deg, var(--button-bg-end), var(--button-bg-start));
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  transform: translateY(-2px);
-}
-
-/* शिमर इफ़ेक्ट */
-#toc-container #toc-toggle-button::before {
-  content: ''; position: absolute; top: 0; left: -120%; width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
-  transform: skewX(-25deg); transition: left 0.8s ease-in-out;
-}
+#toc-container #toc-toggle-button.toc-closed-effect { animation: buttonPulseGlow 2s infinite ease-in-out; }
+#toc-container #toc-toggle-button:hover { background: linear-gradient(140deg, var(--button-bg-end), var(--button-bg-start)); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); transform: translateY(-2px); }
+#toc-container #toc-toggle-button::before { content: ''; position: absolute; top: 0; left: -120%; width: 60%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent); transform: skewX(-25deg); transition: left 0.8s ease-in-out; }
 #toc-container #toc-toggle-button:hover::before { left: 150%; }
-
-/* जब TOC खुला हो तो बटन स्टाइल */
-#toc-container.toc-is-shown #toc-toggle-button {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
+#toc-container.toc-is-shown #toc-toggle-button { border-bottom-left-radius: 0; border-bottom-right-radius: 0; animation: none; /* खुला होने पर पल्स बंद करें */ }
 
 /* --- TOC Box (Collapsible Area) --- */
 #toc-container #toc {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  margin: 0;
-  padding: 0 22px;
-  border: 2px solid var(--toc-border);
-  border-top: none;
-  border-radius: 0 0 8px 8px;
+  max-height: 0; opacity: 0; overflow: hidden; margin: 0; padding: 0 22px;
+  border: 2px solid var(--toc-border); border-top: none; border-radius: 0 0 8px 8px;
   background: linear-gradient(135deg, var(--toc-bg-start), var(--toc-bg-end));
   box-shadow: 0 4px 12px var(--toc-shadow);
-  transition: max-height 0.7s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.5s ease-in-out 0.15s,
-              padding-top 0.7s cubic-bezier(0.4, 0, 0.2, 1),
-              padding-bottom 0.7s cubic-bezier(0.4, 0, 0.2, 1),
-              border-width 0.1s ease-in-out 0.6s;
+  transition: max-height 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease-in-out 0.15s, padding-top 0.7s cubic-bezier(0.4, 0, 0.2, 1), padding-bottom 0.7s cubic-bezier(0.4, 0, 0.2, 1), border-width 0.1s ease-in-out 0.6s;
 }
-
-/* --- TOC Visible State --- */
-#toc-container #toc.toc-visible {
-  max-height: 2000px;
-  opacity: 1;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  border-width: 0 2px 2px 2px;
-}
+#toc-container #toc.toc-visible { max-height: 2000px; opacity: 1; padding-top: 20px; padding-bottom: 20px; border-width: 0 2px 2px 2px; }
 
 /* --- TOC Title --- */
 #toc-container #toc h2 {
-  font-size: 1.25em;
-  margin-top: 0;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px dashed var(--toc-title-border);
-  color: var(--toc-title-color);
-  font-weight: 700;
-  text-align: center;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-  column-span: all;
-  -webkit-column-span: all;
+  font-size: 1.25em; margin-top: 0; margin-bottom: 20px; padding-bottom: 12px;
+  border-bottom: 2px dashed var(--toc-title-border); color: var(--toc-title-color);
+  font-weight: 700; text-align: center; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  column-span: all; -webkit-column-span: all;
   animation: tocFadeIn 0.6s ease-out 0.2s backwards;
 }
 
 /* --- TOC List (UL) --- */
 #toc-container #toc ul {
-  list-style-type: none;
-  padding-left: 0;
-  margin: 0;
-  column-count: 2;
-  column-gap: 30px;
+  list-style-type: none; padding-left: 0; margin: 0; column-count: 2; column-gap: 30px;
   column-rule: 1px dotted var(--toc-column-rule);
   background: linear-gradient(90deg, var(--toc-list-gradient-1) 0%, var(--toc-list-gradient-2) 48%, var(--toc-list-gradient-2) 52%, var(--toc-list-gradient-3) 100%);
-  background-size: 250% 100%;
-  animation: tocGradientShift 20s linear infinite alternate;
-  border-radius: 5px;
-  padding: 12px 8px;
+  background-size: 250% 100%; animation: tocGradientShift 20s linear infinite alternate;
+  border-radius: 5px; padding: 12px 8px;
 }
 
 /* --- TOC List Items (LI) --- */
-#toc-container #toc li {
-  margin-bottom: 8px;
-  line-height: 1.4;
-  break-inside: avoid;
-  -webkit-column-break-inside: avoid;
-  page-break-inside: avoid;
-  position: relative;
-}
+#toc-container #toc li { margin-bottom: 8px; line-height: 1.4; break-inside: avoid; -webkit-column-break-inside: avoid; page-break-inside: avoid; position: relative; }
 
 /* --- TOC Hierarchical Indentation (H3) --- */
-#toc-container #toc li.toc-level-3 {
-  margin-left: 10px;
-  padding-left: 15px;
-  border-left: 3px solid var(--toc-h3-indicator);
-  background-color: var(--toc-h3-bg);
-  border-radius: 4px;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-#toc-container #toc li.toc-level-3:hover {
-   background-color: var(--toc-h3-hover-bg);
-   border-left-color: var(--toc-h3-hover-indicator);
-}
-#toc-container #toc li.toc-level-3 a {
-  font-size: 0.95em;
-}
+#toc-container #toc li.toc-level-3 { margin-left: 10px; padding-left: 15px; border-left: 3px solid var(--toc-h3-indicator); background-color: var(--toc-h3-bg); border-radius: 4px; transition: background-color 0.3s ease, border-color 0.3s ease; }
+#toc-container #toc li.toc-level-3:hover { background-color: var(--toc-h3-hover-bg); border-left-color: var(--toc-h3-hover-indicator); }
+#toc-container #toc li.toc-level-3 a { font-size: 0.95em; }
 
 /* --- TOC Links (A) --- */
-#toc-container #toc a {
-  text-decoration: none;
-  color: var(--toc-link-color);
-  transition: color 0.25s ease, transform 0.25s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-weight: 500;
-  position: relative;
-  overflow: hidden;
-}
-
-/* लिंक होवर इफ़ेक्ट */
-#toc-container #toc a:hover {
-  color: var(--toc-list-hover-text) !important;
-  background-color: var(--toc-list-hover-bg);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-  transform: translateX(4px) scale(1.01);
-}
+#toc-container #toc a { text-decoration: none; color: var(--toc-link-color); transition: color 0.25s ease, transform 0.25s ease, background-color 0.3s ease, box-shadow 0.3s ease; display: flex; align-items: center; padding: 8px 12px; border-radius: 4px; font-weight: 500; position: relative; overflow: hidden; }
+#toc-container #toc a:hover { color: var(--toc-list-hover-text) !important; background-color: var(--toc-list-hover-bg); box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); transform: translateX(4px) scale(1.01); }
 
 /* --- Font Awesome Icon Styling --- */
-#toc-container #toc a i[class*="fa-"] {
-  margin-right: 12px;
-  font-size: 1.15em;
-  width: 1.3em;
-  text-align: center;
-  transition: transform 0.35s cubic-bezier(0.68, -0.55, 0.27, 1.55), color 0.3s ease;
-  flex-shrink: 0;
-}
+#toc-container #toc a i[class*="fa-"] { margin-right: 12px; font-size: 1.15em; width: 1.3em; text-align: center; transition: transform 0.35s cubic-bezier(0.68, -0.55, 0.27, 1.55), color 0.3s ease; flex-shrink: 0; }
+#toc-container #toc a:hover i[class*="fa-"] { transform: rotate(10deg) scale(1.2); }
+/* रंगीन आइकन */
+#toc-container #toc li:nth-child(5n+1) a i { color: #1e90ff; }
+#toc-container #toc li:nth-child(5n+2) a i { color: #32cd32; }
+#toc-container #toc li:nth-child(5n+3) a i { color: #ff4500; }
+#toc-container #toc li:nth-child(5n+4) a i { color: #8a2be2; }
+#toc-container #toc li:nth-child(5n+5) a i { color: #ff69b4; }
 
-/* होवर पर आइकन इफ़ेक्ट */
-#toc-container #toc a:hover i[class*="fa-"] {
-  transform: rotate(10deg) scale(1.2);
-}
+/* --- Highlight Styles (ये ग्लोबल रहेंगे) --- */
+.highlight-target { background-color: var(--highlight-bg) !important; box-shadow: 0 0 0 2px var(--highlight-border) !important; border-radius: 5px !important; padding: 4px 8px !important; margin: 0 !important; animation: highlightPulse 1.6s infinite ease-in-out !important; color: #8b4513 !important; display: inline-block !important; width: auto !important; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.highlight-content { background-color: var(--content-highlight-bg) !important; transition: background-color 0.4s ease-in-out !important; border-radius: 5px !important; padding: 12px 18px !important; margin-top: 8px !important; margin-bottom: 8px !important; box-shadow: 0 2px 8px rgba(218, 165, 32, 0.15) !important; display: block !important; }
 
-/* --- रंगीन आइकन (उदाहरण पैटर्न) --- */
-#toc-container #toc li:nth-child(5n+1) a i { color: #1e90ff; } /* डोज़र ब्लू */
-#toc-container #toc li:nth-child(5n+2) a i { color: #32cd32; } /* लाइम ग्रीन */
-#toc-container #toc li:nth-child(5n+3) a i { color: #ff4500; } /* ऑरेंज रेड */
-#toc-container #toc li:nth-child(5n+4) a i { color: #8a2be2; } /* ब्लू वायलेट */
-#toc-container #toc li:nth-child(5n+5) a i { color: #ff69b4; } /* हॉट पिंक */
-
-
-/* --- Highlight Styles (ये ग्लोबल रहेंगे क्योंकि ये पोस्ट बॉडी में लगते हैं) --- */
-/* Highlighted Heading */
-.highlight-target {
-   background-color: var(--highlight-bg) !important;
-   box-shadow: 0 0 0 2px var(--highlight-border) !important;
-   border-radius: 5px !important;
-   padding: 4px 8px !important;
-   margin: 0 !important; /* नेगेटिव मार्जिन हटा दिया गया */
-   animation: highlightPulse 1.6s infinite ease-in-out !important;
-   color: #8b4513 !important;
-   display: inline-block !important;
-   width: auto !important;
-   box-decoration-break: clone;
-   -webkit-box-decoration-break: clone;
-}
-
-/* Highlighted Content */
-.highlight-content {
-  background-color: var(--content-highlight-bg) !important;
-  transition: background-color 0.4s ease-in-out !important;
-  border-radius: 5px !important;
-  padding: 12px 18px !important;
-  margin-top: 8px !important;
-  margin-bottom: 8px !important;
-  box-shadow: 0 2px 8px rgba(218, 165, 32, 0.15) !important;
-  display: block !important;
-}
-
-
-/* --- प्रतिक्रियात्मक समायोजन (Namespace के अंदर) --- */
+/* --- प्रतिक्रियात्मक समायोजन --- */
 @media(max-width: 768px) {
-    #toc-container #toc ul {
-        column-count: 1;
-        column-rule: none;
-        animation-play-state: paused;
-    }
+    #toc-container #toc ul { column-count: 1; column-rule: none; animation-play-state: paused; }
     #toc-container #toc { padding: 15px; }
     #toc-container #toc h2 { font-size: 1.15em; }
     #toc-container #toc li.toc-level-3 { margin-left: 5px; padding-left: 12px; }
     #toc-container #toc a { padding: 6px 10px; }
 }
 
-/* नोट: ग्लोबल html नियम यहाँ शामिल नहीं हैं */
-/* आप अपनी थीम की मुख्य CSS में जोड़ें:
-html {
-  scroll-behavior: smooth !important;
-  scroll-padding-top: 70px; /* Adjust as needed */
-/* }
-@media(max-width: 768px) {
-  html { scroll-padding-top: 60px; } /* Adjust as needed */
-/* }
-/* --- कोड कॉपी बटन के लिए स्टाइल --- */
-.custom-pre {
-  position: relative; /* बटन पोजिशनिंग के लिए */
-}
-.custom-copy-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #555;
-  color: #eee;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 0.8em;
-  cursor: pointer;
-  opacity: 0.3; /* सामान्य रूप से हल्का दिखे */
-  transition: opacity 0.2s ease, background-color 0.2s ease;
-}
-.custom-pre:hover .custom-copy-btn {
-  opacity: 1; /* हॉवर पर पूरा दिखे */
-}
-.custom-copy-btn:hover {
-  background-color: #777;
-}
-.custom-copy-btn.copied {
-  background-color: #28a745; /* हरा रंग कॉपी होने पर */
-  color: white;
-}
-
-/* --- डिस्मिस बटन के लिए स्टाइल --- */
-.custom-alert, .custom-note {
-  position: relative; /* बटन पोजिशनिंग के लिए */
-  transition: opacity 0.4s ease, transform 0.4s ease, height 0.4s ease, margin 0.4s ease, padding 0.4s ease; /* स्मूथ हटाने के लिए */
-}
-.custom-dismiss-btn {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 1.4em;
-  line-height: 1;
-  color: inherit; /* पैरेंट का रंग लें */
-  opacity: 0.4;
-  cursor: pointer;
-  padding: 2px 5px;
-}
-.custom-dismiss-btn:hover {
-  opacity: 0.8;
-}
-.dismissed { /* बंद किए गए एलिमेंट के लिए */
-    opacity: 0;
-    transform: scale(0.9);
-    height: 0 !important; /* ऊंचाई 0 करें */
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    border-width: 0 !important; /* बॉर्डर हटाएं */
-    overflow: hidden; /* कंटेंट छिपाएं */
-}
-
-/* --- स्क्रॉल पर प्रकट होने वाले एनिमेशन के लिए --- */
-.reveal-on-scroll {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.8s cubic-bezier(0.645, 0.045, 0.355, 1), transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
-  will-change: opacity, transform; /* प्रदर्शन के लिए */
-}
-.reveal-on-scroll.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-/* =====================================
-   पैराग्राफ के अंदर फ्लोटिंग इमेज स्टाइल (नया)
-   ===================================== */
-
-.custom-p img.img-float-left,
-figure.img-float-left img { /* यदि फिगर को फ्लोट करना है */
-  float: left;
-  margin: 5px 20px 10px 0; /* ऊपर, दाएं, नीचे, बाएं - टेक्स्ट से स्पेस */
-  max-width: 40%; /* छवि को बहुत बड़ा होने से रोकें (समायोजित करें) */
-  height: auto;
-  border-radius: var(--border-radius-small); /* अन्य छवियों जैसी स्टाइल */
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-
-.custom-p img.img-float-right,
-figure.img-float-right img { /* यदि फिगर को फ्लोट करना है */
-  float: right;
-  margin: 5px 0 10px 20px; /* ऊपर, दाएं, नीचे, बाएं - टेक्स्ट से स्पेस */
-  max-width: 40%; /* छवि को बहुत बड़ा होने से रोकें (समायोजित करें) */
-  height: auto;
-  border-radius: var(--border-radius-small); /* अन्य छवियों जैसी स्टाइल */
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-
-/* फ्लोट को क्लियर करने के लिए (यदि आवश्यक हो) */
-/* आप इसे उस एलिमेंट पर लगा सकते हैं जो फ्लोट के बाद आना चाहिए */
-.clear-float {
-  clear: both;
-  height: 0;
-  line-height: 0;
-  font-size: 0;
-  overflow: hidden;
-}
-
-/* फ्लोटिंग फिगर के कैप्शन के लिए (यदि फिगर फ्लोट कर रहे हैं) */
-figure.img-float-left,
-figure.img-float-right {
-   max-width: 45%; /* फिगर की अधिकतम चौड़ाई */
-}
-figure.img-float-left figcaption.custom-caption,
-figure.img-float-right figcaption.custom-caption {
-    text-align: left; /* या जैसी जरूरत हो */
-    font-size: 0.85em;
-    margin-top: 5px;
-}
-figure.img-float-right figcaption.custom-caption {
-    text-align: right;
-}
-/* ===== TOC & Highlight Styles v3.2 (Namespaced) - END ===== */
+/* ===== TOC और हाइलाइट स्टाइल्स v3.2 (Namespaced) - END ===== */
