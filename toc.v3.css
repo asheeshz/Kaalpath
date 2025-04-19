@@ -291,6 +291,125 @@ html {
 @media(max-width: 768px) {
   html { scroll-padding-top: 60px; } /* Adjust as needed */
 /* }
-*/
+/* --- कोड कॉपी बटन के लिए स्टाइल --- */
+.custom-pre {
+  position: relative; /* बटन पोजिशनिंग के लिए */
+}
+.custom-copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #555;
+  color: #eee;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.8em;
+  cursor: pointer;
+  opacity: 0.3; /* सामान्य रूप से हल्का दिखे */
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+.custom-pre:hover .custom-copy-btn {
+  opacity: 1; /* हॉवर पर पूरा दिखे */
+}
+.custom-copy-btn:hover {
+  background-color: #777;
+}
+.custom-copy-btn.copied {
+  background-color: #28a745; /* हरा रंग कॉपी होने पर */
+  color: white;
+}
 
+/* --- डिस्मिस बटन के लिए स्टाइल --- */
+.custom-alert, .custom-note {
+  position: relative; /* बटन पोजिशनिंग के लिए */
+  transition: opacity 0.4s ease, transform 0.4s ease, height 0.4s ease, margin 0.4s ease, padding 0.4s ease; /* स्मूथ हटाने के लिए */
+}
+.custom-dismiss-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.4em;
+  line-height: 1;
+  color: inherit; /* पैरेंट का रंग लें */
+  opacity: 0.4;
+  cursor: pointer;
+  padding: 2px 5px;
+}
+.custom-dismiss-btn:hover {
+  opacity: 0.8;
+}
+.dismissed { /* बंद किए गए एलिमेंट के लिए */
+    opacity: 0;
+    transform: scale(0.9);
+    height: 0 !important; /* ऊंचाई 0 करें */
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    border-width: 0 !important; /* बॉर्डर हटाएं */
+    overflow: hidden; /* कंटेंट छिपाएं */
+}
+
+/* --- स्क्रॉल पर प्रकट होने वाले एनिमेशन के लिए --- */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s cubic-bezier(0.645, 0.045, 0.355, 1), transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+  will-change: opacity, transform; /* प्रदर्शन के लिए */
+}
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* =====================================
+   पैराग्राफ के अंदर फ्लोटिंग इमेज स्टाइल (नया)
+   ===================================== */
+
+.custom-p img.img-float-left,
+figure.img-float-left img { /* यदि फिगर को फ्लोट करना है */
+  float: left;
+  margin: 5px 20px 10px 0; /* ऊपर, दाएं, नीचे, बाएं - टेक्स्ट से स्पेस */
+  max-width: 40%; /* छवि को बहुत बड़ा होने से रोकें (समायोजित करें) */
+  height: auto;
+  border-radius: var(--border-radius-small); /* अन्य छवियों जैसी स्टाइल */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.custom-p img.img-float-right,
+figure.img-float-right img { /* यदि फिगर को फ्लोट करना है */
+  float: right;
+  margin: 5px 0 10px 20px; /* ऊपर, दाएं, नीचे, बाएं - टेक्स्ट से स्पेस */
+  max-width: 40%; /* छवि को बहुत बड़ा होने से रोकें (समायोजित करें) */
+  height: auto;
+  border-radius: var(--border-radius-small); /* अन्य छवियों जैसी स्टाइल */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* फ्लोट को क्लियर करने के लिए (यदि आवश्यक हो) */
+/* आप इसे उस एलिमेंट पर लगा सकते हैं जो फ्लोट के बाद आना चाहिए */
+.clear-float {
+  clear: both;
+  height: 0;
+  line-height: 0;
+  font-size: 0;
+  overflow: hidden;
+}
+
+/* फ्लोटिंग फिगर के कैप्शन के लिए (यदि फिगर फ्लोट कर रहे हैं) */
+figure.img-float-left,
+figure.img-float-right {
+   max-width: 45%; /* फिगर की अधिकतम चौड़ाई */
+}
+figure.img-float-left figcaption.custom-caption,
+figure.img-float-right figcaption.custom-caption {
+    text-align: left; /* या जैसी जरूरत हो */
+    font-size: 0.85em;
+    margin-top: 5px;
+}
+figure.img-float-right figcaption.custom-caption {
+    text-align: right;
+}
 /* ===== TOC & Highlight Styles v3.2 (Namespaced) - END ===== */
