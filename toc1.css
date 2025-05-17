@@ -2,7 +2,7 @@
    Stylish TOC CSS for Blogger (v1.2 - Prefixed with stoc-)
    Author: [Your Name/Website Optional]
    Description: CSS for the collapsible button TOC and floating sidebar TOC.
-   Changes: Further reduced overall size (~50% from ORIGINAL large version), Animated button wrapper background, increased button text size, adjusted scroll indicator, improved text readability.
+   Changes: Further reduced overall size, reduced list item text size, added hard gradient text color to list items, increased button header text and floating icon size.
    ========================================================================== */
 
 /* --- सामान्य चर और स्टाइल --- */
@@ -15,29 +15,39 @@
     --stoc-color-5: #fccb45; /* पीला */
     /* टेक्स्ट और हाइलाइट */
     --stoc-text-light: #ffffff;
-    --stoc-text-dark: #212529; /* गहरा (लगभग काला) टेक्स्ट */
-    --stoc-text-muted: #495057; /* गहरा म्यूट टेक्स्ट */
-    --stoc-highlight-bg-start: rgba(37, 117, 252, 0.08); /* Reduced opacity */
-    --stoc-highlight-bg-end: rgba(106, 17, 203, 0.12); /* Reduced opacity */
-    --stoc-highlight-duration: 5s; /* Slightly reduced highlight animation duration */
-    --stoc-popup-highlight-duration: 5s; /* पॉपअप हाइलाइट के लिए अवधि (JS द्वारा उपयोग किया गया) */
+    --stoc-text-dark: #212529; /* गहरा, बेहतर कंट्रास्ट के लिए */
+    --stoc-text-muted: #6c757d;
+    --stoc-highlight-bg-start: rgba(37, 117, 252, 0.08); /* Slightly less opaque */
+    --stoc-highlight-bg-end: rgba(106, 17, 203, 0.12); /* Slightly less opaque */
+    --stoc-highlight-duration: 5s; /* Reduced duration slightly */
+    --stoc-popup-highlight-duration: 5s; /* Reduced duration slightly (Used by JS) */
     /* अन्य */
     --stoc-border-radius: 6px; /* Further Reduced */
     --stoc-font-main: 'Roboto', sans-serif;
     --stoc-font-heading: 'Poppins', sans-serif;
-    --stoc-sidebar-width: 18vw; /* Adjusted based on new base */
+    --stoc-sidebar-width: 15vw;
     --stoc-sidebar-min-width: 180px; /* Further Reduced */
     --stoc-sidebar-max-width: 240px; /* Further Reduced */
-    --stoc-button-box-max-height-initial: 60px; /* Controlled by max-height:0 */
     --stoc-button-box-max-height-expanded: 250px; /* Further Reduced */
-    --stoc-close-icon-hover: #c0392b; /* Darker red */
+    --stoc-close-icon-hover: #e74c3c;
 
-    /* *** लिस्ट आइटम बैकग्राउंड रंग (हल्के रहें ताकि गहरा टेक्स्ट पढ़ा जा सके) *** */
-    --stoc-list-bg-h2: #f3e5f5; /* हल्का बैंगनी (Adjusted) */
-    --stoc-list-bg-h3: #e3f2fd; /* हल्का नीला (Adjusted) */
-    --stoc-list-bg-h4: #e0f7fa; /* हल्का सियान (Adjusted) */
-    --stoc-list-bg-h5: #fce4ec; /* हल्का गुलाबी (Adjusted) */
-    --stoc-list-bg-h6: #fff9c4; /* हल्का पीला/क्रीम (Adjusted) */
+    /* *** लिस्ट आइटम बैकग्राउंड रंग *** */
+    /* ये ठोस पृष्ठभूमि ग्रेडिएंट टेक्स्ट के नीचे पठनीयता के लिए महत्वपूर्ण हैं */
+    --stoc-list-bg-h2: #f3eaff; /* Lighter */
+    --stoc-list-bg-h3: #e8f2ff; /* Lighter */
+    --stoc-list-bg-h4: #e1ffff; /* Lighter */
+    --stoc-list-bg-h5: #fff4f5; /* Lighter */
+    --stoc-list-bg-h6: #fffbe6; /* Lighter */
+
+    /* *** ग्रेडिएंट टेक्स्ट रंग *** */
+    --stoc-gradient-text: linear-gradient(to right, var(--stoc-color-4), #e03a4f, var(--stoc-color-5)); /* Pink, custom Red, Yellow */
+}
+
+/* Animation for gradient background (Used by button wrapper and list items border) */
+@keyframes stoc-gradient-bg-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 /* --- बटन TOC कंटेनर और बटन --- */
@@ -54,32 +64,25 @@
     border: none; /* No outer border */
 }
 
-/* Animation for gradient background */
-@keyframes stoc-gradient-bg-animation {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
 
 #stoc-toc-button-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 7px 12px; /* Further Reduced padding */
+    padding: 6px 12px; /* Further Reduced padding */
     cursor: pointer;
-    /* Background removed - wrapper gradient shows */
     color: var(--stoc-text-light); /* Keep light text for header */
     user-select: none; /* Prevent text selection on click */
-    position: relative; /* Needed for z-index */
-    z-index: 2; /* Above scrollbox content potentially */
+    position: relative;
+    z-index: 2;
      /* Subtle text shadow for readability over varying background */
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* Reduced shadow */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 #stoc-toc-button-header h3 {
     margin: 0;
     font-family: var(--stoc-font-heading);
-    font-size: 1.2em; /* Increased font size for header text */
+    font-size: 1.3em; /* Increased font size relative to list items */
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -88,15 +91,15 @@
 
 .stoc-toc-button-title-text {
     display: inline-block;
-    padding: 3px 12px; /* Further Reduced padding */
-    border-radius: 30px; /* Slightly reduced radius */
-    background: rgba(255, 255, 255, 0.25); /* Slightly less transparent */
+    padding: 3px 10px; /* Further Reduced padding */
+    border-radius: 40px;
+    background: rgba(255, 255, 255, 0.2);
     color: #fff0e6;
     font-weight: 600;
-    font-size: 0.9em; /* Increased font size as requested */
+    font-size: 0.75em; /* Further Reduced font size */
     margin: 0 3px; /* Further Reduced margin */
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Slightly less transparent */
+    border: 1px solid rgba(255, 255, 255, 0.25);
      /* Subtle text animation */
     animation: stoc-text-subtle-pulse 3s ease-in-out infinite;
 }
@@ -104,17 +107,17 @@
 /* Subtle text pulse animation */
 @keyframes stoc-text-subtle-pulse {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.95; } /* Slightly less opacity change */
+    50% { opacity: 0.9; }
 }
 
 
 #stoc-toc-button-header h3 .fa-book-open {
     color: #ffe5d9;
-    font-size: 1em; /* Kept size relative to parent */
+    font-size: 0.9em; /* Further Reduced font size */
 }
 
 .stoc-toc-open-prompt-icon {
-    font-size: 0.8em; /* Kept size relative to parent */
+    font-size: 0.75em; /* Further Reduced font size */
     display: inline-block;
     animation: stoc-point-right-pulse 2s infinite ease-in-out;
     color: #ffffff;
@@ -130,7 +133,7 @@
     font-size: 1.1em; /* Further Reduced font size */
     transition: transform 0.35s ease;
     color: var(--stoc-text-light);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* Reduced shadow */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
 }
 
 #stoc-toc-button-wrapper.collapsed #stoc-toc-button-toggle-icon {
@@ -148,10 +151,9 @@
     overflow-x: hidden;
     padding: 0 12px; /* Further Reduced padding */
     position: relative;
-    transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out, opacity 0.3s ease-out; /* Slightly faster transition */
+    transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out, opacity 0.3s ease-out; /* Reduced transition duration */
     border-top: none; /* डिफ़ॉल्ट रूप से बॉर्डर नहीं */
     opacity: 0;
-    /* Background pattern removed - wrapper gradient shows */
     background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white overlay */
     z-index: 1; /* Below header */
 }
@@ -159,9 +161,9 @@
 #stoc-toc-button-wrapper.expanded #stoc-toc-button-scrollbox {
     max-height: var(--stoc-button-box-max-height-expanded);
     padding: 8px 12px; /* Further Reduced padding */
-    border-top: 1px solid rgba(0,0,0,0.08); /* Subtler border */
+    border-top: 1px solid rgba(0,0,0,0.08); /* Subtle border */
     opacity: 1;
-    transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out, opacity 0.3s ease-in 0.05s, border-top 0s linear 0.05s; /* Slightly faster transition */
+    transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out, opacity 0.3s ease-in 0.1s, border-top 0s linear 0.1s; /* बॉर्डर तुरंत दिखाएँ */
 }
 
 #stoc-toc-button-list {
@@ -176,16 +178,16 @@
     top: 50%;
     right: 15px; /* Further Reduced */
     transform: translateY(-50%);
-    font-size: 1.6em; /* Further Reduced */
-    color: var(--stoc-color-1);
+    font-size: 3em; /* Increased */
+    color: var(--stoc-color-1); /* Base color for glow effect */
     background: none;
     border: none;
     padding: 0;
     cursor: pointer;
     z-index: 999;
-    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, color 0.3s ease, right 0.3s ease; /* Faster transition */
-    text-shadow: 0 0 8px rgba(106, 17, 203, 0.6); /* Further Reduced shadow */
-    animation: stoc-pulse-glow-float-original 2.5s infinite ease-in-out; /* Slightly faster animation */
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, color 0.3s ease, right 0.3s ease; /* Reduced transition duration */
+    text-shadow: 0 0 12px rgba(106, 17, 203, 0.8); /* Adjusted shadow */
+    animation: stoc-pulse-glow-float-original 2.5s infinite ease-in-out; /* Reduced duration */
     opacity: 0;
     visibility: hidden; /* डिफ़ॉल्ट रूप से छिपा हुआ */
 }
@@ -196,29 +198,29 @@
 }
 
 #stoc-floating-toc-icon:hover {
-    transform: translateY(-50%) scale(1.08) rotate(6deg); /* Further Reduced scale/rotation */
-    filter: brightness(1.25); /* Slightly less brightness */
+    transform: translateY(-50%) scale(1.15) rotate(10deg); /* Adjusted effect */
+    filter: brightness(1.4); /* Adjusted brightness */
 }
 
 body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
     /* Move icon left when sidebar is open */
-    right: calc( clamp(var(--stoc-sidebar-min-width), var(--stoc-sidebar-width), var(--stoc-sidebar-max-width)) + 15px); /* Further Reduced spacing */
+    right: calc( clamp(var(--stoc-sidebar-min-width), var(--stoc-sidebar-width), var(--stoc-sidebar-max-width)) + 15px); /* Consistent spacing */
 }
 
 @keyframes stoc-pulse-glow-float-original {
     0%, 100% {
         transform: translateY(-50%) scale(1);
-        filter: drop-shadow(0 0 5px var(--stoc-color-1)); /* Further Reduced shadow */
+        filter: drop-shadow(0 0 8px var(--stoc-color-1)); /* Adjusted shadow */
         color: var(--stoc-color-1);
     }
     50% {
-        transform: translateY(-52%) scale(1.04); /* Further Reduced movement/scale */
-        filter: drop-shadow(0 0 12px var(--stoc-color-2)); /* Further Reduced shadow */
+        transform: translateY(-54%) scale(1.08); /* Adjusted movement/scale */
+        filter: drop-shadow(0 0 20px var(--stoc-color-2)); /* Adjusted shadow */
         color: var(--stoc-color-2);
     }
 }
 
-/* --- फ्लोティング आइकन साइडबार --- */
+/* --- फ्लोटिंग आइकन साइडबार --- */
 #stoc-toc-icon-sidebar {
     position: fixed;
     top: 0;
@@ -228,7 +230,7 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
     background-color: #fff;
     box-shadow: -6px 0 25px rgba(0, 0, 0, 0.18); /* Further Reduced shadow */
     transform: translateX(100%); /* Start off-screen */
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Slightly faster transition */
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Reduced transition duration */
     z-index: 1010;
     display: flex;
     flex-direction: column;
@@ -242,17 +244,17 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
 }
 
 #stoc-toc-icon-sidebar-header {
-    padding: 10px 35px 10px 18px; /* Further Reduced padding */
-    border-bottom: 1px solid #e9ecef; /* Subtle border */
+    padding: 10px 35px 10px 15px; /* Further Reduced padding */
+    border-bottom: 1px solid #e9ecef; /* Slightly adjusted border */
     flex-shrink: 0; /* Prevent header from shrinking */
     position: relative;
-    background: linear-gradient(135deg, rgba(106, 17, 203, 0.03), rgba(37, 117, 252, 0.03)); /* Further less opaque */
+    background: linear-gradient(135deg, rgba(106, 17, 203, 0.03), rgba(37, 117, 252, 0.03)); /* Slightly less opaque */
 }
 
 #stoc-toc-icon-sidebar-header h3 {
     margin: 0;
     font-family: var(--stoc-font-heading);
-    font-size: 1.1em; /* Further Reduced font size */
+    font-size: 1.2em; /* Slightly Increased font size relative to list items */
     font-weight: 700;
     text-align: center;
     color: var(--stoc-color-1);
@@ -268,17 +270,17 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
     width: 24px; /* Further Reduced */
     height: 24px; /* Further Reduced */
     font-size: 1em; /* Further Reduced */
-    color: #777; /* Darker grey */
+    color: #999;
     cursor: pointer;
     display: flex; /* Center icon */
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    transition: background-color 0.2s ease, color 0.2s ease, transform 0.3s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.25s ease; /* Reduced transition duration */
 }
 
 #stoc-toc-sidebar-internal-close:hover {
-    background-color: rgba(0, 0, 0, 0.08); /* Slightly darker hover */
+    background-color: rgba(0, 0, 0, 0.06); /* Slightly less opaque */
     color: var(--stoc-close-icon-hover);
     transform: translateY(-50%) rotate(180deg);
 }
@@ -288,7 +290,7 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
     overflow-y: auto; /* Enable scrolling */
     padding: 12px 8px 12px 12px; /* Further Reduced padding */
     position: relative; /* For scroll indicator positioning */
-    /* Background pattern adjusted further */
+    /* Background pattern adjusted */
     background-image: linear-gradient(45deg, rgba(106,17,203,0.02) 25%, transparent 25%),
                       linear-gradient(-45deg, rgba(37,117,252,0.02) 25%, transparent 25%),
                       linear-gradient(45deg, transparent 75%, rgba(0,198,255,0.02) 75%),
@@ -296,7 +298,7 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
                       radial-gradient(circle at center, rgba(254,202,87,0.02) 10%, transparent 11%);
     background-size: 25px 25px, 25px 25px, 25px 25px, 25px 25px, 100% 100%; /* Further Reduced size */
     background-position: 0 0, 0 12.5px, 12.5px -12.5px, 12.5px 0px, 0 0; /* Adjusted position */
-    background-color: #fdfdfe; /* Very light background */
+    background-color: #fefefe; /* Lighter */
 }
 
 #stoc-toc-icon-sidebar-list {
@@ -305,29 +307,29 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
     margin: 0;
 }
 
-/* --- बाहरी साइडबार क्लोज ボタン --- */
+/* --- बाहरी साइडबार क्लोज बटन --- */
 #stoc-toc-sidebar-external-close {
     position: fixed;
     top: 50%;
     left: 15px; /* Further Reduced */
     transform: translateY(-50%);
-    width: 38px; /* Further Reduced */
-    height: 38px; /* Further Reduced */
-    background: linear-gradient(135deg, #e74c3c, #c0392b); /* Darker red gradient */
+    width: 36px; /* Further Reduced */
+    height: 36px; /* Further Reduced */
+    background: linear-gradient(135deg, var(--stoc-color-4), var(--stoc-color-3));
     border: none;
     border-radius: 50%;
     color: #fff;
     font-size: 1.2em; /* Further Reduced */
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4); /* Further Reduced shadow */
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3); /* Further Reduced shadow */
     z-index: 1011; /* Above sidebar overlay, below sidebar content */
     display: flex; /* Center icon */
     justify-content: center;
     align-items: center;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease; /* Faster transition */
-    transform: translateY(-50%) scale(0.7); /* Further Reduced starting scale */
+    transition: all 0.3s ease; /* Reduced transition duration */
+    transform: translateY(-50%) scale(0.7); /* Adjusted initial scale */
 }
 
 #stoc-toc-sidebar-external-close.visible {
@@ -337,8 +339,8 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
 }
 
 #stoc-toc-sidebar-external-close:hover {
-    transform: translateY(-50%) scale(1.08) rotate(-10deg); /* Further Reduced effect */
-    box-shadow: 0 6px 15px rgba(231, 76, 60, 0.6); /* Further Reduced shadow */
+    transform: translateY(-50%) scale(1.08) rotate(-12deg); /* Adjusted effect */
+    box-shadow: 0 6px 15px rgba(255, 107, 107, 0.5); /* Adjusted shadow */
 }
 
 /* --- साझा TOC लिस्ट आइटम स्टाइलिंग --- */
@@ -352,40 +354,38 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
     background-size: 400% 400%;
     animation: stoc-gradient-bg-animation 9s ease infinite;
     overflow: hidden;
-    transition: box-shadow 0.2s ease; /* Faster transition */
+    transition: box-shadow 0.25s ease; /* Reduced transition duration */
 }
 
 .stoc-toc-list-item:hover {
-    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.07); /* Further Reduced shadow */
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.06); /* Further Reduced shadow */
 }
 
 .stoc-toc-list-item a {
     display: flex;
     align-items: flex-start; /* Align icon with first line of text */
-    gap: 7px; /* Further Reduced gap */
+    gap: 6px; /* Further Reduced gap */
     padding: 7px 10px; /* Further Reduced padding */
     text-decoration: none;
     border-radius: 4px; /* Further Reduced - Inner radius */
     position: relative;
     z-index: 1; /* Above gradient border */
     background-color: var(--stoc-list-bg-h2); /* डिफ़ॉल्ट बैकग्राउंड (H2 का उपयोग) */
-    color: var(--stoc-text-dark); /* गहरा टेक्स्ट रंग */
-    transition: transform 0.2s ease, background-color 0.15s ease; /* Faster transition */
+    /* Text color handled by .stoc-toc-item-text */
+    transition: transform 0.2s ease, background-color 0.15s ease; /* Reduced transition duration */
 }
 
 .stoc-toc-list-item a:hover {
     transform: scale(1.008); /* Further Reduced scale */
-    background-color: #f8f9fa; /* होवर पर हल्का सफेद बैकग्राउंड */
+    background-color: #f8f9fa; /* होवर पर हल्का बैकग्राउंड */
 }
 
 /* क्लिक इफ़фект क्लास (बैकग्राउंड बदलें) */
 .stoc-toc-list-item a.stoc-toc-link-clicked {
     transform: scale(1.015); /* Further Reduced scale */
     background-color: #eef; /* क्लिक पर हल्का नीला/बैंगनी टिंट */
-    transition: transform 0.08s ease-out, background-color 0.08s ease-out; /* Faster transition */
+    transition: transform 0.08s ease-out, background-color 0.08s ease-out; /* Reduced transition duration */
 }
-
-/* stoc-gradient-bg-animation keyframes are already defined at the top for button wrapper */
 
 
 .stoc-toc-list-item .stoc-toc-item-icon {
@@ -394,8 +394,8 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
     width: 1em; /* Further Reduced width for alignment */
     text-align: center;
     opacity: 1;
-    transition: color 0.15s ease; /* Faster transition */
-    color: var(--stoc-color-1); /* डिफ़ॉल्ट रंग */
+    transition: color 0.15s ease; /* Reduced transition duration */
+    color: var(--stoc-color-1); /* डिफ़ॉल्ट रंग (या ग्रेडिएंट के साथ मिश्रित) */
     flex-shrink: 0; /* Prevent icon shrinking */
 }
 
@@ -412,27 +412,37 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
     font-family: var(--stoc-font-main);
     white-space: normal; /* Allow text wrapping */
     word-break: break-word; /* Break long words */
+
+    /* *** ग्रेडिएंट टेक्स्ट स्टाइल *** */
+    color: var(--stoc-text-dark); /* Fallback color */
+    background-image: var(--stoc-gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    /* Subtle text animation (optional, might interfere with gradient) */
+    /* animation: stoc-text-subtle-pulse 3s ease-in-out infinite; */ /* Keeping this off by default for gradient text */
 }
 
 /* --- पदानुक्रम स्टाइलिंग (बैकग्राउंड, आइकन रंग, पैडिंग) --- */
 .stoc-toc-list-item.level-2 { padding-left: 0; }
-.stoc-toc-list-item.level-2 a { font-weight: 700; font-size: 1em; background-color: var(--stoc-list-bg-h2); } /* Further Reduced font size */
-.stoc-toc-list-item.level-2 .stoc-toc-item-icon { color: var(--stoc-color-1); font-size: 1em; } /* Further Reduced font size */
+.stoc-toc-list-item.level-2 a { font-weight: 700; font-size: 0.95em; background-color: var(--stoc-list-bg-h2); } /* Further Reduced font size */
+.stoc-toc-list-item.level-2 .stoc-toc-item-icon { color: var(--stoc-color-1); font-size: 0.95em; } /* Further Reduced font size */
 
 .stoc-toc-list-item.level-3 { padding-left: 10px; } /* Further Reduced indentation */
-.stoc-toc-list-item.level-3 a { font-weight: 600; font-size: 0.95em; background-color: var(--stoc-list-bg-h3); } /* Further Reduced font size */
+.stoc-toc-list-item.level-3 a { font-weight: 600; font-size: 0.9em; background-color: var(--stoc-list-bg-h3); } /* Further Reduced font size */
 .stoc-toc-list-item.level-3 .stoc-toc-item-icon { color: var(--stoc-color-2); }
 
 .stoc-toc-list-item.level-4 { padding-left: 20px; } /* Further Reduced indentation */
-.stoc-toc-list-item.level-4 a { font-weight: 600; font-size: 0.93em; background-color: var(--stoc-list-bg-h4); } /* Further Reduced font size */
+.stoc-toc-list-item.level-4 a { font-weight: 600; font-size: 0.88em; background-color: var(--stoc-list-bg-h4); } /* Further Reduced font size */
 .stoc-toc-list-item.level-4 .stoc-toc-item-icon { color: var(--stoc-color-3); }
 
 .stoc-toc-list-item.level-5 { padding-left: 30px; } /* Further Reduced indentation */
-.stoc-toc-list-item.level-5 a { font-weight: 600; font-size: 0.93em; background-color: var(--stoc-list-bg-h5); } /* Further Reduced font size */
+.stoc-toc-list-item.level-5 a { font-weight: 600; font-size: 0.88em; background-color: var(--stoc-list-bg-h5); } /* Further Reduced font size */
 .stoc-toc-list-item.level-5 .stoc-toc-item-icon { color: var(--stoc-color-4); }
 
 .stoc-toc-list-item.level-6 { padding-left: 40px; } /* Further Reduced indentation */
-.stoc-toc-list-item.level-6 a { font-weight: 600; font-size: 0.93em; background-color: var(--stoc-list-bg-h6); } /* Further Reduced font size */
+.stoc-toc-list-item.level-6 a { font-weight: 600; font-size: 0.88em; background-color: var(--stoc-list-bg-h6); } /* Further Reduced font size */
 .stoc-toc-list-item.level-6 .stoc-toc-item-icon { color: var(--stoc-color-5); }
 
 /* --- साझा स्क्रॉल इंडिकेटर --- */
@@ -446,10 +456,8 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
     pointer-events: none; /* Not interactive */
     color: var(--stoc-color-1);
     text-shadow: 0 0 6px rgba(0, 210, 255, 0.3); /* Further Reduced shadow */
-    animation: stoc-bounce-pulse 1.8s infinite ease-in-out; /* Slightly faster animation */
-    transition: opacity 0.3s ease; /* Faster transition */
-    /* Ensure it's above scrollbar but below content */
-    z-index: 5;
+    animation: stoc-bounce-pulse 2s infinite ease-in-out;
+    transition: opacity 0.3s ease; /* Reduced transition duration */
 }
 
 .stoc-toc-scroll-indicator.visible {
@@ -457,8 +465,8 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
 }
 
 @keyframes stoc-bounce-pulse {
-    0%, 100% { transform: translate(-50%, 0px) scale(1); opacity: 0.6; } /* Further Reduced opacity/movement */
-    50% { transform: translate(-50%, -5px) scale(1.04); opacity: 0.9; } /* Further Reduced opacity/movement */
+    0%, 100% { transform: translate(-50%, 0px) scale(1); opacity: 0.7; }
+    50% { transform: translate(-50%, -4px) scale(1.03); opacity: 1; } /* Further Reduced movement/scale */
 }
 
 /* कस्टम स्क्रॉलबार (Webkit & Firefox) */
@@ -469,20 +477,20 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
 
 #stoc-toc-button-scrollbox::-webkit-scrollbar-track,
 #stoc-toc-icon-sidebar-scrollbox::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.02); /* Further less opaque */
-    border-radius: 2px; /* Further Reduced */
+    background: rgba(0, 0, 0, 0.02); /* Further Less opaque */
+    border-radius: 2px; /* Reduced */
 }
 
 #stoc-toc-button-scrollbox::-webkit-scrollbar-thumb,
 #stoc-toc-icon-sidebar-scrollbox::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, var(--stoc-color-2), var(--stoc-color-3));
-    border-radius: 2px; /* Further Reduced */
+    border-radius: 2px; /* Reduced */
 }
 
 #stoc-toc-button-scrollbox,
 #stoc-toc-icon-sidebar-scrollbox {
     scrollbar-width: thin;
-    scrollbar-color: var(--stoc-color-2) rgba(0, 0, 0, 0.02); /* Further less opaque */
+    scrollbar-color: var(--stoc-color-2) rgba(0, 0, 0, 0.02); /* Further Less opaque */
 }
 
 /* --- कंटेंट हाइलाइटिंग --- */
@@ -495,11 +503,11 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
 .stoc-toc-target-heading {
     position: relative; /* Needed for ::after */
     color: var(--stoc-color-3) !important; /* Override theme color */
-    animation: stoc-zoom-in-effect 0.4s ease-out forwards; /* Faster duration */
+    animation: stoc-zoom-in-effect 0.4s ease-out forwards; /* Further Reduced duration */
     padding-top: 3px; /* Further Reduced */
     padding-bottom: 3px; /* Further Reduced */
-    border-bottom: 2px solid transparent; /* Thickness kept for visibility */
-    transition: color 0.2s ease; /* Faster transition */
+    border-bottom: 1px solid transparent; /* Further Reduced thickness */
+    transition: color 0.25s ease; /* Reduced transition duration */
     text-shadow: 0 0 5px rgba(0, 210, 255, 0.3); /* Further Reduced shadow */
 }
 
@@ -508,14 +516,14 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
     content: '';
     position: absolute;
     left: 0;
-    bottom: -1px; /* Position kept */
+    bottom: -0.5px; /* Adjusted position */
     width: 100%;
-    height: 2px; /* Thickness kept */
+    height: 1px; /* Further Reduced thickness */
     background: linear-gradient(90deg, var(--stoc-color-2), var(--stoc-color-1), var(--stoc-color-3), var(--stoc-color-2));
     background-size: 200% 100%;
-    animation: stoc-gradient-bg-animation 1.8s linear infinite; /* Faster animation speed */
-    border-radius: 1px; /* Kept */
-    transition: opacity 0.4s ease var(--stoc-popup-highlight-duration); /* Delay fade out */
+    animation: stoc-gradient-bg-animation 1.5s linear infinite; /* Further Reduced animation speed */
+    border-radius: 0.5px; /* Further Reduced */
+    transition: opacity 0.4s ease var(--stoc-popup-highlight-duration); /* Adjusted Delay fade out */
     opacity: 1;
 }
 
@@ -535,7 +543,7 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
 /* हाइलाइटेड पैराग्राफ एनिमेशन */
 @keyframes stoc-pulse-background-alt {
     0% { background-color: var(--stoc-highlight-bg-start); box-shadow: 0 2px 8px rgba(37, 117, 252, 0.06); } /* Further Reduced shadow */
-    50% { background-color: var(--stoc-highlight-bg-end); box-shadow: 0 4px 15px rgba(106, 17, 203, 0.1); } /* Further Reduced shadow */
+    50% { background-color: var(--stoc-highlight-bg-end); box-shadow: 0 4px 15px rgba(106, 17, 203, 0.12); } /* Further Reduced shadow */
     100% { background-color: var(--stoc-highlight-bg-start); box-shadow: 0 2px 8px rgba(37, 117, 252, 0.06); } /* Further Reduced shadow */
 }
 
@@ -544,8 +552,8 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
     margin-left: -10px; /* Further Reduced */
     margin-right: -10px; /* Further Reduced */
     border-radius: var(--stoc-border-radius);
-    animation: stoc-pulse-background-alt 2.2s ease-in-out infinite; /* Faster animation duration */
-    transition: background-color 0.4s ease, box-shadow 0.4s ease, padding 0.4s ease, margin 0.4s ease; /* Faster transition */
+    animation: stoc-pulse-background-alt 2.2s ease-in-out infinite; /* Further Reduced duration */
+    transition: background-color 0.4s ease, box-shadow 0.4s ease, padding 0.4s ease, margin 0.4s ease; /* Reduced transition duration */
     /* Delay transition until just before fade out starts */
     transition-delay: calc(var(--stoc-popup-highlight-duration) - 0.4s);
 }
@@ -564,32 +572,32 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
     :root {
         --stoc-sidebar-width: 85vw; /* Adjusted based on new base */
         --stoc-sidebar-min-width: 180px; /* Adjusted based on new base */
-        --stoc-sidebar-max-width: 260px; /* Adjusted based on new base */
+        --stoc-sidebar-max-width: 220px; /* Adjusted based on new base */
     }
 
     #stoc-floating-toc-icon {
-        font-size: 1.5em; /* Further Reduced */
+        font-size: 2.2em; /* Adjusted */
         right: 10px; /* Further Reduced */
     }
 
     body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
-        right: calc( clamp(var(--stoc-sidebar-min-width), var(--stoc-sidebar-width), var(--stoc-sidebar-max-width)) + 10px); /* Further Reduced spacing */
+        right: calc( clamp(var(--stoc-sidebar-min-width), var(--stoc-sidebar-width), var(--stoc-sidebar-max-width)) + 10px); /* Consistent spacing */
     }
 
     #stoc-toc-sidebar-external-close {
-        width: 32px; /* Further Reduced */
-        height: 32px; /* Further Reduced */
+        width: 30px; /* Further Reduced */
+        height: 30px; /* Further Reduced */
         font-size: 1em; /* Further Reduced */
-        left: 8px; /* Further Reduced */
+        left: 10px; /* Further Reduced */
     }
 
-    #stoc-toc-button-header h3 { font-size: 1em; } /* Further Reduced */
-    .stoc-toc-button-title-text { padding: 3px 10px; font-size: 0.85em; } /* Slightly increased relative to other text */
-    #stoc-toc-icon-sidebar-header h3 { font-size: 1em; } /* Further Reduced */
+    #stoc-toc-button-header h3 { font-size: 1.1em; } /* Adjusted */
+    .stoc-toc-button-title-text { padding: 2px 8px; font-size: 0.7em; } /* Further Reduced */
+    #stoc-toc-icon-sidebar-header h3 { font-size: 1.1em; } /* Adjusted */
     #stoc-toc-icon-sidebar { width: clamp(var(--stoc-sidebar-min-width), var(--stoc-sidebar-width), var(--stoc-sidebar-max-width)); }
 
     .stoc-toc-list-item a { padding: 6px 8px; } /* Further Reduced */
-    .stoc-toc-list-item .stoc-toc-item-text { font-size: 0.88em; } /* Further Reduced */
+    .stoc-toc-list-item .stoc-toc-item-text { font-size: 0.88em; } /* Adjusted */
     .stoc-toc-list-item.level-3,
     .stoc-toc-list-item.level-4,
     .stoc-toc-list-item.level-5,
@@ -631,7 +639,7 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
         animation: none !important;
     }
 
-    /* कार्यात्मकता के लिए आवश्यक ट्रांज़िशन/ट्रांसफ़ॉर्म रखें (लेकिन तेज़ करें) */
+    /* कार्यात्मकता के लिए आवश्यक ट्रांज़िशन/ट्राンスफ़ॉर्म रखें (लेकिन तेज़ करें) */
     #stoc-toc-button-toggle-icon { transition: transform 0.01ms !important; }
     #stoc-toc-button-wrapper.collapsed #stoc-toc-button-toggle-icon { transform: rotate(-180deg); }
     #stoc-toc-button-wrapper.expanded #stoc-toc-button-toggle-icon { transform: rotate(0deg); }
@@ -653,17 +661,17 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
         background-color: #eef !important; /* Keep click background */
     }
     #stoc-toc-sidebar-internal-close:hover {
-        background-color: rgba(0, 0, 0, 0.07) !important;
+        background-color: rgba(0, 0, 0, 0.06) !important; /* Adjusted opacity */
         color: var(--stoc-close-icon-hover) !important;
         transform: translateY(-50%) !important; /* Remove rotation */
     }
     #stoc-toc-sidebar-external-close:hover {
-        transform: translateY(-50%) scale(1.02) !important; /* Less scale, no rotation */
-        box-shadow: 0 5px 12px rgba(231, 76, 60, 0.5) !important; /* Reduced shadow */
+        transform: translateY(-50%) scale(1.05) !important; /* Less scale, no rotation */
+        box-shadow: 0 5px 12px rgba(255, 107, 107, 0.4) !important; /* Adjusted shadow */
     }
     #stoc-floating-toc-icon:hover {
         transform: translateY(-50%) !important; /* Remove scale/rotation */
-        filter: brightness(1.1) !important; /* Subtle brightness */
+        filter: brightness(1.15) !important; /* Adjusted brightness */
     }
 }
 
@@ -679,7 +687,7 @@ body.stoc-toc-sidebar-open #stoc-floating-toc-icon {
     font-family: var(--stoc-font-heading); /* Optional: Use TOC heading font */
     /* Add scroll margin top to account for fixed headers/admin bars */
     /* Adjust the value (e.g., 80px) based on your theme's fixed elements */
-    scroll-margin-top: 60px; /* Adjusted for smaller size */
+    scroll-margin-top: 60px; /* Further Adjusted */
     /* Ensure some padding for the highlight effect */
     padding-top: 3px; /* Further Reduced */
     padding-bottom: 3px; /* Further Reduced */
